@@ -107,7 +107,6 @@
             padding: 25px;
             border-radius: 10px;
             margin: 20px 0;
-            display: none;
         }
         
         .calendar-nav {
@@ -297,48 +296,48 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏖️ Annual Vacation Selection</h1>
+            <h1>Annual Vacation Selection</h1>
             <p id="roundInfo">Round 1 - First Choice Selection</p>
         </div>
         
         <div class="employee-info">
             <div class="info-item">
-                <span class="info-label">👤 Employee:</span>
+                <span class="info-label">Employee:</span>
                 <span class="info-value" id="employeeName">Loading...</span>
             </div>
             <div class="info-item">
-                <span class="info-label">🏆 Seniority Rank:</span>
+                <span class="info-label">Seniority Rank:</span>
                 <span class="info-value" id="seniorityRank">-</span>
             </div>
             <div class="info-item">
-                <span class="info-label">📅 Days Remaining:</span>
+                <span class="info-label">Days Remaining:</span>
                 <span class="info-value" id="availableDays">-</span>
             </div>
             <div class="info-item">
-                <span class="info-label">🎯 Round:</span>
+                <span class="info-label">Round:</span>
                 <span class="info-value" id="currentRound">-</span>
             </div>
         </div>
         
         <div class="content">
             <div class="alert alert-info">
-                <strong>📋 Choose your action:</strong> Select vacation dates, skip this round, or end your selection.
+                <strong>Choose your action:</strong> Select vacation dates, skip this round, or end your selection.
             </div>
             
             <div class="action-buttons">
                 <button class="action-btn select-dates-btn" onclick="showCalendar()">
-                    📅 Select Vacation Dates
+                    Select Vacation Dates
                 </button>
                 <button class="action-btn skip-round-btn" onclick="skipRound()">
-                    ⏭️ Skip This Round
+                    Skip This Round
                 </button>
                 <button class="action-btn end-selection-btn" onclick="endSelection()">
-                    🛑 End Selection
+                    End Selection
                 </button>
             </div>
             
             <div class="calendar-section" id="calendarSection">
-                <h3 style="color: #0078d4; margin-top: 0;">📅 Select Your Vacation Dates</h3>
+                <h3 style="color: #0078d4; margin-top: 0;">Select Your Vacation Dates</h3>
                 
                 <div class="legend">
                     <div class="legend-item">
@@ -360,9 +359,9 @@
                 </div>
                 
                 <div class="calendar-nav">
-                    <button class="nav-btn" onclick="previousMonth()">← Previous</button>
+                    <button class="nav-btn" onclick="previousMonth()">Previous</button>
                     <div class="month-title" id="monthTitle">January 2026</div>
-                    <button class="nav-btn" onclick="nextMonth()">Next →</button>
+                    <button class="nav-btn" onclick="nextMonth()">Next</button>
                 </div>
                 
                 <div class="calendar-grid" id="calendarGrid">
@@ -370,7 +369,7 @@
             </div>
             
             <div class="selection-summary" id="selectionSummary">
-                <h3>✅ Your Selected Vacation Days</h3>
+                <h3>Your Selected Vacation Days</h3>
                 <p><strong>Start Date:</strong> <span id="startDate">-</span></p>
                 <p><strong>End Date:</strong> <span id="endDate">-</span></p>
                 <p><strong>Total Days:</strong> <span id="totalDays">0</span></p>
@@ -378,11 +377,11 @@
             </div>
             
             <button class="submit-btn" id="submitBtn" onclick="submitSelection()">
-                📤 Submit Vacation Selection
+                Submit Vacation Selection
             </button>
             
             <div class="alert alert-warning">
-                <strong>📧 What happens next?</strong> You'll receive a confirmation email, and the next person will be notified.
+                <strong>What happens next?</strong> You'll receive a confirmation email, and the next person will be notified.
             </div>
         </div>
     </div>
@@ -409,6 +408,7 @@
         const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
             parseURLParameters();
             updateEmployeeInfo();
             loadCalendarDataFromURL();
@@ -422,6 +422,7 @@
             employeeData.availableDays = parseInt(urlParams.get('days')) || 25;
             employeeData.round = parseInt(urlParams.get('round')) || 1;
             employeeData.unionMaxPerDay = parseInt(urlParams.get('maxperday')) || 2;
+            console.log('Employee data:', employeeData);
         }
         
         function updateEmployeeInfo() {
@@ -456,23 +457,18 @@
                     }
                 });
             }
+            console.log('Calendar availability:', availability);
         }
         
         function showCalendar() {
+            console.log('showCalendar called');
             const calendarSection = document.getElementById('calendarSection');
             const submitBtn = document.getElementById('submitBtn');
             
-            if (calendarSection) {
-                calendarSection.style.display = 'block';
-            }
-            if (submitBtn) {
-                submitBtn.style.display = 'block';
-            }
+            calendarSection.style.display = 'block';
+            submitBtn.style.display = 'block';
             
-            // Ensure calendar renders after display is set
-            setTimeout(() => {
-                renderCalendar();
-            }, 100);
+            renderCalendar();
         }
         
         function skipRound() {
@@ -488,13 +484,6 @@
         }
         
         function processAction(action) {
-            const actionData = {
-                employeeName: employeeData.name,
-                round: employeeData.round,
-                action: action,
-                submissionTime: new Date().toISOString()
-            };
-            
             let emailBody, subject;
             
             if (action === 'skip') {
@@ -506,120 +495,19 @@
             }
             
             const adminEmail = 'kirk.stringer@blood.ca';
-            const mailtoLink = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${emailBody}`;
+            const fullText = `To: ${adminEmail}\nSubject: ${subject}\n\n${emailBody.replace(/%0D%0A/g, '\n')}`;
             
-            // Show action modal
-            showActionModal(subject, emailBody.replace(/%0D%0A/g, '\n'), adminEmail, action);
-        }
-        
-        function showActionModal(subject, body, email, action) {
-            const modal = document.createElement('div');
-            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;';
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = 'background: white; padding: 40px; border-radius: 15px; max-width: 600px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
-            
-            const actionText = action === 'skip' ? 'Skipped Round' : 'Ended Selection';
-            const actionColor = action === 'skip' ? '#ffc107' : '#dc3545';
-            
-            modalContent.innerHTML = `
-                <h2 style="color: ${actionColor}; margin-top: 0;">${actionText}</h2>
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Employee:</strong> ${employeeData.name}</p>
-                    <p><strong>Action:</strong> ${actionText}</p>
-                    <p><strong>Round:</strong> ${employeeData.round}</p>
-                </div>
-                <p style="margin: 20px 0;">Choose how to send your selection:</p>
-                <button id="desktopEmailBtn" style="background: #0078d4; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 5px; width: calc(50% - 10px);">Open Desktop Email</button>
-                <button id="copyTextBtn" style="background: #28a745; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 5px; width: calc(50% - 10px);">Copy for Webmail</button>
-                <button id="cancelBtn" style="background: #6c757d; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 0; width: 100%;">Cancel</button>
-                <div id="copyInstructions" style="display: none; background: #d1ecf1; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #bee5eb;">
-                    <p style="margin: 0; color: #0c5460;"><strong>Text copied!</strong> Now paste it into a new email to ${email}</p>
-                </div>
-            `;
-            
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-            
-            // Desktop email button
-            document.getElementById('desktopEmailBtn').onclick = () => {
-                const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                window.location.href = mailtoLink;
-                document.body.removeChild(modal);
-                disableForm('Selection Submitted');
-            };
-            
-            // Copy text button
-            document.getElementById('copyTextBtn').onclick = () => {
-                const fullText = `To: ${email}\nSubject: ${subject}\n\n${body}`;
+            if (navigator.clipboard) {
                 navigator.clipboard.writeText(fullText).then(() => {
-                    document.getElementById('copyInstructions').style.display = 'block';
-                    setTimeout(() => {
-                        document.body.removeChild(modal);
-                        disableForm('Selection Submitted');
-                    }, 3000);
-                }).catch(() => {
-                    alert('Copy failed. Please manually copy this text:\n\n' + fullText);
+                    alert(`${action === 'skip' ? 'Skip' : 'End'} selection copied to clipboard. Paste into a new email to ${adminEmail}`);
                 });
-            };
-            
-            // Cancel button
-            document.getElementById('cancelBtn').onclick = () => {
-                document.body.removeChild(modal);
-            };
-        }
-    </script>
-</body>
-</html>px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 5px; width: calc(50% - 10px);">Copy for Webmail</button>
-                <button id="cancelBtn" style="background: #6c757d; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 0; width: 100%;">Cancel</button>
-                <div id="copyInstructions" style="display: none; background: #d1ecf1; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #bee5eb;">
-                    <p style="margin: 0; color: #0c5460;"><strong>Text copied!</strong> Now paste it into a new email to ${email}</p>
-                </div>
-            `;
-            
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-            
-            // Desktop email button
-            document.getElementById('desktopEmailBtn').onclick = () => {
-                const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                window.location.href = mailtoLink;
-                document.body.removeChild(modal);
-                disableForm(actionText);
-            };
-            
-            // Copy text button
-            document.getElementById('copyTextBtn').onclick = () => {
-                const fullText = `To: ${email}\nSubject: ${subject}\n\n${body}`;
-                navigator.clipboard.writeText(fullText).then(() => {
-                    document.getElementById('copyInstructions').style.display = 'block';
-                    setTimeout(() => {
-                        document.body.removeChild(modal);
-                        disableForm(actionText);
-                    }, 3000);
-                }).catch(() => {
-                    alert('Copy failed. Please manually copy this text:\n\n' + fullText);
-                });
-            };
-            
-            // Cancel button
-            document.getElementById('cancelBtn').onclick = () => {
-                document.body.removeChild(modal);
-            };
-        }
-        
-        function disableForm(actionText) {
-            document.querySelector('.action-buttons').style.display = 'none';
-            document.getElementById('calendarSection').style.display = 'none';
-            document.getElementById('submitBtn').style.display = 'none';
-            
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-info';
-            alert.innerHTML = `<strong>✅ ${actionText} Recorded</strong><br>Your selection has been processed.`;
-            document.querySelector('.content').appendChild(alert);
+            } else {
+                alert(`Copy this text and email to ${adminEmail}:\n\n${fullText}`);
+            }
         }
         
         function renderCalendar() {
+            console.log('renderCalendar called');
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
             
@@ -644,7 +532,6 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
-                dayElement.dataset.day = day;
                 
                 const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const bookedCount = availability[dateString] || 0;
@@ -788,25 +675,18 @@ This is an automated vacation selection submission.`;
             
             const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
             const adminEmail = 'kirk.stringer@blood.ca';
+            const fullText = `To: ${adminEmail}\nSubject: ${emailSubject}\n\n${emailBodyText}`;
             
-            showSubmissionModal(emailSubject, emailBodyText, adminEmail, startDate, endDate, totalDays);
+            if (confirm(`You selected:\n\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nCopy email text to clipboard?`)) {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(fullText).then(() => {
+                        alert('Email text copied to clipboard. Paste into a new email to send your selection.');
+                    });
+                } else {
+                    alert(`Copy this text and email to ${adminEmail}:\n\n${fullText}`);
+                }
+            }
         }
-        
-        function showSubmissionModal(subject, body, email, startDate, endDate, totalDays) {
-            const modal = document.createElement('div');
-            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;';
-            
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = 'background: white; padding: 40px; border-radius: 15px; max-width: 600px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
-            
-            modalContent.innerHTML = `
-                <h2 style="color: #28a745; margin-top: 0;">Confirm Your Selection</h2>
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>Employee:</strong> ${employeeData.name}</p>
-                    <p><strong>Start Date:</strong> ${new Date(startDate).toLocaleDateString()}</p>
-                    <p><strong>End Date:</strong> ${new Date(endDate).toLocaleDateString()}</p>
-                    <p><strong>Total Days:</strong> ${totalDays}</p>
-                </div>
-                <p style="margin: 20px 0;">Choose how to send your vacation selection:</p>
-                <button id="desktopEmailBtn" style="background: #0078d4; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 5px; width: calc(50% - 10px);">Open Desktop Email</button>
-                <button id="copyTextBtn" style="background: #28a745; color: white; border: none; padding: 15px 25
+    </script>
+</body>
+</html>
