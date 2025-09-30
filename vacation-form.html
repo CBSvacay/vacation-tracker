@@ -202,6 +202,20 @@
             transform: scale(1.05);
         }
         
+        .calendar-day.work-day {
+            background: #e0e0e0 !important;
+            border-color: #bdbdbd;
+        }
+
+        .calendar-day.work-day.selected {
+            background: #007bff !important;
+            color: white;
+        }
+
+        .calendar-day.work-day:hover:not(.disabled):not(.unavailable) {
+            background: #d0d0d0 !important;
+        }
+        
         .calendar-day.disabled {
             background: #f8f9fa;
             color: #ccc;
@@ -356,6 +370,10 @@
                         <div class="legend-color" style="background: #007bff;"></div>
                         <span>Your Selection</span>
                     </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e0e0e0; border-color: #bdbdbd;"></div>
+                        <span>Your Work Days</span>
+                    </div>
                 </div>
                 
                 <div class="calendar-nav">
@@ -399,6 +417,7 @@
         let currentYear = 2026;
         let selectedDates = [];
         let availability = {};
+        let employeeSchedule = [];
         
         const monthNames = [
             "January", "February", "March", "April", "May", "June",
@@ -422,7 +441,15 @@
             employeeData.availableDays = parseInt(urlParams.get('days')) || 25;
             employeeData.round = parseInt(urlParams.get('round')) || 1;
             employeeData.unionMaxPerDay = parseInt(urlParams.get('maxperday')) || 2;
+            
+            // Parse employee schedule
+            const scheduleParam = urlParams.get('schedule');
+            if (scheduleParam && scheduleParam !== '') {
+                employeeSchedule = scheduleParam.split(',');
+            }
+            
             console.log('Employee data:', employeeData);
+            console.log('Employee schedule:', employeeSchedule);
         }
         
         function updateEmployeeInfo() {
@@ -536,6 +563,12 @@
                 const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const bookedCount = availability[dateString] || 0;
                 const maxPerDay = employeeData.unionMaxPerDay;
+                
+                // Check if this is a work day for this employee
+                const isWorkDay = employeeSchedule.includes(dateString);
+                if (isWorkDay) {
+                    dayElement.classList.add('work-day');
+                }
                 
                 if (bookedCount >= maxPerDay) {
                     dayElement.classList.add('unavailable');
