@@ -459,9 +459,20 @@
         }
         
         function showCalendar() {
-            document.getElementById('calendarSection').style.display = 'block';
-            document.getElementById('submitBtn').style.display = 'block';
-            renderCalendar();
+            const calendarSection = document.getElementById('calendarSection');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (calendarSection) {
+                calendarSection.style.display = 'block';
+            }
+            if (submitBtn) {
+                submitBtn.style.display = 'block';
+            }
+            
+            // Ensure calendar renders after display is set
+            setTimeout(() => {
+                renderCalendar();
+            }, 100);
         }
         
         function skipRound() {
