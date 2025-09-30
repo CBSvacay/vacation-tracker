@@ -554,31 +554,79 @@
             const endDate = selectedDates[selectedDates.length - 1];
             const totalDays = selectedDates.length;
             
-            // Create email body with structured data
-            const emailBody = `VACATION_SELECTION%0D%0AName: ${employeeData.name}%0D%0AStart: ${startDate}%0D%0AEnd: ${endDate}%0D%0ADays: ${totalDays}%0D%0ARound: ${employeeData.round}%0D%0A%0D%0AThis is an automated vacation selection submission.`;
+            // Create email content
+            const emailBodyText = `VACATION_SELECTION
+Name: ${employeeData.name}
+Start: ${startDate}
+End: ${endDate}
+Days: ${totalDays}
+Round: ${employeeData.round}
+
+This is an automated vacation selection submission.`;
             
             const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
-            
-            // Change this to your email address
             const adminEmail = 'kirk.stringer@blood.ca';
             
-            // Create mailto link
-            const mailtoLink = `mailto:${adminEmail}?subject=${encodeURIComponent(emailSubject)}&body=${emailBody}`;
+            // Show submission modal
+            showSubmissionModal(emailSubject, emailBodyText, adminEmail, startDate, endDate, totalDays);
+        }
+        
+        function showSubmissionModal(subject, body, email, startDate, endDate, totalDays) {
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;';
             
-            // Show confirmation
-            if (confirm(`You selected:\n\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nClick OK to send your selection via email.`)) {
-                // Open email client
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = 'background: white; padding: 40px; border-radius: 15px; max-width: 600px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
+            
+            modalContent.innerHTML = `
+                <h2 style="color: #28a745; margin-top: 0;">Confirm Your Selection</h2>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Employee:</strong> ${employeeData.name}</p>
+                    <p><strong>Start Date:</strong> ${new Date(startDate).toLocaleDateString()}</p>
+                    <p><strong>End Date:</strong> ${new Date(endDate).toLocaleDateString()}</p>
+                    <p><strong>Total Days:</strong> ${totalDays}</p>
+                </div>
+                <p style="margin: 20px 0;">Choose how to send your vacation selection:</p>
+                <button id="desktopEmailBtn" style="background: #0078d4; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 5px; width: calc(50% - 10px);">Open Desktop Email</button>
+                <button id="copyTextBtn" style="background: #28a745; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 5px; width: calc(50% - 10px);">Copy for Webmail</button>
+                <button id="cancelBtn" style="background: #6c757d; color: white; border: none; padding: 15px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 10px 0; width: 100%;">Cancel</button>
+                <div id="copyInstructions" style="display: none; background: #d1ecf1; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #bee5eb;">
+                    <p style="margin: 0; color: #0c5460;"><strong>Text copied!</strong> Now paste it into a new email to ${email}</p>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Desktop email button
+            document.getElementById('desktopEmailBtn').onclick = () => {
+                const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                 window.location.href = mailtoLink;
-                
-                // Update UI
-                document.getElementById('submitBtn').textContent = '✅ Email Opened - Send to Complete';
+                document.body.removeChild(modal);
+                document.getElementById('submitBtn').textContent = 'Email Opened - Send to Complete';
                 document.getElementById('submitBtn').disabled = true;
-                
-                // Show success message after a short delay
-                setTimeout(() => {
-                    alert('Please send the email that just opened in your email client to complete your vacation selection.');
-                }, 500);
-            }
+            };
+            
+            // Copy text button
+            document.getElementById('copyTextBtn').onclick = () => {
+                const fullText = `To: ${email}\nSubject: ${subject}\n\n${body}`;
+                navigator.clipboard.writeText(fullText).then(() => {
+                    document.getElementById('copyInstructions').style.display = 'block';
+                    setTimeout(() => {
+                        document.body.removeChild(modal);
+                        document.getElementById('submitBtn').textContent = 'Selection Sent - Check Email';
+                        document.getElementById('submitBtn').disabled = true;
+                    }, 3000);
+                }).catch(() => {
+                    alert('Copy failed. Please manually copy this text:\n\n' + fullText);
+                });
+            };
+            
+            // Cancel button
+            document.getElementById('cancelBtn').onclick = () => {
+                document.body.removeChild(modal);
+            };
         }
     </script>
 </body>
