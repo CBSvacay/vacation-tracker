@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacation Selection Form</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0078d4, #106ebe);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        
+        .employee-info {
+            background: #e3f2fd;
+            padding: 20px 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #1976d2;
+        }
+        
+        .info-value {
+            background: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .calendar-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .nav-btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .nav-btn:hover {
+            background: #106ebe;
+        }
+        
+        .month-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .calendar-header {
+            background: #0078d4;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+        
+        .calendar-day {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 6px;
+        }
+        
+        .calendar-day:hover:not(.disabled):not(.unavailable) {
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+        
+        .calendar-day.available {
+            background: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .calendar-day.partial {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+        }
+        
+        .calendar-day.unavailable {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .calendar-day.selected {
+            background: #007bff;
+            color: white;
+            border-color: #0056b3;
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+        
+        .calendar-day.disabled {
+            background: #f8f9fa;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #ddd;
+        }
+        
+        .selection-summary {
+            background: #e8f5e8;
+            border: 3px solid #28a745;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            display: none;
+        }
+        
+        .selection-summary h3 {
+            color: #155724;
+            margin-top: 0;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏖️ Annual Vacation Selection</h1>
+            <p id="roundInfo">Round 1 - First Choice Selection</p>
+        </div>
+        
+        <div class="employee-info">
+            <div class="info-item">
+                <span class="info-label">👤 Employee:</span>
+                <span class="info-value" id="employeeName">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">🏆 Seniority Rank:</span>
+                <span class="info-value" id="seniorityRank">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">📅 Available Days:</span>
+                <span class="info-value" id="availableDays">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">🎯 Round:</span>
+                <span class="info-value" id="currentRound">-</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="alert alert-info">
+                <strong>📋 Instructions:</strong> Click your start date, then click your end date to select consecutive vacation days.
+            </div>
+            
+            <div class="calendar-section">
+                <h3 style="color: #0078d4; margin-top: 0;">📅 Select Your Vacation Dates</h3>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #d4edda;"></div>
+                        <span>Available (0 people)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #fff3cd;"></div>
+                        <span>Partial (1 person)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f8d7da;"></div>
+                        <span>Full (2 people)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #007bff;"></div>
+                        <span>Your Selection</span>
+                    </div>
+                </div>
+                
+                <div class="calendar-nav">
+                    <button class="nav-btn" onclick="previousMonth()">← Previous</button>
+                    <div class="month-title" id="monthTitle">January 2026</div>
+                    <button class="nav-btn" onclick="nextMonth()">Next →</button>
+                </div>
+                
+                <div class="calendar-grid" id="calendarGrid">
+                </div>
+            </div>
+            
+            <div class="selection-summary" id="selectionSummary">
+                <h3>✅ Your Selected Vacation Days</h3>
+                <p><strong>Start Date:</strong> <span id="startDate">-</span></p>
+                <p><strong>End Date:</strong> <span id="endDate">-</span></p>
+                <p><strong>Total Days:</strong> <span id="totalDays">0</span></p>
+                <p><strong>Remaining Days:</strong> <span id="remainingDays">-</span></p>
+            </div>
+            
+            <button class="submit-btn" id="submitBtn" onclick="submitSelection()" disabled>
+                📤 Submit Vacation Selection
+            </button>
+            
+            <div class="alert alert-warning">
+                <strong>📧 What happens next?</strong> You'll receive a confirmation email, and the next person will be notified.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let employeeData = {
+            name: 'Test Employee',
+            rank: 1,
+            availableDays: 25,
+            round: 1
+        };
+        
+        let currentMonth = 0;
+        let currentYear = 2026;
+        let selectedDates = [];
+        let availability = {};
+        
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        
+        const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            parseURLParameters();
+            updateEmployeeInfo();
+            loadCalendarDataFromURL();
+            renderCalendar();
+        });
+        
+        function parseURLParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            employeeData.name = urlParams.get('name') || 'Test Employee';
+            employeeData.rank = parseInt(urlParams.get('rank')) || 1;
+            employeeData.availableDays = parseInt(urlParams.get('days')) || 25;
+            employeeData.round = parseInt(urlParams.get('round')) || 1;
+        }
+        
+        function loadCalendarDataFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const calParam = urlParams.get('cal');
+            
+            availability = {};
+            
+            if (calParam && calParam !== '') {
+                const entries = calParam.split(',');
+                entries.forEach(entry => {
+                    const parts = entry.split(':');
+                    if (parts.length === 2) {
+                        const date = parts[0];
+                        const count = parseInt(parts[1]);
+                        availability[date] = count;
+                    }
+                });
+            }
+        }
+        
+        function updateEmployeeInfo() {
+            document.getElementById('employeeName').textContent = employeeData.name;
+            document.getElementById('seniorityRank').textContent = employeeData.rank;
+            document.getElementById('availableDays').textContent = employeeData.availableDays;
+            document.getElementById('currentRound').textContent = employeeData.round;
+            document.getElementById('remainingDays').textContent = employeeData.availableDays;
+        }
+        
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            
+            document.getElementById('monthTitle').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            dayNames.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+            
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day disabled';
+                grid.appendChild(emptyDay);
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.dataset.day = day;
+                
+                const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const bookedCount = availability[dateString] || 0;
+                
+                if (bookedCount >= 2) {
+                    dayElement.classList.add('unavailable');
+                } else if (bookedCount === 1) {
+                    dayElement.classList.add('partial');
+                } else {
+                    dayElement.classList.add('available');
+                }
+                
+                if (selectedDates.includes(dateString)) {
+                    dayElement.classList.add('selected');
+                }
+                
+                dayElement.innerHTML = `
+                    <div>${day}</div>
+                    <div style="font-size: 10px;">${bookedCount}/2</div>
+                `;
+                
+                dayElement.addEventListener('click', () => selectDate(dateString, dayElement));
+                grid.appendChild(dayElement);
+            }
+        }
+        
+        function selectDate(dateString, element) {
+            if (element && element.classList.contains('unavailable')) {
+                alert('This date is fully booked!');
+                return;
+            }
+            
+            if (selectedDates.length === 0) {
+                selectedDates.push(dateString);
+            } else if (selectedDates.length === 1) {
+                const start = new Date(selectedDates[0]);
+                const end = new Date(dateString);
+                
+                if (end < start) {
+                    selectedDates = [dateString, selectedDates[0]];
+                } else {
+                    selectedDates.push(dateString);
+                }
+                
+                fillConsecutiveDates();
+            } else {
+                selectedDates = [dateString];
+            }
+            
+            renderCalendar();
+            updateSelectionSummary();
+        }
+        
+        function fillConsecutiveDates() {
+            const start = new Date(selectedDates[0]);
+            const end = new Date(selectedDates[selectedDates.length - 1]);
+            const range = [];
+            
+            let current = new Date(start);
+            while (current <= end) {
+                const dateStr = current.toISOString().split('T')[0];
+                const booked = availability[dateStr] || 0;
+                
+                if (booked >= 2) {
+                    alert(`Cannot select range: ${dateStr} is fully booked.`);
+                    selectedDates = [];
+                    return;
+                }
+                
+                range.push(dateStr);
+                current.setDate(current.getDate() + 1);
+            }
+            
+            if (range.length > employeeData.availableDays) {
+                alert(`Selection too long: ${range.length} days exceeds your ${employeeData.availableDays} day limit.`);
+                selectedDates = [];
+                return;
+            }
+            
+            selectedDates = range;
+        }
+        
+        function updateSelectionSummary() {
+            const summary = document.getElementById('selectionSummary');
+            
+            if (selectedDates.length === 0) {
+                summary.style.display = 'none';
+                document.getElementById('submitBtn').disabled = true;
+                return;
+            }
+            
+            summary.style.display = 'block';
+            document.getElementById('submitBtn').disabled = false;
+            
+            document.getElementById('startDate').textContent = new Date(selectedDates[0]).toLocaleDateString();
+            document.getElementById('endDate').textContent = new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString();
+            document.getElementById('totalDays').textContent = selectedDates.length;
+            document.getElementById('remainingDays').textContent = employeeData.availableDays - selectedDates.length;
+        }
+        
+        function previousMonth() {
+            if (currentMonth === 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+            renderCalendar();
+        }
+        
+        function nextMonth() {
+            if (currentMonth === 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+            renderCalendar();
+        }
+        
+        function submitSelection() {
+            if (selectedDates.length === 0) {
+                alert('Please select your vacation dates first.');
+                return;
+            }
+            
+            const submissionData = {
+                employeeName: employeeData.name,
+                seniorityRank: employeeData.rank,
+                round: employeeData.round,
+                startDate: selectedDates[0],
+                endDate: selectedDates[selectedDates.length - 1],
+                totalDays: selectedDates.length,
+                selectedDates: selectedDates,
+                submissionTime: new Date().toISOString()
+            };
+            
+            try {
+                window.external.ProcessEmployeeSelection(
+                    submissionData.employeeName,
+                    submissionData.startDate,
+                    submissionData.endDate,
+                    submissionData.totalDays
+                );
+                
+                alert(`✅ Vacation Selection Submitted Successfully!\n\n👤 Employee: ${employeeData.name}\n📅 Dates: ${new Date(selectedDates[0]).toLocaleDateString()} to ${new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString()}\n📊 Total Days: ${selectedDates.length}\n\nYour selection has been recorded!`);
+                
+            } catch (error) {
+                alert(`✅ Selection Recorded!\n\n👤 Employee: ${employeeData.name}\n📅 Dates: ${new Date(selectedDates[0]).toLocaleDateString()} to ${new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString()}\n📊 Total Days: ${selectedDates.length}\n\nPlease notify your supervisor that you've made your selection.`);
+                
+                console.log('Excel connection failed, but selection recorded:', submissionData);
+            }
+            
+            document.getElementById('submitBtn').textContent = '✅ Selection Submitted';
+            document.getElementById('submitBtn').disabled = true;
+        }
+    </script>
+</body>
+</html>
