@@ -550,35 +550,35 @@
                 return;
             }
             
-            const submissionData = {
-                employeeName: employeeData.name,
-                seniorityRank: employeeData.rank,
-                round: employeeData.round,
-                startDate: selectedDates[0],
-                endDate: selectedDates[selectedDates.length - 1],
-                totalDays: selectedDates.length,
-                selectedDates: selectedDates,
-                submissionTime: new Date().toISOString()
-            };
+            const startDate = selectedDates[0];
+            const endDate = selectedDates[selectedDates.length - 1];
+            const totalDays = selectedDates.length;
             
-            try {
-                window.external.ProcessEmployeeSelection(
-                    submissionData.employeeName,
-                    submissionData.startDate,
-                    submissionData.endDate,
-                    submissionData.totalDays
-                );
+            // Create email body with structured data
+            const emailBody = `VACATION_SELECTION%0D%0AName: ${employeeData.name}%0D%0AStart: ${startDate}%0D%0AEnd: ${endDate}%0D%0ADays: ${totalDays}%0D%0ARound: ${employeeData.round}%0D%0A%0D%0AThis is an automated vacation selection submission.`;
+            
+            const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
+            
+            // Change this to your email address
+            const adminEmail = 'kirk.stringer@blood.ca';
+            
+            // Create mailto link
+            const mailtoLink = `mailto:${adminEmail}?subject=${encodeURIComponent(emailSubject)}&body=${emailBody}`;
+            
+            // Show confirmation
+            if (confirm(`You selected:\n\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nClick OK to send your selection via email.`)) {
+                // Open email client
+                window.location.href = mailtoLink;
                 
-                alert(`✅ Vacation Selection Submitted Successfully!\n\n👤 Employee: ${employeeData.name}\n📅 Dates: ${new Date(selectedDates[0]).toLocaleDateString()} to ${new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString()}\n📊 Total Days: ${selectedDates.length}\n\nYour selection has been recorded!`);
+                // Update UI
+                document.getElementById('submitBtn').textContent = '✅ Email Opened - Send to Complete';
+                document.getElementById('submitBtn').disabled = true;
                 
-            } catch (error) {
-                alert(`✅ Selection Recorded!\n\n👤 Employee: ${employeeData.name}\n📅 Dates: ${new Date(selectedDates[0]).toLocaleDateString()} to ${new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString()}\n📊 Total Days: ${selectedDates.length}\n\nPlease notify your supervisor that you've made your selection.`);
-                
-                console.log('Excel connection failed, but selection recorded:', submissionData);
+                // Show success message after a short delay
+                setTimeout(() => {
+                    alert('Please send the email that just opened in your email client to complete your vacation selection.');
+                }, 500);
             }
-            
-            document.getElementById('submitBtn').textContent = '✅ Selection Submitted';
-            document.getElementById('submitBtn').disabled = true;
         }
     </script>
 </body>
