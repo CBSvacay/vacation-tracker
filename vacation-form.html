@@ -204,41 +204,42 @@
             opacity: 0.3;
         }
         
-/* Work day colors (when employee HAS a schedule) */
-.calendar-day.work-empty {
-    background: #e0e0e0;
-    border-color: #757575;
-    color: #000;
-    font-weight: bold;
-}
+        /* Work day colors */
+        .calendar-day.work-empty {
+            background: #9e9e9e;
+            border-color: #424242;
+            color: white;
+            font-weight: bold;
+        }
 
-.calendar-day.work-partial {
-    background: #ffc107;
-    border-color: #856404;
-    color: #000;
-    font-weight: bold;
-}
+        .calendar-day.work-partial {
+            background: #ffc107;
+            border-color: #f57c00;
+            color: #000;
+            font-weight: bold;
+        }
 
-.calendar-day.work-full {
-    background: #dc3545;
-    border-color: #721c24;
-    color: white;
-    font-weight: bold;
-    cursor: not-allowed;
-}
+        .calendar-day.work-full {
+            background: #dc3545;
+            border-color: #b71c1c;
+            color: white;
+            font-weight: bold;
+            cursor: not-allowed;
+        }
 
-/* Non-work day colors (when employee HAS a schedule) - no color change */
-.calendar-day.nonwork-empty,
-.calendar-day.nonwork-partial,
-.calendar-day.nonwork-full {
-    background: white;
-    border-color: #dee2e6;
-    color: #000;
-}
+        /* Non-work days - light blue */
+        .calendar-day.nonwork-empty,
+        .calendar-day.nonwork-partial,
+        .calendar-day.nonwork-full {
+            background: #e3f2fd;
+            border-color: #90caf9;
+            color: #000;
+        }
 
-.calendar-day.nonwork-full {
-    cursor: not-allowed;
-}
+        .calendar-day.nonwork-full {
+            cursor: not-allowed;
+        }
+        
         .calendar-day.selected {
             border: 3px solid #667eea;
             background: #667eea !important;
@@ -325,24 +326,25 @@
             
             <div id="calendarGrid"></div>
             
-       <div class="legend">
-    <div class="legend-item">
-        <div class="legend-color" style="background: #e0e0e0; border-color: #757575;"></div>
-        <span>Work Day - Available</span>
-    </div>
-    <div class="legend-item">
-        <div class="legend-color" style="background: #ffc107; border-color: #856404;"></div>
-        <span>Work Day - Partial</span>
-    </div>
-    <div class="legend-item">
-        <div class="legend-color" style="background: #dc3545; border-color: #721c24; color: white;">R</div>
-        <span>Work Day - Full (blocked)</span>
-    </div>
-    <div class="legend-item">
-        <div class="legend-color" style="background: white; border-color: #dee2e6;"></div>
-        <span>Off Day (not counted)</span>
-    </div>
-</div>     
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9e9e9e; border-color: #424242;"></div>
+                    <span>Available Work Day</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffc107; border-color: #f57c00;"></div>
+                    <span>Partially Booked Work Day</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #dc3545; border-color: #b71c1c;"></div>
+                    <span>Fully Booked (Blocked)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e3f2fd; border-color: #90caf9;"></div>
+                    <span>Off Day</span>
+                </div>
+            </div>
+            
             <div id="selectionSummary">
                 <h3>Your Selection</h3>
                 <p><strong>Start Date:</strong> <span id="startDate"></span></p>
