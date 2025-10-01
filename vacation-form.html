@@ -1,4 +1,372 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacation Selection Form</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        .container-lg {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+            display: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        #calendarSection {
+            display: none;
+            margin-top: 25px;
+        }
+        
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .calendar-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .calendar-controls button:hover {
+            background: #5568d3;
+        }
+        
+        #monthTitle {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        #calendarGrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-header {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 2px solid #dee2e6;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+        
+        .calendar-day:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .calendar-day.disabled {
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+        
+        /* Work day colors */
+        .calendar-day.work-empty {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .calendar-day.work-partial {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+        
+        .calendar-day.work-full {
+            background: #f8d7da;
+            border-color: #dc3545;
+            cursor: not-allowed;
+        }
+        
+        /* Non-work day colors */
+        .calendar-day.nonwork-empty {
+            background: #e7f3ff;
+            border-color: #17a2b8;
+        }
+        
+        .calendar-day.nonwork-partial {
+            background: #ffe7d1;
+            border-color: #fd7e14;
+        }
+        
+        .calendar-day.nonwork-full {
+            background: #f5d3e0;
+            border-color: #e83e8c;
+            cursor: not-allowed;
+        }
+        
+        .calendar-day.selected {
+            border: 3px solid #667eea;
+            background: #667eea !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+        #selectionSummary {
+            display: none;
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        #selectionSummary h3 {
+            margin-top: 0;
+            color: #155724;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 2px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-lg px-3 my-5 markdown-body">
+        <h1>Annual Vacation Selection</h1>
+        
+        <div class="info-card">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Employee Name</span>
+                    <span class="info-value" id="employeeName">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Seniority Rank</span>
+                    <span class="info-value" id="seniorityRank">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Available Days</span>
+                    <span class="info-value" id="availableDays">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Current Round</span>
+                    <span class="info-value" id="currentRound">-</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="showCalendar()">Select Vacation Dates</button>
+            <button class="btn btn-warning" onclick="skipRound()">Skip This Round</button>
+            <button class="btn btn-danger" onclick="endSelection()">End Selection</button>
+        </div>
+        
+        <div id="calendarSection">
+            <div class="calendar-controls">
+                <button onclick="previousMonth()">← Previous</button>
+                <span id="monthTitle">January 2026</span>
+                <button onclick="nextMonth()">Next →</button>
+            </div>
+            
+            <div id="calendarGrid"></div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #d4edda; border-color: #28a745;"></div>
+                    <span>Work Day - Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fff3cd; border-color: #ffc107;"></div>
+                    <span>Work Day - Partial</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f8d7da; border-color: #dc3545;"></div>
+                    <span>Work Day - Full</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e7f3ff; border-color: #17a2b8;"></div>
+                    <span>Off Day - Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffe7d1; border-color: #fd7e14;"></div>
+                    <span>Off Day - Partial</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f5d3e0; border-color: #e83e8c;"></div>
+                    <span>Off Day - Full</span>
+                </div>
+            </div>
+            
+            <div id="selectionSummary">
+                <h3>Your Selection</h3>
+                <p><strong>Start Date:</strong> <span id="startDate"></span></p>
+                <p><strong>End Date:</strong> <span id="endDate"></span></p>
+                <p><strong>Total Days:</strong> <span id="totalDays"></span></p>
+                <p><strong>Days Remaining:</strong> <span id="remainingDays"></span></p>
+            </div>
+        </div>
+        
+        <button class="btn btn-success" id="submitBtn" onclick="submitSelection()">Submit Vacation Selection</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+    
+    <script>
     let employeeData = {
         name: 'Test Employee',
         rank: 1,
@@ -35,7 +403,6 @@
         employeeData.round = parseInt(urlParams.get('round')) || 1;
         employeeData.unionMaxPerDay = parseInt(urlParams.get('maxperday')) || 2;
         
-        // Parse employee schedule
         const scheduleParam = urlParams.get('schedule');
         if (scheduleParam && scheduleParam !== '') {
             employeeSchedule = scheduleParam.split(',');
@@ -160,12 +527,9 @@
             const bookedCount = availability[dateString] || 0;
             const maxPerDay = employeeData.unionMaxPerDay;
             
-            // Check if this is a work day for this employee
             const isWorkDay = employeeSchedule.includes(dateString);
             
-            // Apply color classes based on work day status and booking count
             if (isWorkDay) {
-                // Work day colors
                 if (bookedCount >= maxPerDay) {
                     dayElement.classList.add('work-full');
                 } else if (bookedCount > 0) {
@@ -174,7 +538,6 @@
                     dayElement.classList.add('work-empty');
                 }
             } else {
-                // Non-work day colors
                 if (bookedCount >= maxPerDay) {
                     dayElement.classList.add('nonwork-full');
                 } else if (bookedCount > 0) {
@@ -199,7 +562,6 @@
     }
     
     function selectDate(dateString, element, isWorkDay) {
-        // Only block if it's a FULL WORK DAY
         if (element && element.classList.contains('work-full')) {
             alert('This work day is fully booked!');
             return;
@@ -238,7 +600,6 @@
             const booked = availability[dateStr] || 0;
             const isWorkDay = employeeSchedule.includes(dateStr);
             
-            // Only block if it's a full WORK day
             if (isWorkDay && booked >= maxPerDay) {
                 alert(`Cannot select range: ${dateStr} is a fully booked work day.`);
                 selectedDates = [];
@@ -249,7 +610,6 @@
             current.setDate(current.getDate() + 1);
         }
         
-        // Count only work days for vacation limit
         const workDaysInRange = countWorkDaysInSelection(range);
         
         if (workDaysInRange > employeeData.availableDays) {
@@ -336,4 +696,6 @@ This is an automated vacation selection submission.`;
             }
         }
     }
-</script>
+    </script>
+</body>
+</html>
