@@ -204,40 +204,51 @@
             opacity: 0.3;
         }
         
-        /* Work day colors */
-        .calendar-day.work-empty {
-            background: #d4edda;
-            border-color: #28a745;
-        }
-        
-        .calendar-day.work-partial {
-            background: #fff3cd;
-            border-color: #ffc107;
-        }
-        
-        .calendar-day.work-full {
-            background: #f8d7da;
-            border-color: #dc3545;
-            cursor: not-allowed;
-        }
-        
-        /* Non-work day colors */
-        .calendar-day.nonwork-empty {
-            background: #e7f3ff;
-            border-color: #17a2b8;
-        }
-        
-        .calendar-day.nonwork-partial {
-            background: #ffe7d1;
-            border-color: #fd7e14;
-        }
-        
-        .calendar-day.nonwork-full {
-            background: #f5d3e0;
-            border-color: #e83e8c;
-            cursor: not-allowed;
-        }
-        
+       /* Work day colors */
+.calendar-day.work-empty {
+    background: #28a745;
+    border-color: #155724;
+    color: white;
+    font-weight: bold;
+}
+
+.calendar-day.work-partial {
+    background: #ffc107;
+    border-color: #856404;
+    color: #000;
+    font-weight: bold;
+}
+
+.calendar-day.work-full {
+    background: #dc3545;
+    border-color: #721c24;
+    color: white;
+    font-weight: bold;
+    cursor: not-allowed;
+}
+
+/* Non-work day colors */
+.calendar-day.nonwork-empty {
+    background: #17a2b8;
+    border-color: #0c5460;
+    color: white;
+    font-weight: bold;
+}
+
+.calendar-day.nonwork-partial {
+    background: #fd7e14;
+    border-color: #7c3a07;
+    color: white;
+    font-weight: bold;
+}
+
+.calendar-day.nonwork-full {
+    background: #e83e8c;
+    border-color: #6f1e3e;
+    color: white;
+    font-weight: bold;
+    cursor: not-allowed;
+} 
         .calendar-day.selected {
             border: 3px solid #667eea;
             background: #667eea !important;
