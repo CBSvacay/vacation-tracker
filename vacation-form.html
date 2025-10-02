@@ -240,6 +240,18 @@
             cursor: not-allowed;
         }
         
+        /* Previous selections - blue with border */
+        .calendar-day.previous-selection {
+            background: #2196F3;
+            border: 3px solid #1565C0;
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.previous-selection:hover {
+            background: #1976D2;
+        }
+        
         .calendar-day.selected {
             border: 3px solid #667eea;
             background: #667eea !important;
@@ -328,6 +340,10 @@
             
             <div class="legend">
                 <div class="legend-item">
+                    <div class="legend-color" style="background: #2196F3; border: 3px solid #1565C0;"></div>
+                    <span>Your Previous Selection</span>
+                </div>
+                <div class="legend-item">
                     <div class="legend-color" style="background: #9e9e9e; border-color: #424242;"></div>
                     <span>Available Work Day</span>
                 </div>
@@ -374,6 +390,7 @@
     let selectedDates = [];
     let availability = {};
     let employeeSchedule = [];
+    let previousSelections = [];
     
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
@@ -402,8 +419,14 @@
             employeeSchedule = scheduleParam.split(',');
         }
         
+        const previousParam = urlParams.get('previous');
+        if (previousParam && previousParam !== '') {
+            previousSelections = previousParam.split(',');
+        }
+        
         console.log('Employee data:', employeeData);
         console.log('Employee schedule:', employeeSchedule);
+        console.log('Previous selections:', previousSelections);
     }
     
     function updateEmployeeInfo() {
@@ -522,8 +545,11 @@
             const maxPerDay = employeeData.unionMaxPerDay;
             
             const isWorkDay = employeeSchedule.includes(dateString);
+            const isPreviousSelection = previousSelections.includes(dateString);
             
-            if (isWorkDay) {
+            if (isPreviousSelection) {
+                dayElement.classList.add('previous-selection');
+            } else if (isWorkDay) {
                 if (bookedCount >= maxPerDay) {
                     dayElement.classList.add('work-full');
                 } else if (bookedCount > 0) {
