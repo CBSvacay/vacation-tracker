@@ -552,19 +552,22 @@
             const isWorkDay = employeeSchedule.length > 0 ? employeeSchedule.includes(dateString) : true; // If no schedule, treat all as work days
 const isPreviousSelection = previousSelections.includes(dateString);
 
+const isWorkDay = employeeSchedule.length > 0 ? employeeSchedule.includes(dateString) : true;
+const isPreviousSelection = previousSelections.includes(dateString);
+
 if (isPreviousSelection) {
     dayElement.classList.add('previous-selection');
-} else if (bookedCount >= maxPerDay) {
-    // Fully booked - always red regardless of work/non-work
-    dayElement.classList.add('work-full');
-} else if (bookedCount > 0) {
-    // Partially booked - always yellow regardless of work/non-work
-    dayElement.classList.add('work-partial');
 } else if (isWorkDay) {
-    // Available work day - gray
-    dayElement.classList.add('work-empty');
+    // Only show booking status on WORK days
+    if (bookedCount >= maxPerDay) {
+        dayElement.classList.add('work-full');
+    } else if (bookedCount > 0) {
+        dayElement.classList.add('work-partial');
+    } else {
+        dayElement.classList.add('work-empty');
+    }
 } else {
-    // Non-work day with no bookings - light blue
+    // Non-work days always light blue, regardless of bookings
     dayElement.classList.add('nonwork-empty');
 }
             
@@ -720,4 +723,5 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
