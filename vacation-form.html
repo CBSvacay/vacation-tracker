@@ -457,20 +457,19 @@
         console.log('Calendar availability:', availability);
     }
     
-   function countWorkDaysInSelection(dateArray) {
-    // If no schedule provided, count all selected days as work days
-    if (employeeSchedule.length === 0) {
-        return dateArray.length;
-    }
-    
-    let workDayCount = 0;
-    dateArray.forEach(dateStr => {
-        if (employeeSchedule.includes(dateStr)) {
-            workDayCount++;
+    function countWorkDaysInSelection(dateArray) {
+        if (employeeSchedule.length === 0) {
+            return dateArray.length;
         }
-    });
-    return workDayCount;
-}
+        
+        let workDayCount = 0;
+        dateArray.forEach(dateStr => {
+            if (employeeSchedule.includes(dateStr)) {
+                workDayCount++;
+            }
+        });
+        return workDayCount;
+    }
     
     function showCalendar() {
         console.log('showCalendar called');
@@ -549,27 +548,22 @@
             const bookedCount = availability[dateString] || 0;
             const maxPerDay = employeeData.unionMaxPerDay;
             
-            const isWorkDay = employeeSchedule.length > 0 ? employeeSchedule.includes(dateString) : true; // If no schedule, treat all as work days
-const isPreviousSelection = previousSelections.includes(dateString);
-
-const isWorkDay = employeeSchedule.length > 0 ? employeeSchedule.includes(dateString) : true;
-const isPreviousSelection = previousSelections.includes(dateString);
-
-if (isPreviousSelection) {
-    dayElement.classList.add('previous-selection');
-} else if (isWorkDay) {
-    // Only show booking status on WORK days
-    if (bookedCount >= maxPerDay) {
-        dayElement.classList.add('work-full');
-    } else if (bookedCount > 0) {
-        dayElement.classList.add('work-partial');
-    } else {
-        dayElement.classList.add('work-empty');
-    }
-} else {
-    // Non-work days always light blue, regardless of bookings
-    dayElement.classList.add('nonwork-empty');
-}
+            const isWorkDay = employeeSchedule.length > 0 ? employeeSchedule.includes(dateString) : true;
+            const isPreviousSelection = previousSelections.includes(dateString);
+            
+            if (isPreviousSelection) {
+                dayElement.classList.add('previous-selection');
+            } else if (isWorkDay) {
+                if (bookedCount >= maxPerDay) {
+                    dayElement.classList.add('work-full');
+                } else if (bookedCount > 0) {
+                    dayElement.classList.add('work-partial');
+                } else {
+                    dayElement.classList.add('work-empty');
+                }
+            } else {
+                dayElement.classList.add('nonwork-empty');
+            }
             
             if (selectedDates.includes(dateString)) {
                 dayElement.classList.add('selected');
@@ -723,5 +717,3 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
-
-
