@@ -641,7 +641,7 @@ Submission Date: ${submissionDate}
 This is an automated leave request submission.`;
     
     const emailSubject = `Leave Request - Employee #${requestData.employeeNumber} - ${requestData.leaveType}`;
-    const adminEmail = 'kirk.stringer@blood.ca';
+    const adminEmail = 'Your Supervisor';
     
     if (confirm(`You selected:\n\nLeave Type: ${requestData.leaveType}\nTime: ${timeInfo}\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nCopy email text to clipboard?`)) {
         if (navigator.clipboard) {
@@ -665,4 +665,5 @@ This is an automated leave request submission.`;
 </body>
 
 </html>
+
 
