@@ -618,47 +618,41 @@
     }
     
     function submitRequest() {
-        if (selectedDates.length === 0) {
-            alert('Please select your leave dates first.');
-            return;
-        }
-        
-        const startDate = selectedDates[0];
-        const endDate = selectedDates[selectedDates.length - 1];
-        const totalDays = selectedDates.length;
-        const timeInfo = requestData.timeType === 'allday' ? 'ALL DAY' : `${requestData.startTime} - ${requestData.endTime}`;
-        
-        const emailBodyText = `LEAVE_REQUEST
-Employee Number: ${requestData.employeeNumber}
-Leave Type: ${requestData.leaveType}
-Time: ${timeInfo}
-Start: ${startDate}
-End: ${endDate}
-Days: ${totalDays}
-
-This is an automated leave request submission.`;
-        
-        const emailSubject = `Leave Request - Employee #${requestData.employeeNumber} - ${requestData.leaveType}`;
-        const adminEmail = 'kirk.stringer@blood.ca';
-        
-        if (confirm(`You selected:\n\nLeave Type: ${requestData.leaveType}\nTime: ${timeInfo}\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nCopy email text to clipboard?`)) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(emailBodyText).then(() => {
-                    alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
-                    
-                    if (requestData.consecutive === 'no') {
-                        alert('Remember: You selected NON-CONSECUTIVE days. After sending this email, come back and select your next set of dates.');
-                    }
-                }).catch(err => {
-                    prompt('Copy this text (Ctrl+C or Cmd+C):', emailBodyText);
-                    alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
-                });
-            } else {
-                prompt('Copy this text:', emailBodyText);
+    if (selectedDates.length === 0) {
+        alert('Please select your leave dates first.');
+        return;
+    }
+    
+    const startDate = selectedDates[0];
+    const endDate = selectedDates[selectedDates.length - 1];
+    const totalDays = selectedDates.length;
+    const timeInfo = requestData.timeType === 'allday' ? 'ALL DAY' : `${requestData.startTime} - ${requestData.endTime}`;
+    
+    // Use pipe delimiter instead of line breaks
+    const emailBodyText = `LEAVE_REQUEST|Employee Number:${requestData.employeeNumber}|Leave Type:${requestData.leaveType}|Time:${timeInfo}|Start:${startDate}|End:${endDate}|Days:${totalDays}`;
+    
+    const emailSubject = `Leave Request - Employee #${requestData.employeeNumber} - ${requestData.leaveType}`;
+    const adminEmail = 'Your Supervisors';
+    
+    if (confirm(`You selected:\n\nLeave Type: ${requestData.leaveType}\nTime: ${timeInfo}\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nCopy email text to clipboard?`)) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(emailBodyText).then(() => {
+                alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
+                
+                if (requestData.consecutive === 'no') {
+                    alert('Remember: You selected NON-CONSECUTIVE days. After sending this email, come back and select your next set of dates.');
+                }
+            }).catch(err => {
+                prompt('Copy this text (Ctrl+C or Cmd+C):', emailBodyText);
                 alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
-            }
+            });
+        } else {
+            prompt('Copy this text:', emailBodyText);
+            alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
         }
     }
+}
     </script>
 </body>
+
 </html>
