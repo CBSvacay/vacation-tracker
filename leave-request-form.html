@@ -646,7 +646,7 @@ This is an automated leave request submission.`;
     if (confirm(`You selected:\n\nLeave Type: ${requestData.leaveType}\nTime: ${timeInfo}\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nCopy email text to clipboard?`)) {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(emailBodyText).then(() => {
-                alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
+                alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: 'Your supervisor'\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
                 
                 if (requestData.consecutive === 'no') {
                     alert('Remember: You selected NON-CONSECUTIVE days. After sending this email, come back and select your next set of dates.');
@@ -665,5 +665,6 @@ This is an automated leave request submission.`;
 </body>
 
 </html>
+
 
 
