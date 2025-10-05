@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Request Form</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container-lg {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        input[type="text"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus,
+        input[type="time"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .leave-type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .leave-type-btn {
+            padding: 20px;
+            border: 3px solid #dee2e6;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .leave-type-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        
+        .leave-type-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .time-type-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .time-btn {
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .time-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+        
+        .time-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .time-inputs {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .time-inputs.active {
+            display: grid;
+        }
+        
+        .consecutive-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .consecutive-btn {
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .consecutive-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+        
+        .consecutive-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .alert.active {
+            display: block;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #calendarSection {
+            display: none;
+            margin-top: 25px;
+        }
+        
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .calendar-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        #monthTitle {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        #calendarGrid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-header {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 2px solid #dee2e6;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            background: white;
+        }
+        
+        .calendar-day:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .calendar-day.disabled {
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+        
+        .calendar-day.selected {
+            border: 3px solid #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        #selectionSummary {
+            display: none;
+            background: #d4edda;
+            border: 2px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        #selectionSummary.active {
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-lg">
+        <h1>Leave Request Form</h1>
+        
+        <div class="form-group">
+            <label for="employeeNumber">Employee Number *</label>
+            <input type="text" id="employeeNumber" placeholder="Enter your employee number" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Leave Type *</label>
+            <div class="leave-type-grid">
+                <div class="leave-type-btn" onclick="selectLeaveType('LOA Paid (Banked OT)')">LOA Paid<br>(Banked OT)</div>
+                <div class="leave-type-btn" onclick="selectLeaveType('LOA Non-Paid')">LOA<br>Non-Paid</div>
+                <div class="leave-type-btn" onclick="selectLeaveType('Medical Leave')">Medical<br>Leave</div>
+                <div class="leave-type-btn" onclick="selectLeaveType('Personal Day')">Personal<br>Day</div>
+                <div class="leave-type-btn" onclick="selectLeaveType('Vacation')">Vacation</div>
+                <div class="leave-type-btn" onclick="selectLeaveType('Other')">Other</div>
+            </div>
+        </div>
+        
+        <div class="alert alert-warning" id="otherAlert">
+            <strong>Other Leave Types:</strong> Please speak to your supervisor and manually fill out a leave request form.
+        </div>
+        
+        <div id="mainForm" class="hidden">
+            <div class="form-group">
+                <label>Time Off Type *</label>
+                <div class="time-type-grid">
+                    <div class="time-btn" onclick="selectTimeType('allday')">All Day</div>
+                    <div class="time-btn" onclick="selectTimeType('partial')">Partial Day</div>
+                </div>
+                
+                <div class="time-inputs" id="partialTimeInputs">
+                    <div>
+                        <label for="startTime">Start Time</label>
+                        <input type="time" id="startTime">
+                    </div>
+                    <div>
+                        <label for="endTime">End Time</label>
+                        <input type="time" id="endTime">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Consecutive Days? *</label>
+                <div class="consecutive-grid">
+                    <div class="consecutive-btn" onclick="selectConsecutive('yes')">Yes</div>
+                    <div class="consecutive-btn" onclick="selectConsecutive('no')">No</div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info" id="nonConsecutiveAlert">
+                <strong>Non-Consecutive Days:</strong> After selecting your dates and submitting, you'll need to copy the email text and paste it into an email to both supervisors. Then come back to this form and select additional dates until all your non-consecutive days are submitted.
+            </div>
+            
+            <button class="btn btn-primary" id="showCalendarBtn" onclick="showCalendar()" disabled>
+                Continue to Calendar
+            </button>
+        </div>
+        
+        <div id="calendarSection">
+            <div class="calendar-controls">
+                <button onclick="previousMonth()">← Previous</button>
+                <span id="monthTitle">January 2026</span>
+                <button onclick="nextMonth()">Next →</button>
+            </div>
+            
+            <div id="calendarGrid"></div>
+            
+            <div id="selectionSummary">
+                <h3>Your Selection</h3>
+                <p><strong>Employee Number:</strong> <span id="summaryEmpNum"></span></p>
+                <p><strong>Leave Type:</strong> <span id="summaryLeaveType"></span></p>
+                <p><strong>Time:</strong> <span id="summaryTime"></span></p>
+                <p><strong>Start Date:</strong> <span id="startDate"></span></p>
+                <p><strong>End Date:</strong> <span id="endDate"></span></p>
+                <p><strong>Total Days:</strong> <span id="totalDays"></span></p>
+            </div>
+            
+            <button class="btn btn-primary" id="submitBtn" onclick="submitRequest()" style="margin-top: 20px; display: none;">
+                Submit Leave Request
+            </button>
+        </div>
+    </div>
+
+    <script>
+    let requestData = {
+        employeeNumber: '',
+        leaveType: '',
+        timeType: '',
+        startTime: '',
+        endTime: '',
+        consecutive: ''
+    };
+    
+    let currentMonth = 0;
+    let currentYear = 2026;
+    let selectedDates = [];
+    
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    
+    function selectLeaveType(type) {
+        const buttons = document.querySelectorAll('.leave-type-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        event.target.classList.add('selected');
+        
+        requestData.leaveType = type;
+        
+        const otherAlert = document.getElementById('otherAlert');
+        const mainForm = document.getElementById('mainForm');
+        
+        if (type === 'Other') {
+            otherAlert.classList.add('active');
+            mainForm.classList.add('hidden');
+        } else {
+            otherAlert.classList.remove('active');
+            mainForm.classList.remove('hidden');
+            checkFormComplete();
+        }
+    }
+    
+    function selectTimeType(type) {
+        const buttons = document.querySelectorAll('.time-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        event.target.classList.add('selected');
+        
+        requestData.timeType = type;
+        
+        const partialInputs = document.getElementById('partialTimeInputs');
+        if (type === 'partial') {
+            partialInputs.classList.add('active');
+        } else {
+            partialInputs.classList.remove('active');
+            requestData.startTime = '';
+            requestData.endTime = '';
+        }
+        
+        checkFormComplete();
+    }
+    
+    function selectConsecutive(answer) {
+        const buttons = document.querySelectorAll('.consecutive-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+        event.target.classList.add('selected');
+        
+        requestData.consecutive = answer;
+        
+        const alert = document.getElementById('nonConsecutiveAlert');
+        if (answer === 'no') {
+            alert.classList.add('active');
+        } else {
+            alert.classList.remove('active');
+        }
+        
+        checkFormComplete();
+    }
+    
+    function checkFormComplete() {
+        const empNum = document.getElementById('employeeNumber').value.trim();
+        const showCalendarBtn = document.getElementById('showCalendarBtn');
+        
+        requestData.employeeNumber = empNum;
+        
+        if (requestData.timeType === 'partial') {
+            requestData.startTime = document.getElementById('startTime').value;
+            requestData.endTime = document.getElementById('endTime').value;
+        }
+        
+        const isComplete = empNum !== '' && 
+                          requestData.leaveType !== '' && 
+                          requestData.timeType !== '' && 
+                          requestData.consecutive !== '' &&
+                          (requestData.timeType === 'allday' || (requestData.startTime !== '' && requestData.endTime !== ''));
+        
+        showCalendarBtn.disabled = !isComplete;
+    }
+    
+    document.getElementById('employeeNumber').addEventListener('input', checkFormComplete);
+    document.getElementById('startTime').addEventListener('change', checkFormComplete);
+    document.getElementById('endTime').addEventListener('change', checkFormComplete);
+    
+    function showCalendar() {
+        document.getElementById('calendarSection').style.display = 'block';
+        renderCalendar();
+        document.getElementById('calendarSection').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+        
+        document.getElementById('monthTitle').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+        
+        dayNames.forEach(day => {
+            const header = document.createElement('div');
+            header.className = 'calendar-header';
+            header.textContent = day;
+            grid.appendChild(header);
+        });
+        
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day disabled';
+            grid.appendChild(emptyDay);
+        }
+        
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            
+            const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            
+            if (selectedDates.includes(dateString)) {
+                dayElement.classList.add('selected');
+            }
+            
+            dayElement.textContent = day;
+            dayElement.addEventListener('click', () => selectDate(dateString, dayElement));
+            grid.appendChild(dayElement);
+        }
+    }
+    
+    function selectDate(dateString, element) {
+        if (selectedDates.length === 0) {
+            selectedDates.push(dateString);
+        } else if (selectedDates.length === 1) {
+            const start = new Date(selectedDates[0]);
+            const end = new Date(dateString);
+            
+            if (end < start) {
+                selectedDates = [dateString, selectedDates[0]];
+            } else {
+                selectedDates.push(dateString);
+            }
+            
+            fillConsecutiveDates();
+        } else {
+            selectedDates = [dateString];
+        }
+        
+        renderCalendar();
+        updateSelectionSummary();
+    }
+    
+    function fillConsecutiveDates() {
+        const start = new Date(selectedDates[0]);
+        const end = new Date(selectedDates[selectedDates.length - 1]);
+        const range = [];
+        
+        let current = new Date(start);
+        while (current <= end) {
+            const dateStr = current.toISOString().split('T')[0];
+            range.push(dateStr);
+            current.setDate(current.getDate() + 1);
+        }
+        
+        selectedDates = range;
+    }
+    
+    function updateSelectionSummary() {
+        const summary = document.getElementById('selectionSummary');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (selectedDates.length === 0) {
+            summary.classList.remove('active');
+            submitBtn.style.display = 'none';
+            return;
+        }
+        
+        summary.classList.add('active');
+        submitBtn.style.display = 'block';
+        
+        document.getElementById('summaryEmpNum').textContent = requestData.employeeNumber;
+        document.getElementById('summaryLeaveType').textContent = requestData.leaveType;
+        
+        let timeText = requestData.timeType === 'allday' ? 'All Day' : `${requestData.startTime} - ${requestData.endTime}`;
+        document.getElementById('summaryTime').textContent = timeText;
+        
+        document.getElementById('startDate').textContent = new Date(selectedDates[0]).toLocaleDateString();
+        document.getElementById('endDate').textContent = new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString();
+        document.getElementById('totalDays').textContent = selectedDates.length;
+    }
+    
+    function previousMonth() {
+        if (currentMonth === 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else {
+            currentMonth--;
+        }
+        renderCalendar();
+    }
+    
+    function nextMonth() {
+        if (currentMonth === 11) {
+            currentMonth = 0;
+            currentYear++;
+        } else {
+            currentMonth++;
+        }
+        renderCalendar();
+    }
+    
+    function submitRequest() {
+        if (selectedDates.length === 0) {
+            alert('Please select your leave dates first.');
+            return;
+        }
+        
+        const startDate = selectedDates[0];
+        const endDate = selectedDates[selectedDates.length - 1];
+        const totalDays = selectedDates.length;
+        const timeInfo = requestData.timeType === 'allday' ? 'ALL DAY' : `${requestData.startTime} - ${requestData.endTime}`;
+        
+        const emailBodyText = `LEAVE_REQUEST
+Employee Number: ${requestData.employeeNumber}
+Leave Type: ${requestData.leaveType}
+Time: ${timeInfo}
+Start: ${startDate}
+End: ${endDate}
+Days: ${totalDays}
+
+This is an automated leave request submission.`;
+        
+        const emailSubject = `Leave Request - Employee #${requestData.employeeNumber} - ${requestData.leaveType}`;
+        const adminEmail = 'kirk.stringer@blood.ca';
+        
+        if (confirm(`You selected:\n\nLeave Type: ${requestData.leaveType}\nTime: ${timeInfo}\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\n\nCopy email text to clipboard?`)) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(emailBodyText).then(() => {
+                    alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
+                    
+                    if (requestData.consecutive === 'no') {
+                        alert('Remember: You selected NON-CONSECUTIVE days. After sending this email, come back and select your next set of dates.');
+                    }
+                }).catch(err => {
+                    prompt('Copy this text (Ctrl+C or Cmd+C):', emailBodyText);
+                    alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
+                });
+            } else {
+                prompt('Copy this text:', emailBodyText);
+                alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
+            }
+        }
+    }
+    </script>
+</body>
+</html>
