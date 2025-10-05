@@ -679,18 +679,19 @@
         renderCalendar();
     }
     
-    function submitSelection() {
-        if (selectedDates.length === 0) {
-            alert('Please select your vacation dates first.');
-            return;
-        }
-        
-        const startDate = selectedDates[0];
-        const endDate = selectedDates[selectedDates.length - 1];
-        const totalDays = selectedDates.length;
-        const workDays = countWorkDaysInSelection(selectedDates);
-        
-        const emailBodyText = `VACATION_SELECTION
+function submitSelection() {
+    if (selectedDates.length === 0) {
+        alert('Please select your vacation dates first.');
+        return;
+    }
+    
+    const startDate = selectedDates[0];
+    const endDate = selectedDates[selectedDates.length - 1];
+    const totalDays = selectedDates.length;
+    const workDays = countWorkDaysInSelection(selectedDates);
+    
+    // Simple plain text format that won't get URL encoded
+    const emailBodyText = `VACATION_SELECTION
 Name: ${employeeData.name}
 Start: ${startDate}
 End: ${endDate}
@@ -699,21 +700,27 @@ Work Days: ${workDays}
 Round: ${employeeData.round}
 
 This is an automated vacation selection submission.`;
-        
-        const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
-        const adminEmail = 'kirk.stringer@blood.ca';
-        const fullText = `To: ${adminEmail}\nSubject: ${emailSubject}\n\n${emailBodyText}`;
-        
-        if (confirm(`You selected:\n\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\nWork Days: ${workDays}\n\nCopy email text to clipboard?`)) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(fullText).then(() => {
-                    alert('Email text copied to clipboard. Paste into a new email to send your selection.');
-                });
-            } else {
-                alert(`Copy this text and email to ${adminEmail}:\n\n${fullText}`);
-            }
+    
+    const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
+    const adminEmail = 'kirk.stringer@blood.ca';
+    
+    if (confirm(`You selected:\n\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\nWork Days: ${workDays}\n\nCopy email text to clipboard?`)) {
+        // Try copying just the body text (no mailto formatting)
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(emailBodyText).then(() => {
+                alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
+            }).catch(err => {
+                // Fallback - show text to copy manually
+                prompt('Copy this text (Ctrl+C or Cmd+C):', emailBodyText);
+                alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
+            });
+        } else {
+            prompt('Copy this text:', emailBodyText);
+            alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
         }
     }
+}
     </script>
 </body>
 </html>
+
