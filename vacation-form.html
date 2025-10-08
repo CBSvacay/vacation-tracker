@@ -419,35 +419,37 @@
         employeeSchedule = scheduleParam.split(',');
     }
     
-    // Parse previous selections
-    const previousParam = urlParams.get('previous');
-    if (previousParam && previousParam !== '') {
-        const rounds = previousParam.split(',');
-        rounds.forEach(roundData => {
-            // Format: R1:2026-01-15-2026-01-20
-            const parts = roundData.split(':');
-            if (parts.length === 2) {
-                const dates = parts[1].split('-');
-                // dates array will be ['2026', '01', '15', '2026', '01', '20']
-                // Need to reconstruct as startDate and endDate
-                if (dates.length === 6) {
-                    const startDate = `${dates[0]}-${dates[1]}-${dates[2]}`;
-                    const endDate = `${dates[3]}-${dates[4]}-${dates[5]}`;
-                    
-                    // Add all dates in this range to previousSelections
-                    let current = new Date(startDate);
-                    const end = new Date(endDate);
-                    
-                    while (current <= end) {
-                        const dateStr = current.toISOString().split('T')[0];
+// Parse previous selections
+const previousParam = urlParams.get('previous');
+if (previousParam && previousParam !== '') {
+    const rounds = previousParam.split(',');
+    rounds.forEach(roundData => {
+        // Format: R1:2026-01-15-2026-01-20
+        const parts = roundData.split(':');
+        if (parts.length === 2) {
+            const dates = parts[1].split('-');
+            // dates array will be ['2026', '01', '15', '2026', '01', '20']
+            // Need to reconstruct as startDate and endDate
+            if (dates.length === 6) {
+                const startDate = `${dates[0]}-${dates[1]}-${dates[2]}`;
+                const endDate = `${dates[3]}-${dates[4]}-${dates[5]}`;
+                
+                // Add all WORK dates in this range to previousSelections
+                let current = new Date(startDate);
+                const end = new Date(endDate);
+                
+                while (current <= end) {
+                    const dateStr = current.toISOString().split('T')[0];
+                    // Only add if it's a work day
+                    if (employeeSchedule.includes(dateStr)) {
                         previousSelections.push(dateStr);
-                        current.setDate(current.getDate() + 1);
                     }
+                    current.setDate(current.getDate() + 1);
                 }
             }
-        });
-    }
-    
+        }
+    });
+}  
     console.log('Employee data:', employeeData);
     console.log('Employee schedule:', employeeSchedule);
     console.log('Previous selections:', previousSelections);
@@ -747,5 +749,6 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
