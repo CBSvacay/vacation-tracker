@@ -407,27 +407,51 @@
     });
     
     function parseURLParameters() {
-        const urlParams = new URLSearchParams(window.location.search);
-        employeeData.name = urlParams.get('name') || 'Test Employee';
-        employeeData.rank = parseInt(urlParams.get('rank')) || 1;
-        employeeData.availableDays = parseInt(urlParams.get('days')) || 25;
-        employeeData.round = parseInt(urlParams.get('round')) || 1;
-        employeeData.unionMaxPerDay = parseInt(urlParams.get('maxperday')) || 2;
-        
-        const scheduleParam = urlParams.get('schedule');
-        if (scheduleParam && scheduleParam !== '') {
-            employeeSchedule = scheduleParam.split(',');
-        }
-        
-        const previousParam = urlParams.get('previous');
-        if (previousParam && previousParam !== '') {
-            previousSelections = previousParam.split(',');
-        }
-        
-        console.log('Employee data:', employeeData);
-        console.log('Employee schedule:', employeeSchedule);
-        console.log('Previous selections:', previousSelections);
+    const urlParams = new URLSearchParams(window.location.search);
+    employeeData.name = urlParams.get('name') || 'Test Employee';
+    employeeData.rank = parseInt(urlParams.get('rank')) || 1;
+    employeeData.availableDays = parseInt(urlParams.get('days')) || 25;
+    employeeData.round = parseInt(urlParams.get('round')) || 1;
+    employeeData.unionMaxPerDay = parseInt(urlParams.get('maxperday')) || 2;
+    
+    const scheduleParam = urlParams.get('schedule');
+    if (scheduleParam && scheduleParam !== '') {
+        employeeSchedule = scheduleParam.split(',');
     }
+    
+    // Parse previous selections
+    const previousParam = urlParams.get('previous');
+    if (previousParam && previousParam !== '') {
+        const rounds = previousParam.split(',');
+        rounds.forEach(roundData => {
+            // Format: R1:2026-01-15-2026-01-20
+            const parts = roundData.split(':');
+            if (parts.length === 2) {
+                const dates = parts[1].split('-');
+                // dates array will be ['2026', '01', '15', '2026', '01', '20']
+                // Need to reconstruct as startDate and endDate
+                if (dates.length === 6) {
+                    const startDate = `${dates[0]}-${dates[1]}-${dates[2]}`;
+                    const endDate = `${dates[3]}-${dates[4]}-${dates[5]}`;
+                    
+                    // Add all dates in this range to previousSelections
+                    let current = new Date(startDate);
+                    const end = new Date(endDate);
+                    
+                    while (current <= end) {
+                        const dateStr = current.toISOString().split('T')[0];
+                        previousSelections.push(dateStr);
+                        current.setDate(current.getDate() + 1);
+                    }
+                }
+            }
+        });
+    }
+    
+    console.log('Employee data:', employeeData);
+    console.log('Employee schedule:', employeeSchedule);
+    console.log('Previous selections:', previousSelections);
+}
     
     function updateEmployeeInfo() {
         document.getElementById('employeeName').textContent = employeeData.name;
@@ -505,7 +529,7 @@
             emailBody = `VACATION_END%0D%0AName: ${employeeData.name}%0D%0ARound: ${employeeData.round}%0D%0AAction: Ended%0D%0A%0D%0AEmployee chose to end all future vacation selections.`;
         }
         
-        const adminEmail = 'kirk.stringer@blood.ca';
+        const adminEmail = 'Your Supervisors';
         const fullText = `To: ${adminEmail}\nSubject: ${subject}\n\n${emailBody.replace(/%0D%0A/g, '\n')}`;
         
         if (navigator.clipboard) {
@@ -702,7 +726,7 @@ Round: ${employeeData.round}
 This is an automated vacation selection submission.`;
     
     const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
-    const adminEmail = 'kirk.stringer@blood.ca';
+    const adminEmail = 'Your Supervisors';
     
     if (confirm(`You selected:\n\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\nWork Days: ${workDays}\n\nCopy email text to clipboard?`)) {
         // Try copying just the body text (no mailto formatting)
@@ -723,4 +747,5 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
