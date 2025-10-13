@@ -601,6 +601,9 @@
             grid.appendChild(emptyDay);
         }
         
+        // Check if we have location tracking enabled (locationMaxes has data)
+        const hasLocationTracking = Object.keys(locationMaxes).length > 0;
+        
         for (let day = 1; day <= daysInMonth; day++) {
             const dayElement = document.createElement('div');
             dayElement.className = 'calendar-day';
@@ -613,10 +616,16 @@
             let bookedCount = 0;
             let maxPerDay = employeeData.unionMaxPerDay;
             
-            if (isWorkDay && employeeLocation && locationAvailability[dateString]) {
-                bookedCount = locationAvailability[dateString][employeeLocation] || 0;
-                maxPerDay = locationMaxes[employeeLocation] || employeeData.unionMaxPerDay;
+            if (isWorkDay && hasLocationTracking && employeeLocation && employeeLocation !== 'UNKNOWN') {
+                // Use location-specific data
+                if (locationAvailability[dateString] && locationAvailability[dateString][employeeLocation] !== undefined) {
+                    bookedCount = locationAvailability[dateString][employeeLocation];
+                }
+                if (locationMaxes[employeeLocation] !== undefined) {
+                    maxPerDay = locationMaxes[employeeLocation];
+                }
             } else if (isWorkDay) {
+                // Fallback to total count if no location tracking
                 bookedCount = availability[dateString] || 0;
             }
             
@@ -682,6 +691,9 @@
         const end = new Date(selectedDates[selectedDates.length - 1]);
         const range = [];
         
+        // Check if we have location tracking enabled
+        const hasLocationTracking = Object.keys(locationMaxes).length > 0;
+        
         let current = new Date(start);
         while (current <= end) {
             const dateStr = current.toISOString().split('T')[0];
@@ -691,10 +703,16 @@
             let booked = 0;
             let maxForDay = employeeData.unionMaxPerDay;
             
-            if (isWorkDay && employeeLocation && locationAvailability[dateStr]) {
-                booked = locationAvailability[dateStr][employeeLocation] || 0;
-                maxForDay = locationMaxes[employeeLocation] || employeeData.unionMaxPerDay;
+            if (isWorkDay && hasLocationTracking && employeeLocation && employeeLocation !== 'UNKNOWN') {
+                // Use location-specific data
+                if (locationAvailability[dateStr] && locationAvailability[dateStr][employeeLocation] !== undefined) {
+                    booked = locationAvailability[dateStr][employeeLocation];
+                }
+                if (locationMaxes[employeeLocation] !== undefined) {
+                    maxForDay = locationMaxes[employeeLocation];
+                }
             } else if (isWorkDay) {
+                // Fallback to total count
                 booked = availability[dateStr] || 0;
             }
             
