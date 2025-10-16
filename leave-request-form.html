@@ -574,29 +574,32 @@
     }
     
     function updateSelectionSummary() {
-        const summary = document.getElementById('selectionSummary');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (selectedDates.length === 0) {
-            summary.classList.remove('active');
-            submitBtn.style.display = 'none';
-            return;
-        }
-        
-        summary.classList.add('active');
-        submitBtn.style.display = 'block';
-        
-        document.getElementById('summaryEmpNum').textContent = requestData.employeeNumber;
-        document.getElementById('summaryLeaveType').textContent = requestData.leaveType;
-        
-        let timeText = requestData.timeType === 'allday' ? 'All Day' : `${requestData.startTime} - ${requestData.endTime}`;
-        document.getElementById('summaryTime').textContent = timeText;
-        
-        document.getElementById('startDate').textContent = new Date(selectedDates[0]).toLocaleDateString();
-        document.getElementById('endDate').textContent = new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString();
-        document.getElementById('totalDays').textContent = selectedDates.length;
+    const summary = document.getElementById('selectionSummary');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (selectedDates.length === 0) {
+        summary.classList.remove('active');
+        submitBtn.style.display = 'none';
+        return;
     }
     
+    summary.classList.add('active');
+    submitBtn.style.display = 'block';
+    
+    document.getElementById('summaryEmpNum').textContent = requestData.employeeNumber;
+    document.getElementById('summaryLeaveType').textContent = requestData.leaveType;
+    
+    let timeText = requestData.timeType === 'allday' ? 'All Day' : `${requestData.startTime} - ${requestData.endTime}`;
+    document.getElementById('summaryTime').textContent = timeText;
+    
+    // Fix: Parse dates as local dates to avoid timezone shift
+    const startDate = selectedDates[0].split('-');
+    const endDate = selectedDates[selectedDates.length - 1].split('-');
+    
+    document.getElementById('startDate').textContent = new Date(startDate[0], startDate[1] - 1, startDate[2]).toLocaleDateString();
+    document.getElementById('endDate').textContent = new Date(endDate[0], endDate[1] - 1, endDate[2]).toLocaleDateString();
+    document.getElementById('totalDays').textContent = selectedDates.length;
+}
     function previousMonth() {
         if (currentMonth === 0) {
             currentMonth = 11;
@@ -666,6 +669,7 @@ This is an automated leave request submission.`;
 </body>
 
 </html>
+
 
 
 
