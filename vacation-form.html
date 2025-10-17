@@ -752,8 +752,12 @@
         summary.style.display = 'block';
         document.getElementById('submitBtn').disabled = false;
         
-        document.getElementById('startDate').textContent = new Date(selectedDates[0]).toLocaleDateString();
-        document.getElementById('endDate').textContent = new Date(selectedDates[selectedDates.length - 1]).toLocaleDateString();
+       // Fix: Parse dates as local dates to avoid timezone shift
+const startDateParts = selectedDates[0].split('-');
+const endDateParts = selectedDates[selectedDates.length - 1].split('-');
+
+document.getElementById('startDate').textContent = new Date(startDateParts[0], startDateParts[1] - 1, startDateParts[2]).toLocaleDateString();
+document.getElementById('endDate').textContent = new Date(endDateParts[0], endDateParts[1] - 1, endDateParts[2]).toLocaleDateString();
         document.getElementById('totalDays').textContent = `${selectedDates.length} total (${workDays} work days)`;
         document.getElementById('remainingDays').textContent = employeeData.availableDays - workDays;
     }
@@ -819,4 +823,5 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
