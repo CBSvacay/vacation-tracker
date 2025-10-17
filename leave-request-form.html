@@ -400,9 +400,9 @@
         endTime: '',
         consecutive: ''
     };
-    
-    let currentMonth = 0;
-    let currentYear = 2026;
+const urlParams = new URLSearchParams(window.location.search);
+let currentYear = parseInt(urlParams.get('year')) || new Date().getFullYear();
+let currentMonth = 0;
     let selectedDates = [];
     
     const monthNames = [
@@ -669,6 +669,7 @@ This is an automated leave request submission.`;
 </body>
 
 </html>
+
 
 
 
