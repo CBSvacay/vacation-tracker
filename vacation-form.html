@@ -383,7 +383,8 @@
     };
     
     let currentMonth = 0;
-    let currentYear = 2026;
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentYear = parseInt(urlParams.get('year')) || 2026; 
     let selectedDates = [];
     let availability = {};
     let employeeSchedule = [];
@@ -818,3 +819,4 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
