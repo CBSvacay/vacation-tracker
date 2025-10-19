@@ -78,9 +78,36 @@
             animation: pulse 2s infinite;
         }
         
+        .dot-active {
+            font-size: 48px;
+            margin: 0 15px;
+            animation: pulse-active 1.5s infinite;
+            filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));
+        }
+        
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
+        }
+        
+        @keyframes pulse-active {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));
+            }
+            50% { 
+                transform: scale(1.15);
+                filter: drop-shadow(0 0 15px rgba(255, 193, 7, 1));
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(76, 175, 80, 0.7);
+            }
         }
         
         .timestamp {
@@ -115,6 +142,29 @@
             border-left: 4px solid #4caf50;
         }
         
+        .info-box.your-turn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            animation: glow 2s infinite;
+        }
+        
+        .info-box.your-turn h3,
+        .info-box.your-turn .info-row {
+            color: white !important;
+        }
+        
+        .info-box.almost-there {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            border: none;
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        
+        .info-box.almost-there h3,
+        .info-box.almost-there .info-row {
+            color: white !important;
+        }
+        
         .info-box h3 {
             margin: 0 0 15px 0;
             color: #1976D2;
@@ -133,6 +183,15 @@
             margin: 8px 0;
             font-size: 15px;
             color: #333;
+        }
+        
+        .status-message-big {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
         }
         
         .urgent-text {
@@ -209,8 +268,6 @@
             <div id="statusContent">
                 <div class="info-row"><strong>Position:</strong> <span id="yourRank">--</span></div>
                 <div class="info-row"><strong>Status:</strong> <span id="yourStatus">--</span></div>
-                <div class="info-row" id="nextRow" style="display:none;"><strong>Next:</strong> <span id="nextMessage">--</span></div>
-                <div class="info-row" id="actionRow" style="display:none;"><strong>Action:</strong> <span id="actionMessage">--</span></div>
             </div>
         </div>
         
@@ -243,6 +300,7 @@
             <div class="legend-item">🟢 Completed or Skipped</div>
             <div class="legend-item">⚪ Waiting or Paused</div>
             <div class="legend-item">🔴 Ended Selection or No Days Remaining</div>
+            <div class="legend-item">🟡 Currently Selecting (next in line after completed)</div>
             <div class="legend-item">🔵 Your Current Position (larger, animated)</div>
         </div>
         
@@ -250,35 +308,16 @@
             Bookmark this page and refresh to see the latest updates
         </div>
     </div>
+    
     <script>
         // VBA WILL REPLACE THIS DATA BLOCK
         // ====================================
         const employeeData = [
             // VBA_DATA_START
-
-            {union: 1, rank: 1, status: "Completed", round: 1, days: 10},
-            {union: 1, rank: 2, status: "Completed", round: 1, days: 10},
-            {union: 1, rank: 3, status: "Completed", round: 1, days: 10},
-            {union: 1, rank: 4, status: "Completed", round: 1, days: 11},
-            {union: 1, rank: 5, status: "Nudged", round: 0, days: 20},
-            {union: 1, rank: 6, status: "Waiting", round: 0, days: 20},
-            {union: 1, rank: 7, status: "Waiting", round: 0, days: 20},
-            {union: 1, rank: 8, status: "Waiting", round: 0, days: 20},
-            {union: 1, rank: 9, status: "Waiting", round: 0, days: 20},
-            {union: 1, rank: 10, status: "Waiting", round: 0, days: 20},
-            {union: 1, rank: 11, status: "Waiting", round: 0, days: 20}
-        ];
-
-        const timestamps = {
-            1: "Oct 18, 2025 at 10:12 PM",
-            2: "Not started",
-            3: "Not started"
-        };
-
-        const calendarYear = 2026;
-        const currentRounds = {1: 1, 2: 1, 3: 1};
+            {union: 1, rank: 1, status: "Waiting", round: 0, days: 20}
             // VBA_DATA_END
-// ====================================
+        ];
+        // ====================================
         
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
@@ -297,12 +336,13 @@
         document.getElementById('unionInfo').textContent = `Union ${userUnion} - Round ${currentRound}`;
         document.getElementById('calendarYear').textContent = calendarYear;
         
-        // Calculate stats
+        // Calculate stats and find active selector
         let completedCount = 0;
         let waitingCount = 0;
         let endedCount = 0;
         let peopleAhead = 0;
         let lastCompletedRank = 0;
+        let activeRank = 0; // The person currently selecting
         
         unionData.forEach(emp => {
             if (emp.status === "Completed" || emp.status === "Skipped") {
@@ -320,12 +360,20 @@
             }
         });
         
+        // Find the first person after last completed (the active selector)
+        for (let emp of unionData) {
+            if (emp.rank > lastCompletedRank && (emp.status === "Waiting" || emp.status === "Paused" || emp.status === "Nudged")) {
+                activeRank = emp.rank;
+                break;
+            }
+        }
+        
         // Update summary
         document.getElementById('completedCount').textContent = completedCount;
         document.getElementById('waitingCount').textContent = waitingCount;
         document.getElementById('endedCount').textContent = endedCount;
         
-        // Update status box
+        // Update status box with enhanced styling
         const statusBox = document.getElementById('statusBox');
         const statusContent = document.getElementById('statusContent');
         
@@ -334,53 +382,61 @@
         if (!userData) {
             document.getElementById('yourStatus').textContent = "Employee not found";
         } else {
-            let statusHTML = `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+            let statusHTML = '';
             
             if (userData.status === "Completed") {
                 statusBox.className = "info-box completed";
                 statusBox.querySelector('h3').textContent = "Your Status - Completed ✓";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
                 statusHTML += `<div class="info-row"><strong>Status:</strong> Completed</div>`;
-                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1} before next selection</div>`;
+                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1}</div>`;
             }
             else if (userData.status === "Skipped") {
                 statusBox.className = "info-box completed";
                 statusBox.querySelector('h3').textContent = "Your Status - Skipped";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
                 statusHTML += `<div class="info-row"><strong>Status:</strong> Skipped</div>`;
-                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1} before next selection</div>`;
+                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1}</div>`;
             }
             else if (userData.status === "Ended" || userData.days === 0) {
                 statusBox.className = "info-box";
                 statusBox.querySelector('h3').textContent = "Your Status - Done";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
                 statusHTML += `<div class="info-row"><strong>Status:</strong> Done</div>`;
                 statusHTML += `<div class="info-row"><strong>Note:</strong> No further selections available</div>`;
             }
             else if (userData.status === "Nudged") {
                 statusBox.className = "info-box urgent";
                 statusBox.querySelector('h3').textContent = "⚠️ URGENT - Your Status";
-                statusHTML += `<div class="info-row urgent-text"><strong>Status:</strong> LAST CHANCE FOR SELECTION</div>`;
+                statusHTML += `<div class="status-message-big" style="background: #f44336; color: white;">LAST CHANCE FOR SELECTION</div>`;
                 statusHTML += `<div class="info-row urgent-text"><strong>Action:</strong> Check your email immediately!</div>`;
             }
             else if (userData.status === "Waiting" || userData.status === "Paused") {
                 if (peopleAhead === 0) {
-                    statusBox.className = "info-box";
-                    statusBox.querySelector('h3').textContent = "Your Status - Your Turn!";
-                    statusHTML += `<div class="info-row" style="font-size: 16px; font-weight: bold; color: #2196F3;"><strong>Status:</strong> It's your turn! Check your email for the selection link.</div>`;
+                    // IT'S YOUR TURN!
+                    statusBox.className = "info-box your-turn";
+                    statusBox.querySelector('h3').textContent = "🎉 YOUR TURN!";
+                    statusHTML += `<div class="status-message-big" style="background: rgba(255,255,255,0.2); color: white;">It's your turn to select!</div>`;
+                    statusHTML += `<div class="info-row"><strong>Action:</strong> Check your email for the selection link</div>`;
                 } else if (peopleAhead === 1) {
-                    statusBox.className = "info-box";
-                    statusBox.querySelector('h3').textContent = "Your Status - Almost There!";
-                    statusHTML += `<div class="info-row" style="font-size: 16px; font-weight: bold; color: #4caf50;"><strong>Status:</strong> You're Next!</div>`;
+                    // YOU'RE NEXT!
+                    statusBox.className = "info-box almost-there";
+                    statusBox.querySelector('h3').textContent = "⚡ ALMOST THERE!";
+                    statusHTML += `<div class="status-message-big" style="background: rgba(255,255,255,0.2); color: white;">You're Next!</div>`;
+                    statusHTML += `<div class="info-row"><strong>Position:</strong> One person ahead of you</div>`;
                 } else {
                     statusBox.className = "info-box";
                     statusBox.querySelector('h3').textContent = "Your Status";
+                    statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
                     statusHTML += `<div class="info-row"><strong>Status:</strong> Waiting</div>`;
-                    statusHTML += `<div class="info-row"><strong>People ahead of you:</strong> ${peopleAhead}</div>`;
+                    statusHTML += `<div class="info-row"><strong>People ahead:</strong> ${peopleAhead}</div>`;
                 }
             }
             
             statusContent.innerHTML = statusHTML;
         }
         
-        // Render queue
+        // Render queue with enhanced dots
         const queueDisplay = document.getElementById('queueDisplay');
         queueDisplay.innerHTML = '';
         
@@ -393,12 +449,18 @@
             rankLabel.textContent = `Rank ${emp.rank}`;
             rankRow.appendChild(rankLabel);
             
-            // Determine dot
+            // Determine dot type and emoji
             let dotEmoji = '⚪';
+            let dotClass = 'dot';
+            
             if (emp.status === "Completed" || emp.status === "Skipped") {
                 dotEmoji = '🟢';
             } else if (emp.status === "Ended" || emp.days === 0) {
                 dotEmoji = '🔴';
+            } else if (emp.rank === activeRank && activeRank > 0) {
+                // Yellow pulsing dot for active selector
+                dotEmoji = '🟡';
+                dotClass = 'dot-active';
             }
             
             const dot = document.createElement('span');
@@ -406,7 +468,7 @@
                 dot.className = 'dot-you';
                 dot.textContent = '🔵';
             } else {
-                dot.className = 'dot';
+                dot.className = dotClass;
                 dot.textContent = dotEmoji;
             }
             rankRow.appendChild(dot);
@@ -427,9 +489,16 @@
                 rankRow.appendChild(arrow);
             }
             
+            // Add SELECTING NOW label for active rank
+            if (emp.rank === activeRank && activeRank > 0 && emp.rank !== userRank) {
+                const selectingLabel = document.createElement('span');
+                selectingLabel.style.cssText = 'color: #FF9800; font-weight: bold; margin-left: 10px; font-size: 14px;';
+                selectingLabel.textContent = '← SELECTING NOW';
+                rankRow.appendChild(selectingLabel);
+            }
+            
             queueDisplay.appendChild(rankRow);
         });
     </script>
 </body>
-
 </html>
