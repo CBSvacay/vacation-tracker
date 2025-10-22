@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacation Selection Status</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 26px;
+        }
+        
+        .union-info {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .queue-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .rank-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .rank-row:last-child {
+            border-bottom: none;
+        }
+        
+        .rank-label {
+            min-width: 80px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .dot {
+            font-size: 24px;
+            margin: 0 15px;
+        }
+        
+        .dot-you {
+            font-size: 48px;
+            margin: 0 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        .dot-active {
+            font-size: 48px;
+            margin: 0 15px;
+            animation: pulse-active 1.5s infinite;
+            filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes pulse-active {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));
+            }
+            50% { 
+                transform: scale(1.15);
+                filter: drop-shadow(0 0 15px rgba(255, 193, 7, 1));
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(76, 175, 80, 0.7);
+            }
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            font-size: 12px;
+            font-style: italic;
+            margin-left: 10px;
+        }
+        
+        .arrow {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .info-box.urgent {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        
+        .info-box.completed {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .info-box.your-turn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            animation: glow 2s infinite;
+        }
+        
+        .info-box.your-turn h3,
+        .info-box.your-turn .info-row {
+            color: white !important;
+        }
+        
+        .info-box.almost-there {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            border: none;
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        
+        .info-box.almost-there h3,
+        .info-box.almost-there .info-row {
+            color: white !important;
+        }
+        
+        .info-box h3 {
+            margin: 0 0 15px 0;
+            color: #1976D2;
+            font-size: 18px;
+        }
+        
+        .info-box.urgent h3 {
+            color: #c62828;
+        }
+        
+        .info-box.completed h3 {
+            color: #2e7d32;
+        }
+        
+        .info-row {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .status-message-big {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        
+        .urgent-text {
+            color: #c62828;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .summary-box {
+            background: #fff9e6;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .summary-box h3 {
+            margin: 0 0 15px 0;
+            color: #f57c00;
+            font-size: 18px;
+        }
+        
+        .summary-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 15px;
+        }
+        
+        .summary-item .dot {
+            margin-right: 10px;
+        }
+        
+        .legend {
+            background: #f1f3f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        
+        .legend-item {
+            margin: 5px 0;
+            color: #6c757d;
+        }
+        
+        .refresh-note {
+            text-align: center;
+            color: #6c757d;
+            font-size: 13px;
+            font-style: italic;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VACATION SELECTION STATUS</h1>
+            <div class="union-info" id="unionInfo">Loading...</div>
+            <div style="color: #6c757d; font-size: 14px; margin-top: 5px;">Calendar Year: <span id="calendarYear">----</span></div>
+        </div>
+        
+        <div class="info-box" id="statusBox">
+            <h3>Your Status</h3>
+            <div id="statusContent">
+                <div class="info-row"><strong>Position:</strong> <span id="yourRank">--</span></div>
+                <div class="info-row"><strong>Status:</strong> <span id="yourStatus">--</span></div>
+            </div>
+        </div>
+        
+        <div class="queue-container">
+            <div id="queueDisplay">
+                <p style="text-align: center; color: #6c757d;">Loading queue...</p>
+            </div>
+        </div>
+        
+        <div class="summary-box">
+            <h3>Summary</h3>
+            <div id="summaryContent">
+                <div class="summary-item">
+                    <span class="dot">🟢</span>
+                    <span><strong id="completedCount">0</strong> Completed/Skipped</span>
+                </div>
+                <div class="summary-item">
+                    <span class="dot">⚪</span>
+                    <span><strong id="waitingCount">0</strong> Waiting</span>
+                </div>
+                <div class="summary-item">
+                    <span class="dot">🔴</span>
+                    <span><strong id="endedCount">0</strong> Ended/No Days Left</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-title">Legend:</div>
+            <div class="legend-item">🟢 Completed or Skipped</div>
+            <div class="legend-item">⚪ Waiting or Paused</div>
+            <div class="legend-item">🔴 Ended Selection or No Days Remaining</div>
+            <div class="legend-item">🟡 Currently Selecting (next in line after completed)</div>
+            <div class="legend-item">🔵 Your Current Position (larger, animated)</div>
+        </div>
+        
+        <div class="refresh-note">
+            Bookmark this page and refresh to see the latest updates
+        </div>
+    </div>
+    
+    <script>
+      // VBA WILL REPLACE THIS DATA BLOCK
+        // ====================================
+        const employeeData = [
+            // VBA_DATA_START
+
+            {union: 1, rank: 1, status: "Completed", round: 2, days: 15},
+            {union: 1, rank: 2, status: "Completed", round: 2, days: 12},
+            {union: 1, rank: 3, status: "Completed", round: 2, days: 12},
+            {union: 1, rank: 4, status: "Completed", round: 2, days: 7},
+            {union: 1, rank: 5, status: "Completed", round: 2, days: 11},
+            {union: 1, rank: 6, status: "Completed", round: 2, days: 9},
+            {union: 1, rank: 7, status: "Waiting", round: 1, days: 24},
+            {union: 1, rank: 8, status: "Waiting", round: 1, days: 8},
+            {union: 1, rank: 9, status: "Waiting", round: 1, days: 11},
+            {union: 1, rank: 10, status: "Waiting", round: 1, days: 0},
+            {union: 1, rank: 11, status: "Waiting", round: 1, days: 5},
+            {union: 1, rank: 12, status: "Waiting", round: 1, days: 9},
+            {union: 1, rank: 13, status: "Waiting", round: 1, days: 8},
+            {union: 1, rank: 14, status: "Waiting", round: 1, days: 12},
+            {union: 1, rank: 15, status: "Waiting", round: 1, days: 8},
+            {union: 2, rank: 1, status: "Completed", round: 3, days: 16},
+            {union: 2, rank: 2, status: "Completed", round: 3, days: 12},
+            {union: 2, rank: 3, status: "No Days", round: 1, days: 0},
+            {union: 2, rank: 4, status: "Completed", round: 3, days: 1},
+            {union: 2, rank: 5, status: "Waiting", round: 2, days: 10},
+            {union: 2, rank: 6, status: "Ended", round: 1, days: 9},
+            {union: 2, rank: 7, status: "No Days", round: 1, days: 0},
+            {union: 2, rank: 8, status: "No Days", round: 2, days: 0},
+            {union: 3, rank: 1, status: "Waiting", round: 1, days: 3}
+        ];
+
+        const timestamps = {
+            1: "Oct 22, 2025 at 11:20 AM",
+            2: "Oct 22, 2025 at 12:57 PM",
+            3: "Oct 21, 2025 at 11:30 AM"
+        };
+
+        const calendarYear = 2026;
+        const currentRounds = {1: 2, 2: 3, 3: 2};
+            // VBA_DATA_END
+// ====================================
+        
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userUnion = parseInt(urlParams.get('union')) || 1;
+        const userRank = parseInt(urlParams.get('rank')) || 5;
+        
+        // Filter data for user's union
+        const unionData = employeeData.filter(emp => emp.union === userUnion);
+        unionData.sort((a, b) => a.rank - b.rank);
+        
+        // Find user's data
+        const userData = unionData.find(emp => emp.rank === userRank);
+        const currentRound = currentRounds[userUnion] || 1;
+        
+        // Update header
+        document.getElementById('unionInfo').textContent = `Union ${userUnion} - Round ${currentRound}`;
+        document.getElementById('calendarYear').textContent = calendarYear;
+        
+        // Calculate stats and find active selector
+        let completedCount = 0;
+        let waitingCount = 0;
+        let endedCount = 0;
+        let peopleAhead = 0;
+        let lastCompletedRank = 0;
+        let activeRank = 0; // The person currently selecting
+        
+        unionData.forEach(emp => {
+            if (emp.status === "Completed" || emp.status === "Skipped") {
+                completedCount++;
+                if (emp.rank > lastCompletedRank) {
+                    lastCompletedRank = emp.rank;
+                }
+            } else if (emp.status === "Waiting" || emp.status === "Paused" || emp.status === "Nudged") {
+                waitingCount++;
+                if (emp.rank < userRank && userData && (userData.status === "Waiting" || userData.status === "Paused" || userData.status === "Nudged")) {
+                    peopleAhead++;
+                }
+            } else if (emp.status === "Ended" || emp.days === 0) {
+                endedCount++;
+            }
+        });
+        
+        // Find the first person after last completed (the active selector)
+        for (let emp of unionData) {
+            if (emp.rank > lastCompletedRank && (emp.status === "Waiting" || emp.status === "Paused" || emp.status === "Nudged")) {
+                activeRank = emp.rank;
+                break;
+            }
+        }
+        
+        // Update summary
+        document.getElementById('completedCount').textContent = completedCount;
+        document.getElementById('waitingCount').textContent = waitingCount;
+        document.getElementById('endedCount').textContent = endedCount;
+        
+        // Update status box with enhanced styling
+        const statusBox = document.getElementById('statusBox');
+        const statusContent = document.getElementById('statusContent');
+        
+        document.getElementById('yourRank').textContent = `Rank ${userRank}`;
+        
+        if (!userData) {
+            document.getElementById('yourStatus').textContent = "Employee not found";
+        } else {
+            let statusHTML = '';
+            
+            if (userData.status === "Completed") {
+                statusBox.className = "info-box completed";
+                statusBox.querySelector('h3').textContent = "Your Status - Completed ✓";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                statusHTML += `<div class="info-row"><strong>Status:</strong> Completed</div>`;
+                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1}</div>`;
+            }
+            else if (userData.status === "Skipped") {
+                statusBox.className = "info-box completed";
+                statusBox.querySelector('h3').textContent = "Your Status - Skipped";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                statusHTML += `<div class="info-row"><strong>Status:</strong> Skipped</div>`;
+                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1}</div>`;
+            }
+            else if (userData.status === "Ended" || userData.days === 0) {
+                statusBox.className = "info-box";
+                statusBox.querySelector('h3').textContent = "Your Status - Done";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                statusHTML += `<div class="info-row"><strong>Status:</strong> Done</div>`;
+                statusHTML += `<div class="info-row"><strong>Note:</strong> No further selections available</div>`;
+            }
+            else if (userData.status === "Nudged") {
+                statusBox.className = "info-box urgent";
+                statusBox.querySelector('h3').textContent = "⚠️ URGENT - Your Status";
+                statusHTML += `<div class="status-message-big" style="background: #f44336; color: white;">LAST CHANCE FOR SELECTION</div>`;
+                statusHTML += `<div class="info-row urgent-text"><strong>Action:</strong> Check your email immediately!</div>`;
+            }
+            else if (userData.status === "Waiting" || userData.status === "Paused") {
+                if (peopleAhead === 0) {
+                    // IT'S YOUR TURN!
+                    statusBox.className = "info-box your-turn";
+                    statusBox.querySelector('h3').textContent = "🎉 YOUR TURN!";
+                    statusHTML += `<div class="status-message-big" style="background: rgba(255,255,255,0.2); color: white;">It's your turn to select!</div>`;
+                    statusHTML += `<div class="info-row"><strong>Action:</strong> Check your email for the selection link</div>`;
+                } else if (peopleAhead === 1) {
+                    // YOU'RE NEXT!
+                    statusBox.className = "info-box almost-there";
+                    statusBox.querySelector('h3').textContent = "⚡ ALMOST THERE!";
+                    statusHTML += `<div class="status-message-big" style="background: rgba(255,255,255,0.2); color: white;">You're Next!</div>`;
+                    statusHTML += `<div class="info-row"><strong>Position:</strong> One person ahead of you</div>`;
+                } else {
+                    statusBox.className = "info-box";
+                    statusBox.querySelector('h3').textContent = "Your Status";
+                    statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                    statusHTML += `<div class="info-row"><strong>Status:</strong> Waiting</div>`;
+                    statusHTML += `<div class="info-row"><strong>People ahead:</strong> ${peopleAhead}</div>`;
+                }
+            }
+            
+            statusContent.innerHTML = statusHTML;
+        }
+        
+        // Render queue with enhanced dots
+        const queueDisplay = document.getElementById('queueDisplay');
+        queueDisplay.innerHTML = '';
+        
+        unionData.forEach(emp => {
+            const rankRow = document.createElement('div');
+            rankRow.className = 'rank-row';
+            
+            const rankLabel = document.createElement('span');
+            rankLabel.className = 'rank-label';
+            rankLabel.textContent = `Rank ${emp.rank}`;
+            rankRow.appendChild(rankLabel);
+            
+            // Determine dot type and emoji
+            let dotEmoji = '⚪';
+            let dotClass = 'dot';
+            
+            if (emp.status === "Completed" || emp.status === "Skipped") {
+                dotEmoji = '🟢';
+            } else if (emp.status === "Ended" || emp.days === 0) {
+                dotEmoji = '🔴';
+            } else if (emp.rank === activeRank && activeRank > 0) {
+                // Yellow pulsing dot for active selector
+                dotEmoji = '🟡';
+                dotClass = 'dot-active';
+            }
+            
+            const dot = document.createElement('span');
+            if (emp.rank === userRank) {
+                dot.className = 'dot-you';
+                dot.textContent = '🔵';
+            } else {
+                dot.className = dotClass;
+                dot.textContent = dotEmoji;
+            }
+            rankRow.appendChild(dot);
+            
+            // Add timestamp if this is last completed
+            if (emp.rank === lastCompletedRank && lastCompletedRank > 0) {
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = `← Last selection: ${timestamps[userUnion]}`;
+                rankRow.appendChild(timestamp);
+            }
+            
+            // Add YOU arrow
+            if (emp.rank === userRank) {
+                const arrow = document.createElement('span');
+                arrow.className = 'arrow';
+                arrow.textContent = '← YOU ARE HERE';
+                rankRow.appendChild(arrow);
+            }
+            
+            // Add SELECTING NOW label for active rank
+            if (emp.rank === activeRank && activeRank > 0 && emp.rank !== userRank) {
+                const selectingLabel = document.createElement('span');
+                selectingLabel.style.cssText = 'color: #FF9800; font-weight: bold; margin-left: 10px; font-size: 14px;';
+                selectingLabel.textContent = '← SELECTING NOW';
+                rankRow.appendChild(selectingLabel);
+            }
+            
+            queueDisplay.appendChild(rankRow);
+        });
+    </script>
+</body>
+</html>
