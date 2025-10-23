@@ -557,27 +557,45 @@
     }
     
     function processAction(action) {
-        let emailBody, subject;
-        
-        if (action === 'skip') {
-            subject = `Vacation Selection SKIPPED - ${employeeData.name} - Round ${employeeData.round}`;
-            emailBody = `VACATION_SKIP%0D%0AName: ${employeeData.name}%0D%0ARound: ${employeeData.round}%0D%0AAction: Skipped%0D%0A%0D%0AEmployee chose to skip this round.`;
-        } else {
-            subject = `Vacation Selection ENDED - ${employeeData.name}`;
-            emailBody = `VACATION_END%0D%0AName: ${employeeData.name}%0D%0ARound: ${employeeData.round}%0D%0AAction: Ended%0D%0A%0D%0AEmployee chose to end all future vacation selections.`;
-        }
-        
-        const adminEmail = 'Your Supervisors';
-        const fullText = `To: ${adminEmail}\nSubject: ${subject}\n\n${emailBody.replace(/%0D%0A/g, '\n')}`;
-        
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(fullText).then(() => {
-                alert(`${action === 'skip' ? 'Skip' : 'End'} selection copied to clipboard. Paste into a new email to ${adminEmail}`);
-            });
-        } else {
-            alert(`Copy this text and email to ${adminEmail}:\n\n${fullText}`);
-        }
+    let emailBody, subject;
+    
+    if (action === 'skip') {
+        subject = `Vacation Selection SKIPPED - ${employeeData.name} - Round ${employeeData.round}`;
+        emailBody = `VACATION_SKIP
+Name: ${employeeData.name}
+Round: ${employeeData.round}
+Action: Skipped
+
+Employee chose to skip this round.`;
+    } else {
+        subject = `Vacation Selection ENDED - ${employeeData.name}`;
+        emailBody = `VACATION_END
+Name: ${employeeData.name}
+Round: ${employeeData.round}
+Action: Ended
+
+Employee chose to end all future vacation selections.`;
     }
+    
+    const adminEmail = 'Your Supervisors';
+    const mailto = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    
+    // Copy to clipboard as backup
+    const fullText = `To: ${adminEmail}\nSubject: ${subject}\n\n${emailBody}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(fullText).then(() => {
+            // Open email client
+            window.location.href = mailto;
+        }).catch(() => {
+            // If clipboard fails, just open email
+            window.location.href = mailto;
+        });
+    } else {
+        // No clipboard support, just open email
+        window.location.href = mailto;
+    }
+}
     
     function renderCalendar() {
         console.log('renderCalendar called');
@@ -823,5 +841,6 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
