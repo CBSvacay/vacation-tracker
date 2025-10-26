@@ -798,47 +798,53 @@ document.getElementById('endDate').textContent = new Date(endDateParts[0], endDa
         renderCalendar();
     }
     
-    function submitSelection() {
-        if (selectedDates.length === 0) {
-            alert('Please select your vacation dates first.');
-            return;
-        }
-        
-        const startDate = selectedDates[0];
-        const endDate = selectedDates[selectedDates.length - 1];
-        const totalDays = selectedDates.length;
-        const workDays = countWorkDaysInSelection(selectedDates);
-        
-        const emailBodyText = `VACATION_SELECTION
+  function submitSelection() {
+    if (selectedDates.length === 0) {
+        alert('Please select your vacation dates first.');
+        return;
+    }
+    
+    const startDate = selectedDates[0];
+    const endDate = selectedDates[selectedDates.length - 1];
+    const totalDays = selectedDates.length;
+    const workDays = countWorkDaysInSelection(selectedDates);
+    
+    const emailBodyText = `VACATION_SELECTION
 Name: ${employeeData.name}
 Start: ${startDate}
 End: ${endDate}
 Days: ${totalDays}
 Work Days: ${workDays}
 Round: ${employeeData.round}
-
 This is an automated vacation selection submission.`;
-        
-        const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
-        const adminEmail = 'Your Supervisors';
-        
-        if (confirm(`You selected:\n\nStart: ${new Date(startDate).toLocaleDateString()}\nEnd: ${new Date(endDate).toLocaleDateString()}\nTotal Days: ${totalDays}\nWork Days: ${workDays}\n\nCopy email text to clipboard?`)) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(emailBodyText).then(() => {
-                    alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
-                }).catch(err => {
-                    prompt('Copy this text (Ctrl+C or Cmd+C):', emailBodyText);
-                    alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
-                });
-            } else {
-                prompt('Copy this text:', emailBodyText);
+    
+    const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
+    const adminEmail = 'Your Supervisors';
+    
+    // Format dates for display WITHOUT timezone conversion
+    const formatDateForDisplay = (dateStr) => {
+        const [year, month, day] = dateStr.split('-');
+        return new Date(year, month - 1, day).toLocaleDateString();
+    };
+    
+    if (confirm(`You selected:\n\nStart: ${formatDateForDisplay(startDate)}\nEnd: ${formatDateForDisplay(endDate)}\nTotal Days: ${totalDays}\nWork Days: ${workDays}\n\nCopy email text to clipboard?`)) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(emailBodyText).then(() => {
+                alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
+            }).catch(err => {
+                prompt('Copy this text (Ctrl+C or Cmd+C):', emailBodyText);
                 alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
-            }
+            });
+        } else {
+            prompt('Copy this text:', emailBodyText);
+            alert(`Send email to: ${adminEmail}\nSubject: ${emailSubject}`);
         }
     }
+}
     </script>
 </body>
 </html>
+
 
 
 
