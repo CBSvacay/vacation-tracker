@@ -578,13 +578,18 @@ Employee chose to end all future vacation selections.`;
     }
     
     const adminEmail = 'Your Supervisors';
-    const fullText = `To: ${adminEmail}\nSubject: ${subject}\n\n${emailBody}`;
     
-    // Copy to clipboard
+    // Plain text only - no mailto, no URL encoding
+    const fullText = `To: ${adminEmail}
+Subject: ${subject}
+
+${emailBody}`;
+    
+    // Copy plain text to clipboard
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(fullText)
             .then(() => {
-                alert(`✓ ${action === 'skip' ? 'Skip notification' : 'End selection'} copied to clipboard!\n\nPaste this into a new email to your supervisors.`);
+                alert(`✓ ${action === 'skip' ? 'Skip notification' : 'End selection'} copied!\n\nPaste into a new email to your supervisors.`);
             })
             .catch(err => {
                 // Fallback if clipboard fails
@@ -594,7 +599,8 @@ Employee chose to end all future vacation selections.`;
         // Fallback for browsers without clipboard support
         prompt('Copy this text and email to your supervisors:', fullText);
     }
-}    
+}
+        
     function renderCalendar() {
         console.log('renderCalendar called');
         const grid = document.getElementById('calendarGrid');
@@ -844,6 +850,7 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
 
