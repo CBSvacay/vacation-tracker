@@ -556,7 +556,7 @@
         }
     }
     
-    function processAction(action) {
+function processAction(action) {
     let emailBody, subject;
     
     if (action === 'skip') {
@@ -578,25 +578,23 @@ Employee chose to end all future vacation selections.`;
     }
     
     const adminEmail = 'Your Supervisors';
-    const mailto = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-    
-    // Copy to clipboard as backup
     const fullText = `To: ${adminEmail}\nSubject: ${subject}\n\n${emailBody}`;
     
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(fullText).then(() => {
-            // Open email client
-            window.location.href = mailto;
-        }).catch(() => {
-            // If clipboard fails, just open email
-            window.location.href = mailto;
-        });
+    // Copy to clipboard
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullText)
+            .then(() => {
+                alert(`✓ ${action === 'skip' ? 'Skip notification' : 'End selection'} copied to clipboard!\n\nPaste this into a new email to your supervisors.`);
+            })
+            .catch(err => {
+                // Fallback if clipboard fails
+                prompt('Copy this text and email to your supervisors:', fullText);
+            });
     } else {
-        // No clipboard support, just open email
-        window.location.href = mailto;
+        // Fallback for browsers without clipboard support
+        prompt('Copy this text and email to your supervisors:', fullText);
     }
-}
-    
+}    
     function renderCalendar() {
         console.log('renderCalendar called');
         const grid = document.getElementById('calendarGrid');
@@ -841,6 +839,7 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
 
