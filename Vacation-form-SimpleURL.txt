@@ -461,56 +461,39 @@
         console.log('Previous selections:', previousSelections);
     }
     
-    function loadCalendarDataFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const calParam = urlParams.get('cal');
-        
-        availability = {};
-        locationAvailability = {};
-        
-        if (calParam && calParam !== '') {
-            const entries = calParam.split(',');
-            entries.forEach(entry => {
-                const parts = entry.split(':');
-                
-                if (parts.length >= 2) {
-                    const date = parts[0];
-                    const totalCount = parseInt(parts[1]);
-                    availability[date] = totalCount;
-                    
-                    if (parts.length >= 3) {
-                        locationAvailability[date] = {};
-                        
-                        const locationData = parts.slice(2).join(':');
-                        const locationPairs = locationData.split(',');
-                        
-                        locationPairs.forEach(pair => {
-                            const [loc, count] = pair.split(':');
-                            if (loc && count) {
-                                locationAvailability[date][loc] = parseInt(count);
-                            }
-                        });
-                    }
-                }
-            });
-        }
-        
-        const maxesParam = urlParams.get('locationmaxes');
-        if (maxesParam && maxesParam !== '') {
-            const maxPairs = maxesParam.split(',');
-            maxPairs.forEach(pair => {
-                const [loc, max] = pair.split(':');
-                if (loc && max) {
-                    locationMaxes[loc] = parseInt(max);
-                }
-            });
-        }
-        
-        console.log('Calendar availability:', availability);
-        console.log('Location availability:', locationAvailability);
-        console.log('Location maxes:', locationMaxes);
+   function loadCalendarDataFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const calParam = urlParams.get('cal');
+    
+    availability = {};
+    
+    if (calParam && calParam !== '') {
+        const entries = calParam.split(',');
+        entries.forEach(entry => {
+            const parts = entry.split(':');
+            
+            if (parts.length >= 2) {
+                const date = parts[0];
+                const totalCount = parseInt(parts[1]);
+                availability[date] = totalCount;
+            }
+        });
     }
     
+    const maxesParam = urlParams.get('locationmaxes');
+    if (maxesParam && maxesParam !== '') {
+        const maxPairs = maxesParam.split(',');
+        maxPairs.forEach(pair => {
+            const [loc, max] = pair.split(':');
+            if (loc && max) {
+                locationMaxes[loc] = parseInt(max);
+            }
+        });
+    }
+    
+    console.log('Calendar availability:', availability);
+    console.log('Location maxes:', locationMaxes);
+}
     function updateEmployeeInfo() {
         document.getElementById('employeeName').textContent = employeeData.name;
         document.getElementById('seniorityRank').textContent = employeeData.rank;
@@ -850,6 +833,7 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
 
