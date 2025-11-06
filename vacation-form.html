@@ -478,22 +478,18 @@
                     const totalCount = parseInt(parts[1]);
                     availability[date] = totalCount;
                     
-                    if (parts.length >= 3) {
-                        locationAvailability[date] = {};
-                        
-                        const locationData = parts.slice(2).join(':');
-                        const locationPairs = locationData.split(',');
-                        
-                        locationPairs.forEach(pair => {
-                            const [loc, count] = pair.split(':');
-                            if (loc && count) {
-                                locationAvailability[date][loc] = parseInt(count);
-                            }
-                        });
-                    }
-                }
-            });
+                  if (parts.length >= 3) {
+    locationAvailability[date] = {};
+    
+    // Process pairs of [location, count] from the remaining parts
+    for (let i = 2; i < parts.length; i += 2) {
+        const location = parts[i];
+        const count = parseInt(parts[i + 1]);
+        if (location && !isNaN(count)) {
+            locationAvailability[date][location] = count;
         }
+    }
+}
         
         const maxesParam = urlParams.get('locationmaxes');
         if (maxesParam && maxesParam !== '') {
@@ -850,6 +846,7 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
 
