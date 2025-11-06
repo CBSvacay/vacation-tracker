@@ -461,7 +461,7 @@
         console.log('Previous selections:', previousSelections);
     }
     
-    function loadCalendarDataFromURL() {
+   function loadCalendarDataFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const calParam = urlParams.get('cal');
     
@@ -469,51 +469,26 @@
     locationAvailability = {};
     
     if (calParam && calParam !== '') {
-        const parts = calParam.split(',');
-        let i = 0;
+        // Match pattern: date:total followed by location:count pairs until next date
+        const datePattern = /(\d{4}-\d{2}-\d{2}):(\d+):((?:[A-Z]+:\d+,?)+)/g;
+        let match;
         
-        while (i < parts.length) {
-            const entry = parts[i];
-            const colonSplit = entry.split(':');
+        while ((match = datePattern.exec(calParam)) !== null) {
+            const date = match[1];
+            const totalCount = parseInt(match[2]);
+            const locationString = match[3];
             
-            // Check if this is a date entry (has date format YYYY-MM-DD)
-            if (colonSplit.length >= 2 && colonSplit[0].includes('-')) {
-                const date = colonSplit[0];
-                const totalCount = parseInt(colonSplit[1]);
-                availability[date] = totalCount;
-                locationAvailability[date] = {};
-                
-                // Process location pairs that follow
-                let j = 2;
-                while (j < colonSplit.length - 1) {
-                    const loc = colonSplit[j];
-                    const count = parseInt(colonSplit[j + 1]);
-                    locationAvailability[date][loc] = count;
-                    j += 2;
+            availability[date] = totalCount;
+            locationAvailability[date] = {};
+            
+            // Parse location:count pairs
+            const locationPairs = locationString.split(',');
+            locationPairs.forEach(pair => {
+                const [loc, count] = pair.split(':');
+                if (loc && count) {
+                    locationAvailability[date][loc] = parseInt(count);
                 }
-                
-                // Check next parts for additional locations (no date prefix)
-                i++;
-                while (i < parts.length) {
-                    const nextPart = parts[i];
-                    const nextSplit = nextPart.split(':');
-                    
-                    // If it's a date, stop and process it in next iteration
-                    if (nextSplit[0].includes('-')) {
-                        break;
-                    }
-                    
-                    // Otherwise it's a location:count pair for current date
-                    if (nextSplit.length === 2) {
-                        const loc = nextSplit[0];
-                        const count = parseInt(nextSplit[1]);
-                        locationAvailability[date][loc] = count;
-                    }
-                    i++;
-                }
-            } else {
-                i++;
-            }
+            });
         }
     }
     
@@ -872,5 +847,6 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
