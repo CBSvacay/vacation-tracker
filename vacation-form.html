@@ -473,20 +473,18 @@
             entries.forEach(entry => {
                 const parts = entry.split(':');
                 
-                if (parts.length >= 2) {
-                    const date = parts[0];
-                    const totalCount = parseInt(parts[1]);
-                    availability[date] = totalCount;
-                    
-                  if (parts.length >= 3) {
+               if (parts.length >= 3) {
     locationAvailability[date] = {};
     
-    // Process pairs of [location, count] from the remaining parts
+    // parts[2] onwards contain location:count pairs
+    // They're already properly split by the initial ':' split
     for (let i = 2; i < parts.length; i += 2) {
-        const location = parts[i];
-        const count = parseInt(parts[i + 1]);
-        if (location && !isNaN(count)) {
-            locationAvailability[date][location] = count;
+        if (i + 1 < parts.length) {
+            const location = parts[i];
+            const count = parseInt(parts[i + 1]);
+            if (location && !isNaN(count)) {
+                locationAvailability[date][location] = count;
+            }
         }
     }
 }
@@ -846,6 +844,7 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
 
 
