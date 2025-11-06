@@ -404,7 +404,7 @@
         console.log('Page loaded');
         parseURLParameters();
         updateEmployeeInfo();
-        loadCalendarDataFromURL();
+        ();
     });
     
     function parseURLParameters() {
@@ -462,54 +462,76 @@
     }
     
     function loadCalendarDataFromURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const calParam = urlParams.get('cal');
+    const urlParams = new URLSearchParams(window.location.search);
+    const calParam = urlParams.get('cal');
+    
+    availability = {};
+    locationAvailability = {};
+    
+    if (calParam && calParam !== '') {
+        const parts = calParam.split(',');
+        let i = 0;
         
-        availability = {};
-        locationAvailability = {};
-        
-        if (calParam && calParam !== '') {
-            const entries = calParam.split(',');
-            entries.forEach(entry => {
-                const parts = entry.split(':');
+        while (i < parts.length) {
+            const entry = parts[i];
+            const colonSplit = entry.split(':');
+            
+            // Check if this is a date entry (has date format YYYY-MM-DD)
+            if (colonSplit.length >= 2 && colonSplit[0].includes('-')) {
+                const date = colonSplit[0];
+                const totalCount = parseInt(colonSplit[1]);
+                availability[date] = totalCount;
+                locationAvailability[date] = {};
                 
-                if (parts.length >= 2) {
-                    const date = parts[0];
-                    const totalCount = parseInt(parts[1]);
-                    availability[date] = totalCount;
+                // Process location pairs that follow
+                let j = 2;
+                while (j < colonSplit.length - 1) {
+                    const loc = colonSplit[j];
+                    const count = parseInt(colonSplit[j + 1]);
+                    locationAvailability[date][loc] = count;
+                    j += 2;
+                }
+                
+                // Check next parts for additional locations (no date prefix)
+                i++;
+                while (i < parts.length) {
+                    const nextPart = parts[i];
+                    const nextSplit = nextPart.split(':');
                     
-                    if (parts.length >= 3) {
-                        locationAvailability[date] = {};
-                        
-                        const locationData = parts.slice(2).join(':');
-                        const locationPairs = locationData.split(',');
-                        
-                        locationPairs.forEach(pair => {
-                            const [loc, count] = pair.split(':');
-                            if (loc && count) {
-                                locationAvailability[date][loc] = parseInt(count);
-                            }
-                        });
+                    // If it's a date, stop and process it in next iteration
+                    if (nextSplit[0].includes('-')) {
+                        break;
                     }
+                    
+                    // Otherwise it's a location:count pair for current date
+                    if (nextSplit.length === 2) {
+                        const loc = nextSplit[0];
+                        const count = parseInt(nextSplit[1]);
+                        locationAvailability[date][loc] = count;
+                    }
+                    i++;
                 }
-            });
+            } else {
+                i++;
+            }
         }
-        
-        const maxesParam = urlParams.get('locationmaxes');
-        if (maxesParam && maxesParam !== '') {
-            const maxPairs = maxesParam.split(',');
-            maxPairs.forEach(pair => {
-                const [loc, max] = pair.split(':');
-                if (loc && max) {
-                    locationMaxes[loc] = parseInt(max);
-                }
-            });
-        }
-        
-        console.log('Calendar availability:', availability);
-        console.log('Location availability:', locationAvailability);
-        console.log('Location maxes:', locationMaxes);
     }
+    
+    const maxesParam = urlParams.get('locationmaxes');
+    if (maxesParam && maxesParam !== '') {
+        const maxPairs = maxesParam.split(',');
+        maxPairs.forEach(pair => {
+            const [loc, max] = pair.split(':');
+            if (loc && max) {
+                locationMaxes[loc] = parseInt(max);
+            }
+        });
+    }
+    
+    console.log('Calendar availability:', availability);
+    console.log('Location availability:', locationAvailability);
+    console.log('Location maxes:', locationMaxes);
+}
     
     function updateEmployeeInfo() {
         document.getElementById('employeeName').textContent = employeeData.name;
@@ -850,4 +872,5 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
+
 
