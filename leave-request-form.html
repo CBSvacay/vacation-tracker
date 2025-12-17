@@ -402,7 +402,7 @@
     };
 const urlParams = new URLSearchParams(window.location.search);
 let currentYear = parseInt(urlParams.get('year')) || new Date().getFullYear();
-let currentMonth = 0;
+let currentMonth = new Date().getMonth(); // Changed from 0 to current month
     let selectedDates = [];
     
     const monthNames = [
@@ -669,6 +669,7 @@ This is an automated leave request submission.`;
 </body>
 
 </html>
+
 
 
 
