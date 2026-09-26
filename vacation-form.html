@@ -125,6 +125,26 @@
         .btn-success:hover {
             background: #218838;
         }
+
+        .btn-na {
+            background: #17a2b8;
+            color: white;
+            display: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            margin-top: 12px;
+        }
+
+        .btn-na:hover {
+            background: #138496;
+        }
+
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         
         #calendarSection {
             display: none;
@@ -367,7 +387,8 @@
             </div>
         </div>
         
-        <button class="btn btn-success" id="submitBtn" onclick="submitSelection()">Submit Vacation Selection</button>
+        <button class="btn btn-success" id="submitBtn" onclick="submitSelection(false)">Submit Vacation Days Only</button>
+        <button class="btn btn-na" id="submitNaBtn" onclick="submitSelection(true)">Submit Vacation and Make All Non-Working Days Not Available</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
@@ -546,6 +567,7 @@
         
         calendarSection.style.display = 'block';
         submitBtn.style.display = 'block';
+        document.getElementById('submitNaBtn').style.display = 'block';
         
         renderCalendar();
     }
@@ -772,13 +794,15 @@ ${emailBody}`;
         if (selectedDates.length === 0) {
             summary.style.display = 'none';
             document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitNaBtn').disabled = true;
             return;
         }
-        
+
         const workDays = countWorkDaysInSelection(selectedDates);
-        
+
         summary.style.display = 'block';
         document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitNaBtn').disabled = false;
         
        // Fix: Parse dates as local dates to avoid timezone shift
 const startDateParts = selectedDates[0].split('-');
@@ -810,24 +834,29 @@ document.getElementById('endDate').textContent = new Date(endDateParts[0], endDa
         renderCalendar();
     }
     
-  function submitSelection() {
+  // daysOffNA = true when the "Days Off N/A" button is used.
+  // It adds one marker line to the email; the Excel program looks for
+  // "DAYS-OFF-NA" and puts the N/A comment on this pick's LRF line.
+  function submitSelection(daysOffNA) {
     if (selectedDates.length === 0) {
         alert('Please select your vacation dates first.');
         return;
     }
-    
+
     const startDate = selectedDates[0];
     const endDate = selectedDates[selectedDates.length - 1];
     const totalDays = selectedDates.length;
     const workDays = countWorkDaysInSelection(selectedDates);
-    
+
+    const naLine = daysOffNA ? `\nComment: DAYS-OFF-NA` : '';
+
     const emailBodyText = `VACATION_SELECTION
 Name: ${employeeData.name}
 Start: ${startDate}
 End: ${endDate}
 Days: ${totalDays}
 Work Days: ${workDays}
-Round: ${employeeData.round}
+Round: ${employeeData.round}${naLine}
 This is an automated vacation selection submission.`;
     
     const emailSubject = `Vacation Selection - ${employeeData.name} - Round ${employeeData.round}`;
@@ -839,7 +868,9 @@ This is an automated vacation selection submission.`;
         return new Date(year, month - 1, day).toLocaleDateString();
     };
     
-    if (confirm(`You selected:\n\nStart: ${formatDateForDisplay(startDate)}\nEnd: ${formatDateForDisplay(endDate)}\nTotal Days: ${totalDays}\nWork Days: ${workDays}\n\nCopy email text to clipboard?`)) {
+    const naNote = daysOffNA ? `\n\nAll non-working days within this vacation will be marked Not Available (this vacation only)` : '';
+
+    if (confirm(`You selected:\n\nStart: ${formatDateForDisplay(startDate)}\nEnd: ${formatDateForDisplay(endDate)}\nTotal Days: ${totalDays}\nWork Days: ${workDays}${naNote}\n\nCopy email text to clipboard?`)) {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(emailBodyText).then(() => {
                 alert(`Email body copied to clipboard!\n\nNow:\n1. Open your email app\n2. Send new email to: ${adminEmail}\n3. Subject: ${emailSubject}\n4. Paste the copied text in the body\n5. Send`);
@@ -856,4 +887,3 @@ This is an automated vacation selection submission.`;
     </script>
 </body>
 </html>
-
