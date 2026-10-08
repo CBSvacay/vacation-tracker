@@ -411,6 +411,7 @@
     let employeeSchedule = [];
     let previousSelections = [];
     let employeeLocations = {};
+    let officeDays = [];   // OFFICE days (work days - shown grey with OFFICE)
     let locationAvailability = {};
     let locationMaxes = {};
     
@@ -450,6 +451,13 @@
             });
         }
         
+        const officeParam = urlParams.get('office');
+        if (officeParam && officeParam !== '') {
+            officeDays = officeParam.split(',');
+            // older links: make sure office days count as work days
+            officeDays.forEach(d => { if (!employeeSchedule.includes(d)) employeeSchedule.push(d); });
+        }
+
         const previousParam = urlParams.get('previous');
         if (previousParam && previousParam !== '') {
             const rounds = previousParam.split(',');
@@ -700,8 +708,11 @@ ${emailBody}`;
                 dayElement.classList.add('selected');
             }
             
+            const officeLabel = officeDays.includes(dateString)
+                ? `<div style="font-size: 9px; letter-spacing: 0.5px;">OFFICE</div>` : '';
             dayElement.innerHTML = `
                 <div>${day}</div>
+                ${officeLabel}
                 <div style="font-size: 10px;">${bookedCount}/${maxPerDay}</div>
             `;
             
