@@ -615,11 +615,10 @@ Employee chose to end all future vacation selections.`;
     
     const adminEmail = 'Your Supervisors';
     
-    // Plain text only - no mailto, no URL encoding
-    const fullText = `To: ${adminEmail}
-Subject: ${subject}
-
-${emailBody}`;
+    // Plain text only - no mailto, no URL encoding.
+    // Starts with VACATION_SKIP / VACATION_END, the same way a selection starts with VACATION_SELECTION
+    // (a first line like "To: ..." gets scrambled into %20 / %0A when pasted on a phone).
+    const fullText = emailBody;
     
     // Copy plain text to clipboard
     if (navigator.clipboard && navigator.clipboard.writeText) {
