@@ -176,6 +176,11 @@
             background: #5568d3;
         }
         
+        .calendar-controls button:disabled {
+            background: #c7cbe0;
+            cursor: not-allowed;
+        }
+        
         #monthTitle {
             font-size: 22px;
             font-weight: bold;
@@ -348,9 +353,9 @@
         
         <div id="calendarSection">
             <div class="calendar-controls">
-                <button onclick="previousMonth()">← Previous</button>
+                <button id="prevMonthBtn" onclick="previousMonth()">← Previous</button>
                 <span id="monthTitle">January 2026</span>
-                <button onclick="nextMonth()">Next →</button>
+                <button id="nextMonthBtn" onclick="nextMonth()">Next →</button>
             </div>
             
             <div id="calendarGrid"></div>
@@ -406,6 +411,7 @@
     let currentMonth = 0;
     const urlParams = new URLSearchParams(window.location.search);
     let currentYear = parseInt(urlParams.get('year')) || 2026; 
+    const pickYear = currentYear;   // picks are limited to the vacation year (System_Config E16)
     let selectedDates = [];
     let availability = {};
     let employeeSchedule = [];
@@ -643,6 +649,12 @@ Employee chose to end all future vacation selections.`;
         
         document.getElementById('monthTitle').textContent = `${monthNames[currentMonth]} ${currentYear}`;
         
+        // Stay inside the vacation year: no going before January or past December
+        const prevBtn = document.getElementById('prevMonthBtn');
+        const nextBtn = document.getElementById('nextMonthBtn');
+        if (prevBtn) prevBtn.disabled = (currentYear <= pickYear && currentMonth === 0);
+        if (nextBtn) nextBtn.disabled = (currentYear >= pickYear && currentMonth === 11);
+        
         dayNames.forEach(day => {
             const header = document.createElement('div');
             header.className = 'calendar-header';
@@ -825,6 +837,7 @@ document.getElementById('endDate').textContent = new Date(endDateParts[0], endDa
     }
     
     function previousMonth() {
+        if (currentYear <= pickYear && currentMonth === 0) return;   // stay in the vacation year
         if (currentMonth === 0) {
             currentMonth = 11;
             currentYear--;
@@ -835,6 +848,7 @@ document.getElementById('endDate').textContent = new Date(endDateParts[0], endDa
     }
     
     function nextMonth() {
+        if (currentYear >= pickYear && currentMonth === 11) return;  // stay in the vacation year
         if (currentMonth === 11) {
             currentMonth = 0;
             currentYear++;
