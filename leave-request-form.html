@@ -302,6 +302,33 @@
         .hidden {
             display: none;
         }
+
+        /* ===== Phone fix: keep all 7 days of the calendar on screen ===== */
+        #calendarGrid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+        @media (max-width: 560px) {
+            body { padding: 10px; }
+            .container-lg { padding: 16px; }
+            #calendarGrid { gap: 4px; }
+            .calendar-header { padding: 6px 0; font-size: 12px; }
+            .calendar-day { padding: 2px; font-size: 14px; border-width: 1px; }
+            .calendar-controls { padding: 8px; gap: 6px; }
+            .calendar-controls button { padding: 8px 10px; font-size: 13px; }
+            #monthTitle { font-size: 16px; text-align: center; }
+        }
+
+        /* ===== Personal availability colours (only when opened from someone's availability page) ===== */
+        .av-banner { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+                     background: #eef7f6; border: 1px solid #0b7d8f; border-radius: 8px; padding: 9px 12px; margin: 0 0 18px; font-size: 14px; }
+        .av-banner a { color: #0b7d8f; font-weight: bold; text-decoration: none; }
+        .calendar-day.av-g:not(.selected) { background: #c8ecd3; color: #1e6b34; }
+        .calendar-day.av-y:not(.selected) { background: #ffe8a3; color: #7a5600; }
+        .calendar-day.av-r:not(.selected) { background: #f5b7bd; color: #8a1422; }
+        .calendar-day.av-o:not(.selected) { background: white; color: #adb5bd; border-style: dashed; }
+        .calendar-day.av-m:not(.selected) { background: #5b4bc4; color: white; }
+        .calendar-day.av-p:not(.selected) { background: repeating-linear-gradient(45deg, #c9c3f0, #c9c3f0 4px, #e6e2fa 4px, #e6e2fa 8px); color: #3b2f8f; }
+        .calendar-day.av-c:not(.selected) { background: #808080; color: white; }
+        .av-legend { font-size: 12px; color: #444; margin: -8px 0 16px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+        .av-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
     </style>
 </head>
 <body>
@@ -666,13 +693,125 @@ This is an automated leave request submission.`;
     }
 }
     </script>
+    <script>
+    // ===== Personal availability (only when opened from someone's leave availability page) =====
+    // The link carries their code (k), the availability page file (src) and optionally a day (date).
+    // Their part of the availability page is unlocked here the same way as on that page; nothing is sent anywhere.
+    (function () {
+        'use strict';
+        const p = new URLSearchParams(window.location.search);
+        const code = (p.get('k') || '').trim().toUpperCase();
+        const src = p.get('src') || '';
+        const wantDate = /^\d{4}-\d{2}-\d{2}$/.test(p.get('date') || '') ? p.get('date') : '';
+        if (!code || !/^[A-Za-z0-9._-]+\.html$/.test(src)) return;
+
+        const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const DOW3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const NAMES = { g: 'Good', y: 'Limited', r: 'At or below minimum' };
+        let A = null;               // { year, days, U }
+        let preselected = false;
+
+        // banner at the top of the form
+        const banner = document.createElement('div');
+        banner.className = 'av-banner';
+        banner.innerHTML = '<a href="' + src + '?k=' + encodeURIComponent(code) + '">&larr; Back to my availability</a><span id="avBannerInfo"></span>';
+        const h1 = document.querySelector('.container-lg h1');
+        if (h1) h1.insertAdjacentElement('afterend', banner);
+
+        const enc = new TextEncoder();
+        async function sha(b) { return new Uint8Array(await crypto.subtle.digest('SHA-256', b)); }
+        function hex(b) { return Array.from(b, x => x.toString(16).padStart(2, '0')).join(''); }
+        function idxOf(y, m, d) { return Math.round((Date.UTC(y, m, d) - Date.UTC(A.year, 0, 1)) / 86400000); }
+
+        function levelFor(i) {
+            const ch = A.days.charAt(i);
+            if (ch >= '0' && ch <= '4') {
+                let lv = (A.U && A.U.lv && A.U.lv[+ch]) ? A.U.lv[+ch] : '';
+                if (!lv && A.U && A.U.lv) lv = A.U.lv[0] || '';
+                const lc = lv.charAt(i);
+                if (lc === 'g' || lc === 'y' || lc === 'r') return lc;
+                if (lc === 'c') return 'c';
+                return '';
+            }
+            if (ch === 'A' || ch === 'a') return 'm';
+            if (ch === 'P' || ch === 'p') return 'p';
+            if (ch === '.') return 'o';
+            if (ch === 'c') return 'c';
+            return '';
+        }
+
+        function decorate() {
+            if (!A || currentYear !== A.year) return;
+            document.querySelectorAll('#calendarGrid .calendar-day:not(.disabled)').forEach(el => {
+                const day = parseInt(el.textContent, 10);
+                if (!day) return;
+                const lv = levelFor(idxOf(currentYear, currentMonth, day));
+                if (lv) el.classList.add('av-' + lv);
+            });
+            const grid = document.getElementById('calendarGrid');
+            if (grid && !document.getElementById('avLegend')) {
+                const lg = document.createElement('div');
+                lg.id = 'avLegend';
+                lg.className = 'av-legend';
+                lg.innerHTML = 'Your availability: <span><i style="background:#c8ecd3"></i>Good</span><span><i style="background:#ffe8a3"></i>Limited</span>' +
+                    '<span><i style="background:#f5b7bd"></i>At minimum</span><span><i style="background:#5b4bc4"></i>Your leave</span>' +
+                    '<span><i style="border:1px dashed #aaa"></i>Day off</span>';
+                grid.insertAdjacentElement('afterend', lg);
+            }
+        }
+
+        // wrap the form's own calendar functions (they stay exactly as they were)
+        const origRender = renderCalendar;
+        renderCalendar = function () { origRender(); decorate(); };
+        const origShow = showCalendar;
+        showCalendar = function () {
+            if (wantDate && !preselected) {
+                preselected = true;
+                const parts = wantDate.split('-').map(Number);
+                currentYear = parts[0];
+                currentMonth = parts[1] - 1;
+                if (selectedDates.length === 0) selectedDates = [wantDate];
+                origShow();
+                updateSelectionSummary();
+                return;
+            }
+            origShow();
+        };
+
+        fetch(src + '?t=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(async txt => {
+            const m = txt.match(/const availData = (\{[\s\S]*?\});\s*\/\/ LEAVE_DATA_END/);
+            if (!m) return;
+            const D = JSON.parse(m[1]);
+            const id = hex(await sha(enc.encode('id:' + code))).slice(0, 16);
+            const blob = D.people && D.people[id];
+            if (!blob) return;
+            const key = await sha(enc.encode('key:' + code));
+            const n = blob.length / 2 - 16, blk = new Uint8Array(52);
+            blk.set(key, 0);
+            for (let j = 0; j < 16; j++) blk[32 + j] = parseInt(blob.substr(j * 2, 2), 16);
+            let ks = null, text = '';
+            for (let i = 0; i < n; i++) {
+                if (i % 32 === 0) {
+                    const ctr = i / 32;
+                    blk[48] = (ctr >>> 24) & 255; blk[49] = (ctr >>> 16) & 255; blk[50] = (ctr >>> 8) & 255; blk[51] = ctr & 255;
+                    ks = await sha(blk);
+                }
+                text += String.fromCharCode(parseInt(blob.substr(32 + i * 2, 2), 16) ^ ks[i % 32]);
+            }
+            if (text.slice(0, 3) !== 'OK|') return;
+            const parts = text.split('|');
+            A = { year: D.year, days: parts[2], U: D.unions ? D.unions[parts[1]] : null };
+            if (wantDate) {
+                const q = wantDate.split('-').map(Number);
+                const dt = new Date(q[0], q[1] - 1, q[2]);
+                const lv = (q[0] === A.year) ? levelFor(idxOf(q[0], q[1] - 1, q[2])) : '';
+                document.getElementById('avBannerInfo').innerHTML = DOW3[dt.getDay()] + ' ' + MON3[dt.getMonth()] + ' ' + dt.getDate() +
+                    (NAMES[lv] ? ' &middot; <b>' + NAMES[lv] + '</b>' : '');
+            }
+            if (document.getElementById('calendarSection').style.display === 'block') renderCalendar();
+        }).catch(() => { });
+    })();
+    </script>
 </body>
 
 </html>
-
-
-
-
-
-
-
