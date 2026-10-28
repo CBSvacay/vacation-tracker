@@ -416,22 +416,22 @@
         const employeeData = [
             // VBA_DATA_START
 
-            {union: 1, rank: 1, status: "Completed", round: 4, days: 8},
+            {union: 1, rank: 1, status: "Waiting", round: 4, days: 8},
             {union: 1, rank: 2, status: "Ended", round: 3, days: 4},
             {union: 1, rank: 3, status: "No Days", round: 3, days: 0},
-            {union: 1, rank: 4, status: "Completed", round: 4, days: 4},
-            {union: 1, rank: 5, status: "Skipped", round: 2, days: 5},
-            {union: 1, rank: 6, status: "Completed", round: 4, days: 14},
+            {union: 1, rank: 4, status: "Waiting", round: 4, days: 4},
+            {union: 1, rank: 5, status: "Waiting", round: 2, days: 5},
+            {union: 1, rank: 6, status: "Waiting", round: 4, days: 14},
             {union: 1, rank: 7, status: "Ended", round: 3, days: 1},
-            {union: 1, rank: 8, status: "Completed", round: 4, days: 2},
-            {union: 1, rank: 9, status: "Completed", round: 4, days: 2},
+            {union: 1, rank: 8, status: "Waiting", round: 4, days: 2},
+            {union: 1, rank: 9, status: "Waiting", round: 4, days: 2},
             {union: 1, rank: 10, status: "No Days", round: 4, days: 0},
-            {union: 1, rank: 11, status: "Completed", round: 4, days: 4},
+            {union: 1, rank: 11, status: "Waiting", round: 4, days: 4},
             {union: 1, rank: 12, status: "No Days", round: 4, days: 0},
-            {union: 1, rank: 13, status: "Completed", round: 4, days: 3},
-            {union: 1, rank: 14, status: "Waiting", round: 3, days: 4},
-            {union: 1, rank: 15, status: "Waiting", round: 3, days: 2},
-            {union: 1, rank: 16, status: "Waiting", round: 3, days: 8},
+            {union: 1, rank: 13, status: "Waiting", round: 4, days: 3},
+            {union: 1, rank: 14, status: "Ended", round: 3, days: 4},
+            {union: 1, rank: 15, status: "Ended", round: 3, days: 2},
+            {union: 1, rank: 16, status: "Waiting", round: 4, days: 6},
             {union: 2, rank: 1, status: "Ended", round: 6, days: 6},
             {union: 2, rank: 2, status: "Ended", round: 0, days: 22},
             {union: 2, rank: 3, status: "No Days", round: 5, days: 0},
@@ -443,13 +443,13 @@
         ];
 
         const timestamps = {
-            1: "Oct 27, 2026 at 4:58 PM",
+            1: "Oct 28, 2026 at 12:21 PM",
             2: "Not started",
             3: "Not started"
         };
 
         const calendarYear = 2027;
-        const currentRounds = {1: 4, 2: 7, 3: 2};
+        const currentRounds = {1: 5, 2: 7, 3: 2};
 
         const liveSchedule = {year: 2027, unions: {1: {max: 2, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
             ["1", "wwc.wwwwsc.wwwwwc.wwwwwc.w.wwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vwwwwc.wwwwwc.wwwwwc.swwwwc.wwvvvc.vvvvvc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vvvvvc.vvvwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwsc.svvv"], 
@@ -462,7 +462,7 @@
             ["8", "vvcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..vvvcv..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..vvvcv..vwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwscw..ww"], 
             ["9", "..cwwv...cwww...cwww...cwww...cwww...cwww...cwww...cvww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
             ["10", "..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cvvvv..cvwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww."], 
-            ["11", "wwcw...wvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wscw...w"], 
+            ["11", "wwcw...wvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wscw...w"], 
             ["12", "..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv."], 
             ["13", "w.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...wwwc...wwwc...wwwc..www.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..vvv.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..vvv.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...vvvc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...wwwc...wwwc...wwwc..www.c..vvv.c...ww.c...ww.c..www"], 
             ["14", "wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..vvcvw..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..vvcvv..vvcww..wwcww..wwcww..wwcww..wwcvv..vvcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wscww..w"], 
