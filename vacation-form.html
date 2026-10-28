@@ -189,7 +189,7 @@
         
         #calendarGrid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 8px;
             margin-bottom: 20px;
         }
@@ -317,6 +317,23 @@
             height: 30px;
             border-radius: 6px;
             border: 2px solid #dee2e6;
+        }
+
+        /* ===== Phones: keep the calendar inside the screen ===== */
+        @media (max-width: 560px) {
+            body { padding: 10px; }
+            .container-lg { padding: 16px; }
+            h1 { font-size: 22px; margin-bottom: 18px; }
+            #calendarGrid { gap: 4px; }
+            .calendar-header { padding: 6px 0; font-size: 12px; }
+            .calendar-day { padding: 2px; font-size: 14px; border-width: 1px; overflow: hidden; }
+            .calendar-day.previous-selection, .calendar-day.selected { border-width: 2px; }
+            .calendar-day div { font-size: 9px !important; line-height: 1.1; }
+            .calendar-day div:first-child { font-size: 14px !important; }
+            .calendar-controls { padding: 8px; gap: 6px; }
+            .calendar-controls button { padding: 8px 10px; font-size: 13px; }
+            #monthTitle { font-size: 16px; text-align: center; }
+            .btn-success, .btn-na { font-size: 16px; }
         }
     </style>
 </head>
