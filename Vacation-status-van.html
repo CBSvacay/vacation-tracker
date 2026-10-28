@@ -253,6 +253,79 @@
             padding-top: 20px;
             border-top: 1px solid #dee2e6;
         }
+
+        /* ===== Live schedule: "Show available dates" (no names) ===== */
+        .ls-toggle {
+            display: block;
+            width: 100%;
+            margin: 20px 0 0 0;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .ls-section {
+            display: none;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            background: #f8f9ff;
+        }
+        .ls-section h3 { margin: 0; color: #4c5bd4; font-size: 18px; }
+        .ls-note { font-size: 12px; color: #6c757d; margin: 3px 0 10px 0; }
+        .ls-tabs { display: flex; background: #e9ecf8; border-radius: 8px; padding: 3px; margin-bottom: 10px; }
+        .ls-tab {
+            flex: 1; border: none; background: transparent; padding: 8px 0;
+            font-size: 14px; font-weight: bold; font-family: inherit;
+            color: #667eea; border-radius: 6px; cursor: pointer;
+        }
+        .ls-tab.on { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .ls-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .ls-nav button {
+            background: #667eea; color: white; border: none; border-radius: 6px;
+            padding: 6px 14px; font-size: 15px; font-weight: bold; cursor: pointer;
+        }
+        .ls-nav button:disabled { background: #c7cbe0; cursor: default; }
+        .ls-nav span { font-weight: bold; color: #2c3e50; font-size: 15px; text-align: center; }
+        .ls-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .ls-dh { text-align: center; font-size: 12px; font-weight: bold; color: #495057; }
+        .ls-d { border-radius: 6px; text-align: center; padding: 5px 0; line-height: 1.25; font-size: 11px; cursor: pointer; }
+        .ls-d b { display: block; font-size: 14px; }
+        .ls-open { background: #d4edda; }
+        .ls-part { background: #fff3cd; }
+        .ls-full { background: #f8d7da; color: #a71d2a; font-weight: bold; }
+        .ls-closed { background: #808080; color: white; }
+        .ls-none { background: #f1f3f5; color: #adb5bd; }
+        .ls-d.sel { outline: 2px solid #2c3e50; outline-offset: -2px; }
+        .ls-legend { font-size: 12px; color: #555; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+        .ls-sw { display: inline-block; width: 13px; height: 13px; border: 1px solid #bbb; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+        .ls-grid { border-collapse: collapse; table-layout: fixed; width: 100%; }
+        .ls-grid th { font-size: 10px; color: #444; font-weight: bold; padding: 0; text-align: center; height: 14px; }
+        .ls-grid td { padding: 0; height: 18px; border: 1px solid #d0d0d0; text-align: center; cursor: pointer; }
+        .ls-grid .ln { width: 24px; border: none; font-size: 11px; font-weight: bold; color: #333; text-align: right; padding-right: 4px; cursor: default; }
+        .ls-grid .wk { border-left: 2px solid #333; }
+        .c-w { background: #e9ecef; }
+        .c-v { background: #ff0000; }
+        .c-s { background: #ffc7ce; }
+        .c-c { background: #808080; }
+        .c-dot { background: #ffffff; }
+        .c-x { background: #fafafa; }
+        .ls-grid tr.ls-off td { height: 19px; font-size: 10px; font-weight: bold; border-top: 2px solid #333; }
+        .ls-grid td.sel { outline: 2px solid #2c3e50; outline-offset: -2px; }
+        .ls-info { margin-top: 8px; font-size: 13px; color: #2c3e50; min-height: 18px; }
+        @media (max-width: 520px) {
+            .ls-section { margin-left: -22px; margin-right: -22px; padding: 10px 6px; }
+            .ls-grid .ln { width: 18px; font-size: 9px; padding-right: 2px; }
+            .ls-grid th { font-size: 8px; }
+            .ls-grid td { height: 14px; }
+            .ls-grid tr.ls-off td { font-size: 8px; height: 16px; }
+        }
     </style>
 </head>
 <body>
@@ -295,6 +368,25 @@
             </div>
         </div>
         
+        
+        <button class="ls-toggle" id="lsToggle" type="button" style="display: none;">📅 Show available dates ▼</button>
+        <div class="ls-section" id="lsSection">
+            <h3 id="lsTitle">Available dates</h3>
+            <div class="ls-note">Line numbers only - no names. Updated every time this page updates.</div>
+            <div class="ls-tabs">
+                <button class="ls-tab on" id="lsTabCal" type="button">📅 Calendar</button>
+                <button class="ls-tab" id="lsTabGrid" type="button">▦ 4-week schedule</button>
+            </div>
+            <div class="ls-nav">
+                <button id="lsPrev" type="button">←</button>
+                <span id="lsRange"></span>
+                <button id="lsNext" type="button">→</button>
+            </div>
+            <div id="lsBody"></div>
+            <div class="ls-legend" id="lsLegend"></div>
+            <div class="ls-info" id="lsInfo"></div>
+        </div>
+        
         <div class="legend">
             <div class="legend-title">Legend:</div>
             <div class="legend-item">🟢 Completed or Skipped</div>
@@ -315,56 +407,40 @@
         const employeeData = [
             // VBA_DATA_START
 
-            {union: 1, rank: 1, status: "Completed", round: 2, days: 11},
-            {union: 1, rank: 2, status: "Completed", round: 2, days: 34},
-            {union: 1, rank: 3, status: "Completed", round: 2, days: 26},
-            {union: 1, rank: 4, status: "Completed", round: 2, days: 10},
-            {union: 1, rank: 5, status: "Ended", round: 1, days: 1},
-            {union: 1, rank: 6, status: "Completed", round: 2, days: 13},
-            {union: 1, rank: 7, status: "Completed", round: 2, days: 7},
-            {union: 1, rank: 8, status: "Completed", round: 2, days: 13},
-            {union: 1, rank: 9, status: "Completed", round: 2, days: 5},
-            {union: 1, rank: 10, status: "Completed", round: 2, days: 1},
-            {union: 1, rank: 11, status: "Completed", round: 2, days: 6},
-            {union: 1, rank: 12, status: "Completed", round: 2, days: 3},
-            {union: 1, rank: 13, status: "Completed", round: 2, days: 4},
-            {union: 1, rank: 14, status: "Completed", round: 2, days: 7},
-            {union: 1, rank: 15, status: "Completed", round: 2, days: 3},
-            {union: 1, rank: 16, status: "Completed", round: 2, days: 5},
-            {union: 1, rank: 17, status: "Completed", round: 2, days: 3},
-            {union: 1, rank: 18, status: "Completed", round: 2, days: 4},
-            {union: 1, rank: 19, status: "Completed", round: 2, days: 7},
-            {union: 1, rank: 20, status: "Completed", round: 2, days: 1},
-            {union: 1, rank: 21, status: "Completed", round: 2, days: 4},
-            {union: 1, rank: 22, status: "Waiting", round: 1, days: 4},
-            {union: 1, rank: 23, status: "Waiting", round: 1, days: 16},
-            {union: 1, rank: 24, status: "Waiting", round: 1, days: 3},
-            {union: 1, rank: 25, status: "Waiting", round: 1, days: 4},
-            {union: 1, rank: 26, status: "Waiting", round: 1, days: 14},
-            {union: 1, rank: 27, status: "No Days", round: 1, days: 0},
-            {union: 2, rank: 1, status: "Paused", round: 2, days: 19},
-            {union: 2, rank: 2, status: "Paused", round: 2, days: 24},
-            {union: 2, rank: 3, status: "No Days", round: 2, days: 0},
-            {union: 2, rank: 4, status: "Paused", round: 2, days: 21},
-            {union: 2, rank: 5, status: "Paused", round: 2, days: 8},
-            {union: 2, rank: 6, status: "Paused", round: 2, days: 16},
-            {union: 2, rank: 7, status: "Paused", round: 2, days: 13},
-            {union: 2, rank: 8, status: "No Days", round: 2, days: 0},
-            {union: 2, rank: 9, status: "Paused", round: 2, days: 6},
-            {union: 2, rank: 10, status: "Paused", round: 2, days: 12},
-            {union: 2, rank: 11, status: "Paused", round: 2, days: 7},
-            {union: 2, rank: 12, status: "Paused", round: 2, days: 6},
-            {union: 2, rank: 13, status: "Paused", round: 2, days: 7}
+            {union: 1, rank: 1, status: "Completed", round: 4, days: 8},
+            {union: 1, rank: 2, status: "Ended", round: 3, days: 4},
+            {union: 1, rank: 3, status: "No Days", round: 3, days: 0},
+            {union: 1, rank: 4, status: "Completed", round: 4, days: 4},
+            {union: 1, rank: 5, status: "Skipped", round: 2, days: 5},
+            {union: 1, rank: 6, status: "Completed", round: 4, days: 14},
+            {union: 1, rank: 7, status: "Ended", round: 3, days: 1},
+            {union: 1, rank: 8, status: "Completed", round: 4, days: 2},
+            {union: 1, rank: 9, status: "Completed", round: 4, days: 2},
+            {union: 1, rank: 10, status: "No Days", round: 4, days: 0},
+            {union: 1, rank: 11, status: "Completed", round: 4, days: 4},
+            {union: 1, rank: 12, status: "Completed", round: 4, days: 3},
+            {union: 1, rank: 13, status: "Completed", round: 4, days: 3},
+            {union: 1, rank: 14, status: "Waiting", round: 3, days: 4},
+            {union: 1, rank: 15, status: "Waiting", round: 3, days: 2},
+            {union: 1, rank: 16, status: "Waiting", round: 3, days: 8},
+            {union: 2, rank: 1, status: "Ended", round: 6, days: 6},
+            {union: 2, rank: 2, status: "Ended", round: 0, days: 22},
+            {union: 2, rank: 3, status: "No Days", round: 5, days: 0},
+            {union: 2, rank: 4, status: "Ended", round: 6, days: 4},
+            {union: 2, rank: 5, status: "Ended", round: 0, days: 20},
+            {union: 2, rank: 6, status: "No Days", round: 4, days: 0},
+            {union: 3, rank: 1, status: "No Days", round: 1, days: 0},
+            {union: 3, rank: 2, status: "Ended", round: 1, days: 11}
         ];
 
         const timestamps = {
-            1: "Oct 27, 2026 at 5:28 PM",
-            2: "Oct 27, 2026 at 5:21 PM",
+            1: "Oct 27, 2026 at 4:50 PM",
+            2: "Not started",
             3: "Not started"
         };
 
         const calendarYear = 2027;
-        const currentRounds = {1: 2, 2: 3, 3: 1};
+        const currentRounds = {1: 4, 2: 7, 3: 2};
             // VBA_DATA_END
 // ====================================
         
@@ -548,6 +624,183 @@
             
             queueDisplay.appendChild(rankRow);
         });
+        
+        // ==================== LIVE SCHEDULE: "Show available dates" (no names) ====================
+        // liveSchedule is written by the Excel program in the data block above.
+        (function () {
+            const LS = (typeof liveSchedule !== 'undefined') ? liveSchedule : null;
+            const U = (LS && LS.unions) ? LS.unions[userUnion] : null;
+            if (!U || !U.lines || U.lines.length === 0) return;      // nothing to show: the button stays hidden
+
+            const toggle = document.getElementById('lsToggle');
+            const section = document.getElementById('lsSection');
+            const bodyEl = document.getElementById('lsBody');
+            const rangeEl = document.getElementById('lsRange');
+            const prevBtn = document.getElementById('lsPrev');
+            const nextBtn = document.getElementById('lsNext');
+            const legendEl = document.getElementById('lsLegend');
+            const infoEl = document.getElementById('lsInfo');
+            const tabCal = document.getElementById('lsTabCal');
+            const tabGrid = document.getElementById('lsTabGrid');
+
+            const year = LS.year;
+            const maxDay = U.max || 0;
+            const lines = U.lines;                                   // [line number, one letter per day]
+            const nDays = lines[0][1].length;
+            const blocks = (U.blocks || []).map(b => ({ start: b[0], len: b[1] }));
+            const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const DOW1 = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            const DOW3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const STATUS = { 'v': 'Vacation booked', 's': 'STAT', 'w': 'Working', 'c': 'Closed', '.': 'Day off', '-': 'Not on the schedule' };
+            const CLS = { 'v': 'c-v', 's': 'c-s', 'w': 'c-w', 'c': 'c-c', '.': 'c-dot', '-': 'c-x' };
+
+            const dateOf = i => new Date(year, 0, 1 + i);
+            const indexOf = d => Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(year, 0, 1)) / 86400000);
+            const ymd = s => { const p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+            const longDate = d => `${DOW3[d.getDay()]} ${MON3[d.getMonth()]} ${d.getDate()}`;
+
+            // Totals per day: people booked off, and whether the day is open / closed / not on the schedule
+            const offCount = [];
+            const dayKind = [];
+            for (let i = 0; i < nDays; i++) {
+                let off = 0, active = false, closed = false, any = false;
+                for (const ln of lines) {
+                    const ch = ln[1].charAt(i);
+                    if (ch === 'v') off++;
+                    if (ch === 'v' || ch === 'w' || ch === 's') active = true;
+                    if (ch === 'c') closed = true;
+                    if (ch !== '-') any = true;
+                }
+                offCount.push(off);
+                dayKind.push(!any ? 'none' : ((!active && closed) ? 'closed' : 'open'));
+            }
+            const countText = c => maxDay > 0 ? `${c}/${maxDay}` : `${c} off`;
+            const levelClass = c => (maxDay > 0 && c >= maxDay) ? 'ls-full' : (c > 0 ? 'ls-part' : 'ls-open');
+            const swatch = (color, text) => `<span><span class="ls-sw" style="background:${color}"></span>${text}</span>`;
+            const dayInfo = i => {
+                const d = dateOf(i);
+                if (dayKind[i] === 'closed') return `${longDate(d)}: closed`;
+                if (dayKind[i] === 'none') return `${longDate(d)}: not on the schedule yet`;
+                const c = offCount[i];
+                if (maxDay > 0) return `${longDate(d)}: ${c} of ${maxDay} booked off` + (c >= maxDay ? ' - full' : ` - ${maxDay - c} spot${maxDay - c === 1 ? '' : 's'} left`);
+                return `${longDate(d)}: ${c} booked off`;
+            };
+
+            // Start on this month / this 4-week block when it's in the vacation year
+            const today = new Date();
+            let view = 'cal';
+            let month = (today.getFullYear() === year) ? today.getMonth() : 0;
+            let block = 0;
+            if (today.getFullYear() === year) {
+                const ti = indexOf(today);
+                blocks.forEach((b, k) => { const s = indexOf(ymd(b.start)); if (ti >= s && ti < s + b.len) block = k; });
+            }
+
+            function renderCal() {
+                const first = new Date(year, month, 1).getDay();
+                const days = new Date(year, month + 1, 0).getDate();
+                let h = DOW1.map(d => `<div class="ls-dh">${d}</div>`).join('');
+                for (let k = 0; k < first; k++) h += '<div></div>';
+                for (let d = 1; d <= days; d++) {
+                    const i = indexOf(new Date(year, month, d));
+                    if (dayKind[i] === 'closed') h += `<div class="ls-d ls-closed" data-i="${i}"><b>${d}</b>closed</div>`;
+                    else if (dayKind[i] === 'none') h += `<div class="ls-d ls-none" data-i="${i}"><b>${d}</b>&nbsp;</div>`;
+                    else h += `<div class="ls-d ${levelClass(offCount[i])}" data-i="${i}"><b>${d}</b>${countText(offCount[i])}</div>`;
+                }
+                bodyEl.innerHTML = `<div class="ls-cal">${h}</div>`;
+                rangeEl.textContent = `${MONTHS[month]} ${year}`;
+                prevBtn.disabled = (month === 0);
+                nextBtn.disabled = (month === 11);
+                legendEl.innerHTML = swatch('#d4edda', 'Open') + swatch('#fff3cd', 'Some booked') +
+                    (maxDay > 0 ? swatch('#f8d7da', 'Full') : '') + swatch('#808080', 'Closed');
+                infoEl.textContent = maxDay > 0 ? `Numbers = people booked off / daily maximum. Tap a day for details.`
+                                                : `Numbers = people booked off that day. Tap a day for details.`;
+            }
+
+            function renderGrid() {
+                if (blocks.length === 0) {
+                    bodyEl.innerHTML = '<p style="color:#6c757d;">The schedule has not been built for this year yet.</p>';
+                    rangeEl.textContent = '';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    legendEl.innerHTML = '';
+                    infoEl.textContent = '';
+                    return;
+                }
+                const b = blocks[block];
+                const s = indexOf(ymd(b.start));
+                let h1 = '<tr><th class="ln"></th>', h2 = '<tr><th class="ln"></th>';
+                for (let k = 0; k < b.len; k++) {
+                    const d = dateOf(s + k);
+                    const wk = (k > 0 && d.getDay() === 1) ? ' class="wk"' : '';
+                    h1 += `<th${wk}>${DOW1[d.getDay()]}</th>`;
+                    h2 += `<th${wk}>${d.getDate()}</th>`;
+                }
+                let rows = '';
+                for (const ln of lines) {
+                    rows += `<tr><td class="ln">${ln[0]}</td>`;
+                    for (let k = 0; k < b.len; k++) {
+                        const i = s + k;
+                        const ch = (i >= 0 && i < nDays) ? ln[1].charAt(i) : '-';
+                        const wk = (k > 0 && dateOf(i).getDay() === 1) ? ' wk' : '';
+                        rows += `<td class="${CLS[ch] || 'c-x'}${wk}" data-i="${i}" data-l="${ln[0]}"></td>`;
+                    }
+                    rows += '</tr>';
+                }
+                let off = '<tr class="ls-off"><td class="ln">Off</td>';
+                for (let k = 0; k < b.len; k++) {
+                    const i = s + k;
+                    const wk = (k > 0 && dateOf(i).getDay() === 1) ? ' wk' : '';
+                    if (i < 0 || i >= nDays || dayKind[i] === 'none') off += `<td class="c-x${wk}"></td>`;
+                    else if (dayKind[i] === 'closed') off += `<td class="c-c${wk}" data-i="${i}"></td>`;
+                    else off += `<td class="${levelClass(offCount[i])}${wk}" data-i="${i}">${offCount[i]}</td>`;
+                }
+                off += '</tr>';
+                bodyEl.innerHTML = `<table class="ls-grid">${h1}</tr>${h2}</tr>${rows}${off}</table>`;
+                const e = dateOf(s + b.len - 1), d0 = dateOf(s);
+                rangeEl.textContent = `${MON3[d0.getMonth()]} ${d0.getDate()} - ${MON3[e.getMonth()]} ${e.getDate()}, ${year}`;
+                prevBtn.disabled = (block === 0);
+                nextBtn.disabled = (block === blocks.length - 1);
+                legendEl.innerHTML = swatch('#ff0000', 'Vacation') + swatch('#ffc7ce', 'STAT') + swatch('#e9ecef', 'Working') +
+                    swatch('#ffffff', 'Day off') + swatch('#808080', 'Closed');
+                infoEl.textContent = maxDay > 0 ? `Off row = people booked off (max ${maxDay}). Tap a square for details.`
+                                                : 'Off row = people booked off. Tap a square for details.';
+            }
+
+            function render() {
+                tabCal.className = 'ls-tab' + (view === 'cal' ? ' on' : '');
+                tabGrid.className = 'ls-tab' + (view === 'grid' ? ' on' : '');
+                if (view === 'cal') renderCal(); else renderGrid();
+            }
+
+            document.getElementById('lsTitle').textContent = `Available dates - Union ${userUnion}`;
+            toggle.style.display = 'block';
+            toggle.addEventListener('click', () => {
+                const open = section.style.display !== 'block';
+                section.style.display = open ? 'block' : 'none';
+                toggle.textContent = open ? '📅 Hide available dates ▲' : '📅 Show available dates ▼';
+                if (open) render();
+            });
+            tabCal.addEventListener('click', () => { view = 'cal'; render(); });
+            tabGrid.addEventListener('click', () => { view = 'grid'; render(); });
+            prevBtn.addEventListener('click', () => { if (view === 'cal') { if (month > 0) month--; } else if (block > 0) block--; render(); });
+            nextBtn.addEventListener('click', () => { if (view === 'cal') { if (month < 11) month++; } else if (block < blocks.length - 1) block++; render(); });
+            bodyEl.addEventListener('click', ev => {
+                const el = ev.target.closest('[data-i]');
+                if (!el) return;
+                bodyEl.querySelectorAll('.sel').forEach(x => x.classList.remove('sel'));
+                el.classList.add('sel');
+                const i = +el.dataset.i;
+                if (el.dataset.l) {
+                    const ln = lines.find(x => x[0] === el.dataset.l);
+                    const ch = ln ? ln[1].charAt(i) : '-';
+                    infoEl.textContent = `Line ${el.dataset.l} - ${longDate(dateOf(i))}: ${STATUS[ch] || ''}`;
+                } else {
+                    infoEl.textContent = dayInfo(i);
+                }
+            });
+        })();
     </script>
 </body>
 </html>
