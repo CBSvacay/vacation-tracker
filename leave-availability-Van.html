@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>My Leave Availability</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            background: white;
+            padding: 26px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 { margin: 0; font-size: 24px; text-align: center; color: #2c3e50; }
+        .sub { text-align: center; color: #667eea; font-weight: bold; font-size: 15px; margin: 4px 0 16px; }
+        .msg { background: #f8f9fa; border-radius: 10px; padding: 18px; font-size: 15px; line-height: 1.5; text-align: center; color: #495057; }
+        .dis h2 { color: #c25e00; font-size: 19px; margin: 0 0 10px; }
+        .dis p { font-size: 14.5px; line-height: 1.5; margin: 0 0 10px; }
+        .dis ul { font-size: 14px; line-height: 1.5; padding-left: 20px; margin: 0 0 14px; }
+        .dis li { margin-bottom: 4px; }
+        .chk { display: flex; gap: 10px; align-items: flex-start; background: #fff9e6; border: 2px solid #ffc107; border-radius: 8px; padding: 12px; font-weight: 600; font-size: 14.5px; cursor: pointer; }
+        .chk input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; }
+        .btn {
+            display: block; width: 100%; box-sizing: border-box; text-align: center; border: none; border-radius: 8px;
+            padding: 12px; font-size: 16px; font-weight: bold; font-family: inherit; cursor: pointer; text-decoration: none;
+            background: linear-gradient(135deg, #0f9d8a 0%, #0b7d8f 100%); color: white; margin-top: 14px;
+        }
+        .btn:disabled { opacity: 0.45; cursor: default; }
+        .btn.small { padding: 9px; font-size: 14.5px; margin-top: 10px; }
+        .note { font-size: 12px; color: #6c757d; margin-top: 10px; }
+        .nav { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 8px; }
+        .nav button { background: #667eea; color: white; border: none; border-radius: 6px; padding: 7px 15px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .nav button:disabled { background: #c7cbe0; cursor: default; }
+        .nav span { font-weight: bold; font-size: 17px; }
+        .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+        .dh { text-align: center; font-size: 12px; font-weight: bold; color: #495057; }
+        .d { border-radius: 6px; text-align: center; padding: 6px 0 5px; line-height: 1.15; cursor: pointer; min-height: 38px; box-sizing: border-box; }
+        .d b { display: block; font-size: 15px; }
+        .d small { display: block; font-size: 10px; font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 2px; }
+        .d.sel { outline: 3px solid #2c3e50; outline-offset: -3px; }
+        .g { background: #c8ecd3; color: #1e6b34; }
+        .y { background: #ffe8a3; color: #7a5600; }
+        .r { background: #f5b7bd; color: #8a1422; }
+        .n { background: #e9ecef; color: #495057; }
+        .c { background: #808080; color: white; }
+        .p { background: #f1f3f5; color: #b5bcc3; }
+        .o { background: white; color: #adb5bd; border: 1px dashed #ccd1d7; }
+        .s { background: #ffc7ce; color: #9c0006; }
+        .f { background: #e7f0ff; color: #33507a; }
+        .none { background: #fafafa; color: #ced4da; }
+        .mine { background: #5b4bc4; color: white; }
+        .pend { background: repeating-linear-gradient(45deg, #c9c3f0, #c9c3f0 4px, #e6e2fa 4px, #e6e2fa 8px); color: #3b2f8f; }
+        .legend { font-size: 12px; color: #444; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+        .sw { display: inline-block; width: 13px; height: 13px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+        .detail { margin-top: 10px; border: 2px solid #0b7d8f; border-radius: 10px; padding: 11px 12px; font-size: 14px; display: none; }
+        .detail b { font-size: 15px; }
+        h3 { font-size: 16px; margin: 20px 0 6px; }
+        .req { display: flex; justify-content: space-between; gap: 8px; align-items: center; border-top: 1px solid #e9ecef; padding: 8px 0; font-size: 14px; }
+        .req.past { opacity: 0.5; }
+        .pill { font-size: 11.5px; font-weight: bold; border-radius: 10px; padding: 2px 9px; white-space: nowrap; }
+        .pa { background: #d4edda; color: #1e6b34; }
+        .pp { background: #e6e2fa; color: #3b2f8f; }
+        .foot { font-size: 12px; color: #6c757d; font-style: italic; margin-top: 12px; text-align: center; }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 16px 12px; }
+            .d b { font-size: 14px; }
+            .d small { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Leave Availability</h1>
+        <div class="sub" id="sub">&nbsp;</div>
+        <div id="app"><div class="msg">Loading...</div></div>
+    </div>
+
+    <script>
+        // The Excel program replaces everything between these two lines. Don't edit them by hand.
+        // LEAVE_DATA_START
+        const availData = {"v":1,"updated":"Oct 28, 2026 at 4:14 PM","year":2026,"form":"leave-request-form.html","unions":{"1":{"locs":["","","","",""],"lv":["---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------yryyrrcryygyrcrgggrycyygggycygggyrcgrggyrcryrygycgggygrcggggggcgggggycyyyyggcyyyyyrcyyrrrrcgyyyyycgggggycyrrrrrcryrr","","","",""]},"2":{"locs":["","","","",""],"lv":["---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------yrrrrrrrrryyrrryyrrrryyyyrrrryyyyrrryyyyyryyyrrrryyyyyyryyyrrrrryyrrrrrrrrrrrrrryyyrrrryyyrrrryyrrryyrrrrrrrrrrrrrrr","","","",""]},"3":{"locs":["","","","",""],"lv":["---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------rrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrrrrcrrrr","","","",""]}},"people":{
+            "087e2da2b7c2e31b":"54714d59f684c017366ceeee0e378b3f8cccfeea1fe3609e9eb014a4692b3d157917240688b3be09c67c41294dfd2ca20544ce3db4bb70874e4d39ce9b0beb0ccde98cbfeed1438c01f8367ccb69db82c0165760bc5b2c7f0f948db7dbc5142cf320ca59700fb9cad98455a6f25b50e53e02adddede9b692e2c9ef37ae11619537ab66af27cf66e68861888cc57bd919e7fa87788fc51aaf8815b93d8a54179628e7d89d40f46218b04659aa9427a4ed5a5819c652309cc6b484ce4986b5f979962ab6e7d7e1c84246d98de84a5c519d0e3ddebb7060f82e39a22b496a7c0b802bae78e05d49457cb014a1df84f6c29e38ce2df9e68e8ad93d1875e859bc78f4962071de9bd8d649136a85f7b111ed1ab2802da9148b858fcffcbebfb83ab3ba406643ba418cee1637f0af09d7642f3962856b8580dbbac1b07f3d3bbdd2cb6410d8a6edb8c1f13dc15d52e7ab37b7dea7112b6081a739e073695f61670af6a3bdd7218ab0d8741da633877042309de82efa5382caa5290e661497632e3eb216ff1a05135cfca433cd03583176235219c8f6500d20b142f92a445bdf8aa5841885acece2c154b8cf93",
+            "f1238c190d4e7393":"b52dfbc20784c523403ca22ef45262fe81eaef1ec1cf41a1121b2fd3cdd52621cce6e70d5e6829a04e8aec4546c7de31d8e9d2681c68c0d26789fbec62792c62f9f983eb7e934cb1b3422de42a0a439a76dc3d56c6040f0f523ae4ee1d4e8d26b6e6c8d21ea2973f885a5a6c3738ad331fff5d3d49ef4741b9e65035a32bb1c353b9dfd1ba1af04e0d17c167cfe927fd2a02a460b7e211f37d8591790753bc011ba5b464cc6ef847e7b02ea83dc3d772318ae28787eee7081f215a4f9cb8b4429d5c3f666904129f3a4ed012798fda21a1bcfa85a2cdaf849d2f017b8d70e1a5834189aec826a7377d24512cf9f302eaeaccb9e3fc5f67814bf15938e88d7817bdcdb984bbf4b37dbf13b142267a309064a3af03332b2e44c6d0e397305a6a29b74493f6a17b51bcfa8206033b3f3fd4d28d9df0e78837f353806163210c9aafc9a528a9efe038e6d3bdbc8b117bac211c090722f59b726a40c2a2b2b06b7315e1c8d33210cee689663c96fb116249f0d4148d3d0bd2779e9e6a3ccbb71c6fde2cca3f6a7e8a30ca74b8b3171cc428e92c148a2d2fdb962fda9324039bf7b74bd712813d1d159dff5385922185d4e61db7746fa690c8",
+            "1215e7cd6ab22afb":"aaaf5ff168edb1246d1f72aadf8a8813493a61d52b38a9795aad514613fce5973dff1ea45563fe7c1ac253302fb009d9fd0e3ca9acf5d36170c3083dd0fbf963ef558626a344b5c5cfa1eb8dcd9a5de9a6187fa8e6e40739bb55faa2e9b4a508ba40639075e6b20bfc1591c282911251283b179e1b9a5fbc7d8fa8119235b6fa05276b039d2838f0d22ee6b8f778ea371a3eba65962e6bf002328980a6acbaef0c9c0eda2ad6e723e3e1c4cdd135f9072a9b552ce0f621084f59c930ce594bf24baec84869b3002f966748070218fd4874f9dfee37b6ebcd5f0ebde5d5d3cb9216fa883ca29c2769b4bdb415add2f25dd332ba973961dda2e3ff2ce3ea510799dada446e4dc4231823fdb4d5ed235549e32cf39d8ccaf358f1810ba92ac9bb08791c9b27f0763a1b828dfc88fc6977829237e39a3779b10a0a24a87f2a3dfdac0d106d8943c44b389bdc1c64b116ccec0ea3f0b04f68a94af89c75ebc3c5e022658261f782388f15c9e8346a1da8e34326310977c1f2641413dbbeb1c0adb0e69e8eaa004b3fb4100fa35332e76e15d77f1eafeb5815393cdc4cd3e4202952ee6580498a549b63bd08",
+            "1c0bba0e8e1044ef":"898cb4009c18059d917dbbefdca61297bd4269e2e66b9b20c31e8f74d116d7118df65459de42eb3aff4e0ff9e81735e1a24c3407607f3908997e995f71f75657cafb74840dbd524d566928d9aab2e3f186749d7137c4dc9f97e44ab60c05d386420b6af1a53bb9504ea44df78a029c8d3d16f5a43be6b578d2a30cffad8ee6d87536a0f437e005e246f848c04ae6030ac9113df213390ef81f25e8fecb579061a01861a9a617fb96ac42ad5e2a8eeb4b9dd5a8c6aa2f1c6bf9ccc70ffcc70c30864ce066c4b4ed41b9011835773caee56d1bb1cf2216cfda414dbc1e847109db3fbc7464673ba2dc02ff08b1eae487ded49c4b5df4ff16bdcd8272d188e67f0218e4ed9192aef78068874629a8c2fd0258547150ef34dcce4c73a7c1c37c0b14c6d3f3ad62bb24b90a2baa2ae6c67f230fb4dda16e26b57ed981e97ff88fe06111c41812a09691d6a002fcde870c8bb5f662f4b592aacb2cb8a9d101326e7ef8a7c9d7161a509f476524ff213c020aa0d3bf1428677ee262daf1f349b58d36d6345a3b0e83067f112135a3575a69ae7f2e57f506466ea87a17e9f4c80cc88a592d4be997a07647b9c8e3ee92086dca84c72e99fb4587",
+            "13cd2402a6243ac0":"ecebccbd00a4bd37518d160d9bd7fad64b70577ff6b8015eeb0fd3e41bc02c580caed3399e3c54b4d330d51f91afbc00f2780767c84a6db30d83368d231dcf1c3689b2d1522395a2bf8c8d2fba7d73a967a87744c4c241694c5d29c51c061b53dd21ec8b8f8d92f9f7dbd125b6fc581fa2711fa050318616aef3c608a70760097b00525fcba43fec282f7e40099de1f193e9884b18f1404b22f7c5f96ec026e58c0cbaf1acaa7b547ae65b488b69641db6368891a9d4ceb582b2921214b5a502107d9b88ebecbf28746e966dfe5d11cb08f6b67895022fe630621fe94d201ad3116676905b5d5d6fc9d3b0ce8111e8ef83e349239834385bb4a4d70b482050b2470560ac63e96bbb668f55bdfc27c27e92686d9c5b39515f719cdc7cdc7eb898ff59c7c5faa0cdaa67c545d60bb2ce55afa041bc0ac4c3347774ea82e3847337ac12da202d21c003f370f37489ebbd68d08e72b5e228e9b9eb01f2511bd4eaecd048b05ea79e604d4264616191fd6b996e50207ffec4f34fb8f2103f34dc92bb57fc9f96228b548b787d1c4fba91357321a5f52f6c0b6a35bc4f2f987fae668f73ca897048bac31395e4d1321ca82996f4e007aa67f3163d271ce77808818e883265186302cfd6abf3453f74d190c6ba045f5a1296266d16f9",
+            "591a912d6fecb7bb":"c81b5d53aec146fb8d23e858bffc43a87075fd98ff02870deef5ae094c1dc2192ab65e55ea00deb8b4304372e718b1a34406e408f3790fad53cac9c48f95ef8f6f00704134a5ca715845f3517cbed466ed7315ddaa03a7d2a025e65b56c8f16dadf5ac7f7ee7284e0bc88b4e2fddbc7c04317f9b0c87c256ba2e7b5d5cc5c38c1d322a6d98f441d5f934d6a0a8a6a9f525115b00f36bf2908bc86287d220a1d6852d12d119c8e72b7ac0362f0ba44e04ad26edc0c42c97f44dad4e995a6ecf35a6579e91e5d84c04de9859ea4b19ac33be070d35a2f63028191d15be126e3a4bd8ebcf2f71457da6403b7d27c331300de82a984863ebb689fbb1653125545042399fccb389156c9e0f6d78620347d2458f8928b768a6bccbc0d1957a37f38abebe0b87a743aed83649aede6d4bed3801bb7d5003987aa616e690425c63489d6abed6f656ec1f2e9d3965c80ced8f7a4e618004b4aea233deef24e666f7ee6d9e1866a9fc25a746f2ecdd5fc9fed2da73b23cfb6b596c9a32f5d148ef1d6ff9e90ba6d44a51050a7304a04607abee631294af505db43f9aeb98a1a0cfb62b0904f5547c059b8c1b67bcc3c462857e09926f78b7039732",
+            "7b2da3caa12eed40":"ddb853fbfac2dbb663f3ea0176787c70664f34e4ed97dcbb6885c6e58daedf064ffb44eeaac07c7f89cddda98dc8d13944631681a56d47a31e0f72a88d28ba328853bf13d20db538ed0137ef42963ff29c0129f12db801fece9f48846e6670484809a0141765fa6d4f3df56ba25c1be5de3ba0898a9f235a384f5a9f83cfc2657a4ab1c92e54722f2773121f27f444fec55665ab9c1031f265b34ac3a31a6171dcc1dc02344be7521b06cdbca1b011d81d0beaf2d7edae18fe29a9acd82dbe83fadb3b4e878abee46b284747c28b77f2e703c587888ea58fa9bbfdb8a6e6b0f2c7165b6fa344ed1f6894b3a05f2ba0a5f4b60f245a6657509e44624add6a39f3e4aaa026506ced722c86fd7e5d489f0da3b845d06ec6bbcd753c6e485920d829fd989077d97cf29238d64155c9b6234cb0bf1cf39b6bcdbd322960e8ee46fbe4eadbe7df12b7c567992f53d43092e25faa2a8bbc0394fde9a1f7eca38fa06627ffc68edd044cb9a29b4a44f0f63cedc9ab1bde1971007193575f825faff4da38b78e63abe86fc5762621367ac067a3",
+            "ec63dcd6a65ca670":"525bbff2d95b66e06faef6d1fd24a102505c8886e0f18dcbeabc8f737b44fc818a1eb7fb854c53e9181109eaa18512f67165afa408114171853ae7f7ce1f910e513a5c05d23f5bf4026c3c1138760451c5490d4af5fed632ee7f5caf0f448a5ce0e1c03a0d75a9bc9fa35a6b56f1abc55fdc07ff88db4b08f7c2b5ae1e2baf84689b0f73e49a81a6a9451f757fa39b54db5658d5da366631f251f640066117ec0225709d04e8271c2602d63164bbf09d1e0148249c44ab5919f079315bf9ee0c320c49f87e2d88a48d74e6a0ff06ad4059d113d00358b2a2f03072a0cfb9f9abffe1342e611e1c19f0963cb90ff102ec08e6475f057c8efcdeb03b5465b54e7d7ccc65f3d382e72905460ca02a6e92693b2408e39d9995828a44df5511d743405202fdae504eab16a363111827cdd038201ae76d1c6cbe4a6e8d2cef86b6febeac3f53c0053022279bee223e7a203e15234e48ade63e9c8875904483077507a5264b0e2afe7e307ac2f4c89b2fbdb22f6cb5f8144c568111046c921993ab2174c5239da03b092d05d8b2577b8a878192ee2dbf99e74230cee98286744c7c4aa3ac324b42a72ed86f17d08266c0f0d69ff74b8d6ee35e",
+            "6e77c0d68e4c6b40":"d61f4b26ecc4c87b65142148fff6ac2e9bf5ea21e42d95fb9f1cd5f82c6824fb9f75e0bda99752662be79b24960f7e708fdc9871f7af677b699dac4c2f7a5275898e0dee488f4d7a22aff9c1bf376549fc3647b8ba187cfc22ebff61a073633ede829f39dddd1985ca745070f51b9429ac14a5e84bc6cc0279414386dd5765b7bcb6a9e285d9c5d53831eb5eb61e17f8051b29bd9f185b99b9ea5fed16faba70d5a9e3861f9c938e7986ad0b17c0ff3fe29de1a21bcd1cb65dd488e94bb8d8228104494d15e8c676c8c489947495ebc5760361c9342ac78d32b93ad8a7648737fe4f0743f132ad5ae97f2ebde00aba9d5453bf89794178fe8ca3b9c13e0e4fce0aae0aa7dbcb36107c81cebaf80d052540ef357ceca450e1cdac794cf06b8c68fe204c1dd75c537844434a6778008ee1feb692e03f3dd909f971e4c86be0f16b8582ba70ffc0a7879dcbab5f1c2339526fc2105913dd6dd81e7f4ebb70bfbaeac8cf6019a17eeb3de0663589add46597784ef6d84274712b2699545078948dcf0707eff5011fbbfc5eab1f51e0c6012f5779dfe849af68b288a64829f49dc7241705dd968fd243fb32230b455e9d6673b050ce9dfe97a72b2929472d59e883c267",
+            "593bf63569396074":"282fdb8359dc27a8834d6c853905aa918c9e99ce3b3ab95af4ca9f35e78e1bb1f2ae04cb586c2aafacf4e379ec10ec1b0f6f3558dab03c2c8e4bdd343364efbef7b5b97cb4f8bbafc68472959482d5fcf43a7b268cb76a31fac8f699101b864e1d3a09dc5e0a65f501edb7536fd7dd4caaea82189572f4b45e8087ad55176bdd80fa9ff4fcbceb0c5b83ee2fbbc0b67a9175718521103673376e46ad818ca39e38b71bf84bb3caf35b7c403dd6decd57d146a8e07ce2cbb2ac65c4663310ff6cb0ed2eee991211daabfbb0df79df94a9f1c925b385799c667428fd8b2962645892d63b82915c9133801496069d8024592ca4a0aa07a6748e8822001a0791b2ee66d1c6143b7c83e37ed213b78e2c50bd4c470821cac6922e0bdde513e7117587f1d893ec9ae1bc4a8c1a583d18fd679b10cc4635de64611ddc5313c3ab112dbe05613f78d1388c3757269cd47e2eaeeb1799e398c78170697c86e007961aff42f016cd85bb5fcfdd541cca2da9829d82cc042c9dd47f915bfb8ed89852b4c6960c25aac537f161c5fb0305f817817934f5f642b9a96aac6f948947ecc15e683b131c00014d75703dc83d57c21e315941f2c060f79632219ca83d26307a7af77aa24802954fee382cd89f7c3f24f89455",
+            "b0e756033d9793ac":"b4af81b13b30dd05422ad57eb3ebd06606a28a769c0c35d8ada10681e64113894f222a36a1ea43bbba33559dd415b30502ed7774134ef16381431551d01aadbc827045db39a88c58bf107a706d2e402ceff0cb9170641336ca7d7cf862af6437c49b77eb1ca513a7fe963a0103e799ed2701c7b79eb085596cfa81d4da2aac91f1f6d93145ad78c90806d11c520caed36d3d6e73419d4e1a630cc193cac86720f73138ebdab3c84393804a51c965d4c114d7d5b291542d0fa5cb1162f6404dfd0424c8afe2dbec8a5b7ef209d34cc9fb81b9bcc23a85c6fdfe9e3e5478bf161fa9946405e30cabd3df86cfe76edfa946f84ad39f3efaecda0764f21394d0ea671c964177527063fb7cbf2dec6fbc2bb18bbdcb79999ddd06f9d28a740a4c6e4cbb3ffd64ac0210e2f81f2093869fd0f75615b46b00481dd40bc1ac9cfc12e7be691016b8ca52a4bffe690b4825bc9c20ad6d9fc2b41d9ed0af9869e48888cc6766f2a22ad8066ff6050822bdfd8d1393b0ec60dfe3535d8c7c3a7590e61f3c6c04bd489797e3ce437492a3eef6b93f1099b274f30b678ed11a274819310c3df56448723f151ac563667631c2ab6fb2a6b7aadfd19102beab942a306b1f85d5dcbd8456",
+            "a7f8a5eb192cbe8d":"a852c21f48ad62122e47497660d53699cc2da5532253c0cb565bf9bc71bff8cb01e982beefc8a44dd32d6737f811c3c0401c0579261691faa4ddfa617f31c286eedf04512603d095f7c9cba528476c35998f4c6a9b02c172d766bbdf6efac9eeca030fe18390b052c762d51370f20592ad04b7f771223c92bbf5b02c275e588bdce35064fe8f8bf4b299382ae03686d58d2e1ae408b5bef17c45d69edfdee2a369fc71ff1d94f51fc51563efb3c5412c0b16d139309a70284b7175b55cf2c1f26cdd9ee1da7ba83ceac6f44ba9c15288be15d936a6b8f999ddec4c785b68603e0bfa50a2e6cfaa70288c484a2021c41b9ced9b042ad1bc7a1e302c64ba53b6ba916d90c303ff8d852c8763e5c18d67a43aee17e99619955dad8a849682876f2c750a947e39c0481c91dcaa1d2ce5b8cc1f4656a024d424a1e400412a4e4c31fc58a7a3e5cc469df108e1f677501039bd8ba1243256fc86a5d12dbfe05e733f96f9082518ffbf136a7d8b402c5f5751fb9bc9d6d23cac7aa0bdbcfe414824150b48294a793b229d9598f76fb8d165af0cbc358a905da3272179d1a20e",
+            "db89b82156ddc861":"a00bd606c3e6d56c523035cd48672cec7c28c31a488abcd71b52e1938653df05fb7fbd684f602eb092b9b6d5cf13184c62b3382a3baa24348b91fb15f0092c4d40c3625aa517378cb360928fe0c415b576f583d04ab5591ea96d1b2fca230900738d66fccbe396b79241adeaeb1c3deb035e9909185c7d894e3d51fea72110e96527612055046eaf0ffa326a86f0ec897b3851dce1e5748008727bac977faa5801ca3b417b51d618b3b7a63510e219d49c3a7a0061540d08804d4eebef25c092fcb23fd0b2d3a19756aefc2fb1631c9699ff4134fbbda4904c5f499c9ee6f4d850f635c0d6e5fc887a6b60150be125a9f16e56c97762d783c3099de98b0ba0c00e13c5f3af68e283aa88d42842edd3b7f95433911d5d7a947e5b64dd4285e34c2d5011e2162dc8e2efa85bf01e17ccf68c11d260b1ff6476a70bbe997cc74076c30d6f51ba50c6c07ab6ff08c75586c645697a8fbef03e5d6e4ed69414035ac1b1d7f7a136c3e588b1cf56015562ed59bb76b06b8986df2917ec734b28a8f07350c38c2060617adf6f521d0f788100c54c8a236e10f921d006d3083faf3567cf30a3a072abd80a12b01cc060b5f0787e65479fcc670b",
+            "955118f97ccd0b78":"752d2e585b78486b9c6b65e74bb98a679fd9100e78ade5da21d724a3f33be7252115489291076af9b2098bb03cc52ba3e5e57bc8591dc812df785ee2d315356799072eb359c8ba20de91091d5e254ab10f71fad2a6556d09d2ecb822a78b2524b79a317426387f17514f2e59fde4b095666f829c1a248a0e153a4104e90b11675ebc5717ea4cd86a86c1530d795199413995487c7f68d02d1f80fceed1d478858ae06cb64d713e2daf34f1d8ef3f0bb763363273f7a9efd0835184312db025f037d01cf4195ae8bc41967113ebd3befd9732944f8a866fd797c399ede7f779c74058bcbb5113b83d53d2dc19eaba3922f54c6b416ba84a46f1fc364e492099712b858edc485c512ddb1ee10bffb3406c0475b81fd35bf303f28f82600662b8bf6c7abd673527290c9baffd1d3f98c745eda4a3324f4af1c86f46be2a2bb5db00f47140e162e337f7d31c256c4703f28c5252ef4d290421129d67fe50302126cc8070ce017f5f791e082e061da54a06c3973d00426fe3fb0cf820e6d04410988612733b947320cb62ee9664c39900a3",
+            "e1158d04419d4d85":"acec20d9f1deee6f8169015f32c15f6bd6c9690841f04dbcdbdf40a04fff78f17ad8d1d2fe0a873050f55aff8f24946a9b4d8fe6132e113797b8703eaabdff362a42daaf58a197d3a24703319887868ce3510ae7fa0894cbda3623c31cb091a50133cdda8849667c4dc43565edf48339e0d6d8fb1e27a28d73857d0f21da3812e72dfc1bde8e4907503e655812bd3a56b8308fe4aedde76980bebb334959185760a09dadbf9717fca39b62c42c3f9ee34f6fd7e2198422b522a9acc6e5b5004c6c26729fba1208318670d26acd0b8c49cfced3b683ea5a31553cba27bd7e33bc78dc46a76d2a22badbccd450aeeba7db2dbaf238679572835c2f789500b45e1c3de18cc7c81a69157d9dacdd9159611fbdfc61df811952208e3e887976f5f119c0acb8fc5657828157237d9267228f6efff2cd91a66680fc346a542921349b54ec0a7ec0ee9a01ff46fee5c4af5737f29d42cc674624ea40332b6f3511e2f29e199bd3254527324635ab9add1e44d83eb1a98fb406d071d0d8652574b4043bc4a5d9d33072324233eeddfd16d2c03a",
+            "38fb2fdd267c24b0":"54d88b85bbd787c8e755fdfe075746931ef6e26d9ef075c0b0a27dbb0a5a8d62c6a89eb56d9be91c92798b34b3365cba6113719583b34080cda784773231204622c871d4883ee8856edb06e8879322a15409797f6360b6d52432bbdbb257808f07e2616fe120be9e4cebc0c03740183df61ba469b94ecb725853fc7d6fa6581eea2a541997f26ef8a8a077b0f05bc2643f92e5c1c0fccf4868a4e7d86edd766fbe1b8351aa89521fd34f8b40557d0751ec4b47c4814dac69d8d5d129f4a2923952f5404b39d8b277aa4eabf3e2a4ec3af65f2b1abe8bfd803e9fa120defd493f99e8128c191046e08ab82bb0a5e02612eaf562f8c1696675a147bdf584cfdd44b77e585aeb8e939f872a732ee5d83f9b950b940f89cbd813a262cedd90e69e043666395430aea59ffbe7d4e9bbbb6090f532b1887e73a5fad95fcd68a94ea7bac179279157af30045be86b5f6af8425fc87b0dbe039f8a0991b0dbba37927b79901f87bf5ef568eb63d3a21d5a7a613c07e8a46ea9f196debada49c0a00436fa75ecdfe480c1e6eff366f8180212d827923db21b8a80dbb89c193dbd6bf86bca90d3a0701861e77c16",
+            "55682038f8160793":"1a1ca312a507b4fe1c00db99bc5ca76bbd761a594627a908d6cc9c544d502034e67adc69d356ae4e690483ffb3ba135e7f25818f36ff536277f914d4f9e1d3f7a7aa46e244801dfd28d2ff60dc04497b6a70220939799007f496f9f6113c08ace6ff106116dfca6b9b9a62d387c00e4a3cc309476bd70d9aadd0566a8edab382d3a61ca75cc8908868970f48dc31e7ce89f991c98cf316f6ac2de82df8286f53d38476e6b0c1ef7c25930d323213a4f9e90264a30992351791a0e5cd79d167a0d07cbf430d2f2c722495ce2f09d83d07c062283d333fd9220f54b7a27f04e3fed6f9d25f40d14574eac038f79dcd27524bb61e3a5401f4ed43d710dfdd02a4abafe6dd09ac27e9e76b71e05ef56b30af173d5a5c472da5a4e814929123c41daf2738619823606c49358f135c78bf4000fb6de192f877fba4054e8eb0ca8363f0191d795227efe86357ddc917868692beb24e2fbaa91557ccfab31b633ab1e4e65159e8425a6b42ff80ddeeb3d7a4e5ce722f6c5ec247148682c301fdcbb1e4610a71a30e54bb46e4a035eb1810bb48841d67e7ca874e1b9f1fc5a2e5271317ca056c1db2ff51c09503",
+            "9721da68e94e63a7":"a47ecd4b2265d092976b577446844c10d276b9227a9923bd1057560406c1dd85bdf2d71a90e559e55c71bd07f31e2e2052100da735f4afc232cb75a395861a6d27ef6554096760792c05d168526feb2618ece81f216b0b47c7b8d43f9c874d085017263504569270d10f4b71f93d48774973345671d946dde03d74d4a0b402e03c3fded4b8ca65538c1339522ceb0cfd7faf14a7f0016073c267fb85e253c230fd43662f4b8a46a6fc3fafadb4e73f4f2e6cba2aaee018e234eb977cee8bec91f72378b3a5948ea9b981262b314340fd9557242097629b5099cfc984562d6aed9be97f9a05cc102b242410883d2adb80bbc50f4d06cebd704b822225ebd22d0e520a8b2a08a178190b36386228165f2de16294e37214bfc2400694671b40cf0c465b0a62a32b447c4a3e71e3ca6f6ed90ea2c65531a3f594eb1f65506afe61a69e7d50e944488ec1ebf9e92ed0156af9306ac5d23cc52eb7952d7f180a810d765d3486513293576f378dc4f546f72112712d57cabe86c9eccf1c55b52cbd333d7c1e919c7128146f444bd95d5665cdf2032afe781d6363d1931e14eacf849c20307221f52f9be3a91f",
+            "4601b8d79e859557":"7c89a4eff829a24082ed7035d6744d3661c3e8a958d2b18f7a9c7a85159b3e8d067d85baa841fdb1ac4467fb7bffe2f337fe0f0621482d6e841ca22b335ea3a4faa4d3669f142619bd9ec28e53273f7ecba383cab6afb76f8a7cdb4c2abbe29a72a9b7486f7ccb028a4df124a96964b1a54d38304811be0a40f327b3beeb2fa4e272e84557e4507fb53ef53734b054d0f37fd1f373f82580145d6fbb579235fbdc0e0a7ef7c3c939bab7263e0006a740b940d8f4f8744e24f4c4c5ac7c41f25f6c0bb9ad2a392a042a83862f997608903c70fed96678e6935a0fc997f690794cafcd502e092cfe6749229c5dd0c68e9d93caf12fbc4a6e46b4bed650b8ab7a82fe2dfed667d4c81a6507202d1fa4dedc4c16be033d3e589f37be30a0005fa331b4e94db3953d3cb5623bd03ad6f89e046131ef0ae7507162ca755a2d69002fe3e31387bf7b3f9f0afe83436b54ddc352aabf65fb1338e087ceb9eeffbc2ebf4bb6421415191796efa836eb191d4b76524ef8d006e359d7ae3c23c2817640af7b11d98ece74e6d6f54b6e74f5fe6db0",
+            "fac837481d8c933c":"f214d7b06f4b8e1e8fc273b55fd9572c058a50ce5a006082abf269c7e88839c78e0b85507e84fe52bfb8f86a397b221bf2aa9aae05bd3dab9a888377d1305ece8a7d35a85045d55975b2eb3d46fdbf342511fcc76c09ff60fa6aab5a0edbb3057c56659982d8deb90969d43b81c93f5da3a8510217275389ce401ea640d9450ef0e4b65ced6eca0bb6a68955d5accd9b869123bc0962cb822b457fb63448fa7811af60bfab06a5bee5bed7f70e69c2d752b353bf1fbc99a9c32f15cbc427849a63b80d69dbc21d4351549894987672f96d4e792df0fda40efb7a256c25a53d83b9e3a3edabb8cedcaa96770528dc0691aaf7c937fcc5b8aaa30b5e408a96a31d94d931b4d2e6d5b69ec0e023c58c05264b1fda4e9992a903fd68418556be3925be044a0ec2ff49d4c20064236d9323ac3f1492766761c922fb87ee6b3cfd6e9aba8f4e543b12ccccc18f102637bc9b7c750ff121f5dc5c83f3ef6d3b45722f6e747e154ae30db2d58da7eda294ac3e0ac1f44c8386db8cb46e1dadee1e17a46824db5799b171e646dc521b4a50d080ffe0fc85076df4c7ce2f9af50d8ae59061d1e4c6ea7c7872f9e37b78b5119050db29403014feaa3561d3f773389b7c9274a50dee",
+            "754906d03c452737":"9b0ce78ef66a7fda500f8335f2117464335411a9d3a260decd6e92e7c39cfc9b627de81dfda6ffb3081ee760ca514e9d865cfa326c62ff0fed6c948cbdd8251fffaf7a9d6eec56fe5f80dec040f76075fb7d0ae9d5bf8f9c625c158831b33281747c085455becadbb4557313012e3a8764da633823ad3e45aba90d98d674832e770442095ebe26adf1d70a8c769858547dec9636770974ab8e580a9580d9be941493315935eeafe24c3218f0b2c005ae50924300884816d277cb8bf50242de34283b62a0d9713adb7da8d0a30bdbe7a5cc9eb0f522a56bc66ff3f30f20a98396254a360a8f68efeedc6caec190b086677a261f661513b17e99f4d4b0ebf4caf2399d1e2c5917504158d5df298945a68df6c4ce2accaa77e19d30d3a5d0cccbcdeb60678d8863247b49d95f45e0f2e83aaf1c3fe85ffc0bf2458735bfa03021560d9925cbb888eb86804faed99833ab0d73aa9ccbeb4faab6509e5c1a5de8ad2c91c7fb3aa56bb9a4f94526f4d4b27431bf3e603d37ee762270532479722b76cc0b7bfa0d01fb95e582823b5031c240f2c1526ea5997fa3d87c350861",
+            "2f0828cd3cf311d1":"c641aed4a5ecc74fc0da0192b6d9a0eb7e159b53416cda2811e7950a7f21a536c97037330b5b569c8223207fd128f0a6442d5972ee6707cf6d2e4946eec8b77530305a270edaf3605ded78fd2cc4a860523e569adcbe6155673491baa62dcef3decf2fb5ee92102f4542f07675753be6ea439f8fdfa1bca1ddea356fd34394d12948d053bdce6e64c4834fbde6d32329237c0bd13b1bd32324421b5f6db1da2723234f2a71b36e63d5bea0b636866384413808f084a2b9d1fef826fb3e3e03ac7a5b3f11b35ab8dcd31a9d966e24c7c39e7e2661fd022f7fee2e7ceec516baff6edd8a99e9918eaa31bb2e07b75fc36d41eba6aba966b55c0095f689cf26185f068b8bf98c4a0ef02a7a852480b87d66351724f9c0013d592b34512c5aff68aab8dc7ade650c2286129f85c8e922f947a755b82d090fd86258bfed9e9fe4665da52cf05c4225b763cc8bbcf7cbf6ed6792bdbf97647bb4ad680a9eee149006a836326a0890bc186ad4135ce68d32107a1977179ca49e62a63b372f3214c45fcdd0c148d01598c5515301a37af2d98f",
+            "e1fffe1e82d3bb05":"fa7d33aa5af4155fa1631e46ffd6a35bc1f3b00258af383e124b37435f7ee5bc9e8156060c4d47b0d1b4b0ec832cec92935a4b130f4a47a7b38219d779d7a48ba5d1a6593572369c74252ea50664dfc1393875236f83a822418b7d651422c04c1abf74f792502969864a460acbfd56f1ec3c94d20837241e771194c41468bb4de865af2f545a4c8e84d63ec08154531212f963c7dded008c633a0860b30985200b525226f84a032d8bcb6d7c73bcd31f1a8c32034b14990b56f9e8c25586aabaf623695539421fc1474066b1c23a96cd59a9d93578714980ae4fcf8d2a2ec40320da262a78d59d1fe31773fdaa190d54034e17f037cbcfda6ba6997c6347e04ac679e8fedf992cfd90e90bc612858d3b3798a2773fc3f237f31f9801dd65927f69912aebc00c519f452e75d403a27b1fb3cea63accecd1a7cfee0efdd34013831bb371b778518697f85fe420a9ee0e2831f7670d606f2596fa3fe92583766426eae650a229b461f56b17e75a5a35e3296a75f6de7433f52ad90b0d19e511316bfac4ba706348a7b84e26b9f870cc7e",
+            "d94e35b866d8d29e":"29d40b69e59d54eee7e3317813b34c20e3a9e6730f78fcec62c4df21668fa16e750d346334d58cf28f80c75006cac3c8272e06b4d39d7996cb3d64b4733b5ca5c7395eed7b35162d8c38d0fe2f4d84e8f95b23d60237d8c1b368bcad58b6e4469d5e3637e4c7dc22576707b558f8560bef0e19e34591c928e7f450fbf66b66ab1fad2d29e82cccc24b32b951327d9fcefe61bcec2dc69223008a7ab867a94010e19a0e60685d386cb6c8bd363fe9b0d8fc6bba718aa6fb31472499f556ab366d098c3abdda5d3d9052f0a4db75005a983219fa5f62136c9c2226521c1df6bacf68885c12c01435fb341ad83f96d6ba6ee9b161a318f3ba1e6e005b8d4d809cbfd3ca2048e48c9163965a95e872036a3931cd126dd449af6be1a8e02ec0a450bb80f23f9d7a5d85d86c092fb869cba07cf5d9d9fbbc1ce066ba8b8faec0786cb71d8a52596876b10227b219c636f14ae5f7510e3216285cdd6ec5beb91298defed213c288ef9c7ab0b670b8225d61560b593905dcd40ab7aba932d5216b95a1d526688bb07ee31b038ad63fe7b6a2fc"
+        }};
+        // LEAVE_DATA_END
+    </script>
+
+    <script>
+    (function () {
+        'use strict';
+        const D = (typeof availData !== 'undefined') ? availData : null;
+        const app = document.getElementById('app');
+        const subEl = document.getElementById('sub');
+        const params = new URLSearchParams(window.location.search);
+        const code = (params.get('k') || '').trim().toUpperCase();
+        const thisFile = (window.location.pathname.split('/').pop()) || 'leave-availability.html';
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const DOW3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const ACK_KEY = 'leaveAvailAck';
+
+        function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function message(html) { app.innerHTML = '<div class="msg">' + html + '</div>'; }
+
+        if (!D || !D.people) { message('This page hasn&rsquo;t been set up yet. Please try again later.'); return; }
+        if (!code) { message('Please open this page from the <b>personal link in your email</b>.<br>If you can&rsquo;t find it, ask your supervisor to send it again.'); return; }
+        if (!window.crypto || !window.crypto.subtle) { message('Your browser can&rsquo;t open this page. Please try a different browser, or update this one.'); return; }
+
+        // ---------- weekly disclaimer (renews every Sunday, remembered only on this device) ----------
+        function lastSunday() { const t = new Date(); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - t.getDay()); return t.getTime(); }
+        function ackOk() { try { return Number(localStorage.getItem(ACK_KEY) || 0) >= lastSunday(); } catch (e) { return false; } }
+        function saveAck() { try { localStorage.setItem(ACK_KEY, String(Date.now())); } catch (e) { } }
+
+        function showDisclaimer() {
+            app.innerHTML =
+                '<div class="dis"><h2>&#9888; Before you look</h2>' +
+                '<p>This page shows <b>estimated</b> staffing for your shifts, based on the posted schedule and the requests already in (approved and pending).</p>' +
+                '<ul><li>It is a guide only. It does <b>not</b> guarantee your request will be approved.</li>' +
+                '<li>It may not include everything that affects staffing (training, sick calls, operational needs).</li>' +
+                '<li>It changes as requests come in, so it may be different by the time your request is reviewed.</li>' +
+                '<li>It may not reflect the live schedule. <b>Please check the staffing binder</b> before submitting your request.</li></ul>' +
+                '<label class="chk"><input type="checkbox" id="ackBox"><span>I understand this is a live guide only and does not guarantee approval.</span></label>' +
+                '<button class="btn" id="ackBtn" disabled>Continue</button>' +
+                '<div class="note">You&rsquo;ll be asked again each Sunday.</div></div>';
+            const box = document.getElementById('ackBox'), btn = document.getElementById('ackBtn');
+            box.addEventListener('change', () => { btn.disabled = !box.checked; });
+            btn.addEventListener('click', () => { if (box.checked) { saveAck(); start(); } });
+        }
+
+        // ---------- unlock this person's part with their code (SHA-256 keystream, same as the Excel program) ----------
+        const enc = new TextEncoder();
+        async function sha(bytes) { return new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)); }
+        function hex(b) { return Array.from(b, x => x.toString(16).padStart(2, '0')).join(''); }
+        async function unlock() {
+            const id = hex(await sha(enc.encode('id:' + code))).slice(0, 16);
+            const blob = D.people[id];
+            if (!blob) return null;
+            // blob = 16-byte random nonce (hex) + locked text (hex)
+            const key = await sha(enc.encode('key:' + code));
+            const n = blob.length / 2 - 16, out = new Uint8Array(n), blk = new Uint8Array(52);
+            blk.set(key, 0);
+            for (let j = 0; j < 16; j++) blk[32 + j] = parseInt(blob.substr(j * 2, 2), 16);
+            let ks = null;
+            for (let i = 0; i < n; i++) {
+                if (i % 32 === 0) {
+                    const ctr = i / 32;
+                    blk[48] = (ctr >>> 24) & 255; blk[49] = (ctr >>> 16) & 255; blk[50] = (ctr >>> 8) & 255; blk[51] = ctr & 255;
+                    ks = await sha(blk);
+                }
+                out[i] = parseInt(blob.substr(32 + i * 2, 2), 16) ^ ks[i % 32];
+            }
+            let text = '';
+            for (let i = 0; i < n; i++) text += String.fromCharCode(out[i]);
+            if (text.slice(0, 3) !== 'OK|') return null;
+            const parts = text.split('|');
+            const runs = (parts[3] || '').split(';').filter(x => x).map(x => {
+                const a = x.split(',');
+                return { s: +a[0], e: +a[1], st: a[2], kind: a[3], tm: a[4] || '' };
+            });
+            return { union: parts[1], days: parts[2], runs: runs };
+        }
+
+        // ---------- calendar ----------
+        let P = null, U = null, month = 0, selIdx = -1;
+        const year = D.year;
+        const y0 = Date.UTC(year, 0, 1);
+        const idxOf = (y, m, d) => Math.round((Date.UTC(y, m, d) - y0) / 86400000);
+        const dateOf = i => new Date(year, 0, 1 + i);
+        const longDate = d => DOW3[d.getDay()] + ' ' + MON3[d.getMonth()] + ' ' + d.getDate();
+        const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const now = new Date();
+        const todayIdx = idxOf(now.getFullYear(), now.getMonth(), now.getDate());
+        const LEVEL = { g: ['g', 'Good', 'room above the minimum'], y: ['y', 'Limited', 'one more off reaches the minimum'],
+                        r: ['r', 'At or below minimum', 'no room right now'], n: ['n', 'No minimum set', ''] };
+
+        function formLink(dateStr) {
+            let u = (D.form || 'leave-request-form.html') + '?year=' + year + '&k=' + encodeURIComponent(code) + '&src=' + encodeURIComponent(thisFile);
+            if (dateStr) u += '&date=' + dateStr;
+            return u;
+        }
+
+        function dayInfo(i) {
+            // returns {cls, label, text, canRequest}
+            const ch = P.days.charAt(i);
+            if (ch >= '0' && ch <= '4') {
+                const L = +ch;
+                let lv = (U && U.lv && U.lv[L]) ? U.lv[L] : '';
+                if (!lv && U && U.lv) lv = U.lv[0] || '';
+                const lc = lv.charAt(i) || '-';
+                const loc = (L > 0 && U && U.locs && U.locs[L]) ? U.locs[L] : '';
+                const where = loc ? 'working at ' + loc : 'working';
+                if (lc === 'c') return { cls: 'c', label: 'closed', text: 'closed', canRequest: false };
+                if (LEVEL[lc]) {
+                    const v = LEVEL[lc];
+                    return { cls: v[0], label: loc || v[1], text: where + ' - <b>' + v[1] + '</b>' + (v[2] ? ' (' + v[2] + ')' : ''), canRequest: true };
+                }
+                return { cls: 'n', label: loc || 'work', text: where, canRequest: true };
+            }
+            switch (ch) {
+                case 'A': return { cls: 'mine', label: 'leave', text: 'your leave - <b>approved</b>', canRequest: false };
+                case 'P': return { cls: 'pend', label: 'pending', text: 'your leave - <b>pending</b>', canRequest: false };
+                case 'a': return { cls: 'mine', label: 'part', text: 'your partial-day leave - <b>approved</b>', canRequest: false };
+                case 'p': return { cls: 'pend', label: 'part', text: 'your partial-day leave - <b>pending</b>', canRequest: false };
+                case '.': return { cls: 'o', label: 'off', text: 'your day off', canRequest: false };
+                case 'c': return { cls: 'c', label: '', text: 'closed', canRequest: false };
+                case 's': return { cls: 's', label: 'STAT', text: 'STAT holiday', canRequest: false };
+                case 'f': return { cls: 'f', label: 'office', text: 'office day', canRequest: true };
+                default: return { cls: 'none', label: '', text: 'not on the schedule yet', canRequest: false };
+            }
+        }
+
+        function render() {
+            const first = new Date(year, month, 1).getDay();
+            const nd = new Date(year, month + 1, 0).getDate();
+            let h = '<div class="nav"><button id="prev">&larr;</button><span>' + MONTHS[month] + ' ' + year + '</span><button id="next">&rarr;</button></div>';
+            h += '<div class="cal">' + ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(x => '<div class="dh">' + x + '</div>').join('');
+            for (let k = 0; k < first; k++) h += '<div></div>';
+            for (let d = 1; d <= nd; d++) {
+                const i = idxOf(year, month, d);
+                let info = dayInfo(i);
+                let cls = info.cls;
+                if (i < todayIdx && cls !== 'mine' && cls !== 'pend') cls = 'p';
+                h += '<div class="d ' + cls + (i === selIdx ? ' sel' : '') + '" data-i="' + i + '"><b>' + d + '</b><small>' + esc(cls === 'p' ? '' : info.label) + '&nbsp;</small></div>';
+            }
+            h += '</div>';
+            h += '<div class="legend">' +
+                '<span><span class="sw g"></span>Good</span><span><span class="sw y"></span>Limited</span><span><span class="sw r"></span>At/below minimum</span>' +
+                '<span><span class="sw mine"></span>Your leave (approved)</span><span><span class="sw pend"></span>Pending</span>' +
+                '<span><span class="sw o"></span>Day off</span><span><span class="sw c"></span>Closed</span><span><span class="sw p"></span>Past</span></div>';
+            h += '<div class="detail" id="detail"></div>';
+            h += requestsHtml();
+            h += '<a class="btn" href="' + esc(formLink('')) + '">Make a leave request</a>';
+            h += '<div class="foot">Last updated: ' + esc(D.updated || '') + ' &middot; Only you have this link</div>';
+            app.innerHTML = h;
+            document.getElementById('prev').disabled = (month === 0);
+            document.getElementById('next').disabled = (month === 11);
+            document.getElementById('prev').onclick = () => { if (month > 0) { month--; selIdx = -1; render(); } };
+            document.getElementById('next').onclick = () => { if (month < 11) { month++; selIdx = -1; render(); } };
+            app.querySelectorAll('.d[data-i]').forEach(el => el.onclick = () => { selIdx = +el.dataset.i; render(); showDetail(selIdx); });
+            if (selIdx >= 0) showDetail(selIdx);
+        }
+
+        function showDetail(i) {
+            const box = document.getElementById('detail');
+            const info = dayInfo(i);
+            const d = dateOf(i);
+            let h = '<b>' + longDate(d) + '</b> &middot; ' + info.text;
+            if (i < todayIdx) h += '<br><span style="color:#6c757d">This day has passed.</span>';
+            else if (info.canRequest) h += '<a class="btn small" href="' + esc(formLink(ymd(d))) + '">Request this day &rsaquo;</a>';
+            box.innerHTML = h;
+            box.style.display = 'block';
+        }
+
+        function rangeText(s, e) {
+            const a = dateOf(s), b = dateOf(e);
+            if (s === e) return MON3[a.getMonth()] + ' ' + a.getDate();
+            if (a.getMonth() === b.getMonth()) return MON3[a.getMonth()] + ' ' + a.getDate() + ' - ' + b.getDate();
+            return MON3[a.getMonth()] + ' ' + a.getDate() + ' - ' + MON3[b.getMonth()] + ' ' + b.getDate();
+        }
+
+        function requestsHtml() {
+            let h = '<h3>My requests in ' + year + '</h3>';
+            if (!P.runs.length) return h + '<div class="note">No leave or vacation on the schedule for ' + year + ' yet.</div>';
+            P.runs.forEach(r => {
+                const what = r.kind === 'V' ? 'Annual vacation' : 'Leave';
+                const tm = r.tm ? ' &middot; ' + esc(r.tm.replace('-', ' - ')) : '';
+                const pill = r.st === 'P' ? '<span class="pill pp">Pending</span>' : '<span class="pill pa">Approved</span>';
+                h += '<div class="req' + (r.e < todayIdx ? ' past' : '') + '"><span><b>' + rangeText(r.s, r.e) + '</b> &middot; ' + what + tm + '</span>' + pill + '</div>';
+            });
+            return h;
+        }
+
+        async function start() {
+            message('Opening your availability...');
+            let p = null;
+            try { p = await unlock(); } catch (e) { p = null; }
+            if (!p) {
+                subEl.innerHTML = '&nbsp;';
+                message('This link isn&rsquo;t valid (it may have been replaced).<br>Please ask your supervisor to send you a new one.');
+                return;
+            }
+            P = p;
+            U = (D.unions && D.unions[P.union]) ? D.unions[P.union] : null;
+            subEl.textContent = 'Union ' + P.union + ' ' + String.fromCharCode(183) + ' ' + year;
+            month = (now.getFullYear() === year) ? now.getMonth() : 0;
+            render();
+        }
+
+        if (ackOk()) start(); else showDisclaimer();
+    })();
+    </script>
+</body>
+</html>
