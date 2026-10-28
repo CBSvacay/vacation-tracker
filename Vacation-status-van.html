@@ -256,19 +256,27 @@
 
         /* ===== Live schedule: "Show available dates" (no names) ===== */
         .ls-toggle {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 14px;
             width: 100%;
+            text-align: left;
             margin: 20px 0 0 0;
-            padding: 12px;
+            padding: 16px 18px;
             border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0f9d8a 0%, #0b7d8f 100%);
             color: white;
-            font-size: 16px;
-            font-weight: bold;
             font-family: inherit;
             cursor: pointer;
+            box-shadow: 0 6px 18px rgba(11, 125, 143, 0.35);
         }
+        .ls-toggle .ls-ico { font-size: 34px; line-height: 1; }
+        .ls-toggle .ls-txt { flex: 1; }
+        .ls-toggle .ls-big { display: block; font-size: 18px; font-weight: bold; }
+        .ls-toggle .ls-small { display: block; font-size: 13px; opacity: 0.9; margin-top: 2px; }
+        .ls-toggle .ls-new { background: #ffd54f; color: #5d4300; font-size: 11px; font-weight: bold; border-radius: 10px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; }
+        .ls-toggle .ls-chev { font-size: 22px; font-weight: bold; }
         .ls-section {
             display: none;
             border: 2px solid #667eea;
@@ -344,6 +352,25 @@
             </div>
         </div>
         
+        
+        <button class="ls-toggle" id="lsToggle" type="button" style="display: none;"><span class="ls-ico">📅</span><span class="ls-txt"><span class="ls-big">Available dates <span class="ls-new">NEW</span></span><span class="ls-small">See which days are still open - calendar and 4-week schedule</span></span><span class="ls-chev" id="lsChev">▼</span></button>
+        <div class="ls-section" id="lsSection">
+            <h3 id="lsTitle">Available dates</h3>
+            <div class="ls-note">Line numbers only - no names. Updated every time this page updates.</div>
+            <div class="ls-tabs">
+                <button class="ls-tab on" id="lsTabCal" type="button">📅 Calendar</button>
+                <button class="ls-tab" id="lsTabGrid" type="button">▦ 4-week schedule</button>
+            </div>
+            <div class="ls-nav">
+                <button id="lsPrev" type="button">←</button>
+                <span id="lsRange"></span>
+                <button id="lsNext" type="button">→</button>
+            </div>
+            <div id="lsBody"></div>
+            <div class="ls-legend" id="lsLegend"></div>
+            <div class="ls-info" id="lsInfo"></div>
+        </div>
+        
         <div class="queue-container">
             <div id="queueDisplay">
                 <p style="text-align: center; color: #6c757d;">Loading queue...</p>
@@ -369,24 +396,6 @@
         </div>
         
         
-        <button class="ls-toggle" id="lsToggle" type="button" style="display: none;">📅 Show available dates ▼</button>
-        <div class="ls-section" id="lsSection">
-            <h3 id="lsTitle">Available dates</h3>
-            <div class="ls-note">Line numbers only - no names. Updated every time this page updates.</div>
-            <div class="ls-tabs">
-                <button class="ls-tab on" id="lsTabCal" type="button">📅 Calendar</button>
-                <button class="ls-tab" id="lsTabGrid" type="button">▦ 4-week schedule</button>
-            </div>
-            <div class="ls-nav">
-                <button id="lsPrev" type="button">←</button>
-                <span id="lsRange"></span>
-                <button id="lsNext" type="button">→</button>
-            </div>
-            <div id="lsBody"></div>
-            <div class="ls-legend" id="lsLegend"></div>
-            <div class="ls-info" id="lsInfo"></div>
-        </div>
-        
         <div class="legend">
             <div class="legend-title">Legend:</div>
             <div class="legend-item">🟢 Completed or Skipped</div>
@@ -407,56 +416,68 @@
         const employeeData = [
             // VBA_DATA_START
 
-            {union: 1, rank: 1, status: "Completed", round: 2, days: 11},
-            {union: 1, rank: 2, status: "Completed", round: 2, days: 34},
-            {union: 1, rank: 3, status: "Completed", round: 2, days: 26},
-            {union: 1, rank: 4, status: "Completed", round: 2, days: 10},
-            {union: 1, rank: 5, status: "Ended", round: 1, days: 1},
-            {union: 1, rank: 6, status: "Completed", round: 2, days: 13},
-            {union: 1, rank: 7, status: "Completed", round: 2, days: 7},
-            {union: 1, rank: 8, status: "Completed", round: 2, days: 13},
-            {union: 1, rank: 9, status: "Completed", round: 2, days: 5},
-            {union: 1, rank: 10, status: "Completed", round: 2, days: 1},
-            {union: 1, rank: 11, status: "Completed", round: 2, days: 6},
-            {union: 1, rank: 12, status: "Completed", round: 2, days: 3},
-            {union: 1, rank: 13, status: "Completed", round: 2, days: 4},
-            {union: 1, rank: 14, status: "Completed", round: 2, days: 7},
-            {union: 1, rank: 15, status: "Completed", round: 2, days: 3},
-            {union: 1, rank: 16, status: "Completed", round: 2, days: 5},
-            {union: 1, rank: 17, status: "Completed", round: 2, days: 3},
-            {union: 1, rank: 18, status: "Completed", round: 2, days: 4},
-            {union: 1, rank: 19, status: "Completed", round: 2, days: 7},
-            {union: 1, rank: 20, status: "Completed", round: 2, days: 1},
-            {union: 1, rank: 21, status: "Completed", round: 2, days: 4},
-            {union: 1, rank: 22, status: "No Days", round: 2, days: 0},
-            {union: 1, rank: 23, status: "Completed", round: 2, days: 12},
-            {union: 1, rank: 24, status: "No Days", round: 2, days: 0},
-            {union: 1, rank: 25, status: "Waiting", round: 1, days: 4},
-            {union: 1, rank: 26, status: "Waiting", round: 1, days: 14},
-            {union: 1, rank: 27, status: "No Days", round: 1, days: 0},
-            {union: 2, rank: 1, status: "Paused", round: 2, days: 19},
-            {union: 2, rank: 2, status: "Paused", round: 2, days: 24},
-            {union: 2, rank: 3, status: "No Days", round: 2, days: 0},
-            {union: 2, rank: 4, status: "Paused", round: 2, days: 21},
-            {union: 2, rank: 5, status: "Paused", round: 2, days: 8},
-            {union: 2, rank: 6, status: "Paused", round: 2, days: 16},
-            {union: 2, rank: 7, status: "Paused", round: 2, days: 13},
-            {union: 2, rank: 8, status: "No Days", round: 2, days: 0},
-            {union: 2, rank: 9, status: "Paused", round: 2, days: 6},
-            {union: 2, rank: 10, status: "Paused", round: 2, days: 12},
-            {union: 2, rank: 11, status: "Paused", round: 2, days: 7},
-            {union: 2, rank: 12, status: "Paused", round: 2, days: 6},
-            {union: 2, rank: 13, status: "Paused", round: 2, days: 7}
+            {union: 1, rank: 1, status: "Completed", round: 4, days: 8},
+            {union: 1, rank: 2, status: "Ended", round: 3, days: 4},
+            {union: 1, rank: 3, status: "No Days", round: 3, days: 0},
+            {union: 1, rank: 4, status: "Completed", round: 4, days: 4},
+            {union: 1, rank: 5, status: "Skipped", round: 2, days: 5},
+            {union: 1, rank: 6, status: "Completed", round: 4, days: 14},
+            {union: 1, rank: 7, status: "Ended", round: 3, days: 1},
+            {union: 1, rank: 8, status: "Completed", round: 4, days: 2},
+            {union: 1, rank: 9, status: "Completed", round: 4, days: 2},
+            {union: 1, rank: 10, status: "No Days", round: 4, days: 0},
+            {union: 1, rank: 11, status: "Completed", round: 4, days: 4},
+            {union: 1, rank: 12, status: "No Days", round: 4, days: 0},
+            {union: 1, rank: 13, status: "Completed", round: 4, days: 3},
+            {union: 1, rank: 14, status: "Waiting", round: 3, days: 4},
+            {union: 1, rank: 15, status: "Waiting", round: 3, days: 2},
+            {union: 1, rank: 16, status: "Waiting", round: 3, days: 8},
+            {union: 2, rank: 1, status: "Ended", round: 6, days: 6},
+            {union: 2, rank: 2, status: "Ended", round: 0, days: 22},
+            {union: 2, rank: 3, status: "No Days", round: 5, days: 0},
+            {union: 2, rank: 4, status: "Ended", round: 6, days: 4},
+            {union: 2, rank: 5, status: "Ended", round: 0, days: 20},
+            {union: 2, rank: 6, status: "No Days", round: 4, days: 0},
+            {union: 3, rank: 1, status: "No Days", round: 1, days: 0},
+            {union: 3, rank: 2, status: "Ended", round: 1, days: 11}
         ];
 
         const timestamps = {
-            1: "Oct 27, 2026 at 5:48 PM",
-            2: "Oct 27, 2026 at 5:21 PM",
+            1: "Oct 27, 2026 at 4:58 PM",
+            2: "Not started",
             3: "Not started"
         };
 
         const calendarYear = 2027;
-        const currentRounds = {1: 2, 2: 3, 3: 1};
+        const currentRounds = {1: 4, 2: 7, 3: 2};
+
+        const liveSchedule = {year: 2027, unions: {1: {max: 2, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
+            ["1", "wwc.wwwwsc.wwwwwc.wwwwwc.w.wwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vwwwwc.wwwwwc.wwwwwc.swwwwc.wwvvvc.vvvvvc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vvvvvc.vvvwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwsc.svvv"], 
+            ["2", "wwc.vvvvvc.wwwwsc.wwwwwc.wwwwwc.w.wwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwvvc.vvvvvc.vvvvvc.vswvvc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwsc.wsww"], 
+            ["3", "wwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.swwwwc.w.wwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwvvc.vvvvvc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwvc.vvvsvc.vvvvvc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwsc.wwws"], 
+            ["4", "..cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cvvv...cwww...cwww...cwww...cwww...cvvv...cvww...cwww...cwww...cwww...cwww...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
+            ["5", ".wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwwv..vcwww..wcwww..wcwww..wcwwv..vcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcvvv..vcvvv..vcvvv..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..scvww.."], 
+            ["6", "wwc...wwwc...wwwc...wvvc...w.wc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvc...vvvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwsc...ww"], 
+            ["7", "wwcw...wwcw...wwcw...wwcw...vvcww..wwcww..wwcvv..vwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcv...vvcv...vwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wscw...w"], 
+            ["8", "vvcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..vvvcv..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..vvvcv..vwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwscw..ww"], 
+            ["9", "..cwwv...cwww...cwww...cwww...cwww...cwww...cwww...cvww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
+            ["10", "..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cvvvv..cvwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww."], 
+            ["11", "wwcw...wvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wscw...w"], 
+            ["12", "..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv."], 
+            ["13", "w.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...wwwc...wwwc...wwwc..www.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..vvv.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..vvv.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...vvvc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...wwwc...wwwc...wwwc..www.c..vvv.c...ww.c...ww.c..www"], 
+            ["14", "wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..vvcvw..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..vvcvv..vvcww..wwcww..wwcww..wwcww..wwcvv..vvcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wscww..w"], 
+            ["15", "wwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..vvvvc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..wwwwc..wwwwc..wwwsc..www"], 
+            ["16", "..cwwww..cwwww..cwwww..cwwwww.cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwwv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwwv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww."]]}, 2: {max: 1, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
+            ["1", "ww...wwww...wwww..swww..wwww...wwww...w..www...wwww...swww..wwww..wwww...wwww.....wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..wwwc..wwwwc..wswwc.wwww.cwwww..cwwww..cw..wswc..wwwwc..wwwwc.wwww.cwwww..cswww..cw..wwwc..wwwwc..wwwwc.swww.cwwww..cwwww..cw..wwwc..wswwc..wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..ww"], 
+            ["2", "s..wwww...wwww...w..www...wwww...wwww..wwww..wwww...wwws...w..www...wwww...wwww.wwww..cw..wwwc..wwwwc..wwwwc.wsww.cwwww..cwwww..cw..wwwc..wswwc..wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..wwwc..wwwwc..wswwc.wwww.cwwww..cwwww..cw..wswc..wwwwc..wwwwc.wwww.cwwww..cswww..cw..wwwc..wwwwc..wwwwc.swww.cwwww..cwwww..cw..wwwc..wswwc..wwwsc.wwww"], 
+            ["3", "ww....www....www....www.wwww...www....v...ww....www....www....ww..vww....www....w..wwwc...ww.cwww...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cw...wwc...wwwcw..wwwc...ww.cvww...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cv...vvc...wwwcw..wwwc...ww.cvvv...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cv...wwc...wwwcw..wwwc...ww.cwww...cwww...cw...w"], 
+            ["4", "...wwww...vvw....www..w....www....www..www...www....vv.....wwww.w....www....www.www...cwwww.wc...wwwc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwvc.vvv..cvww...cwww...cwwww.w....vvvc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwwc.www..cwww...cwww...cwwww.wc...vvvc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwwc.www..cwww...cwww...cwwww.wc...wwwc...wwsc.www."], 
+            ["5", "ww....www...wwww..w.ww..www....www....www.ww....www...wwww....ww..www....www.......wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cvv..vvc...vvvc..vvvvc...vv.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..w"], 
+            ["6", "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvwww...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwsc..www"], 
+            ["7", "ww....www....www....ww..wwww...www....w...vv....www....www....ww..www....www.......vvvc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cwww...cv..vvvc...wwwc...wwwc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cvvv...cw..wwwc...wwwc...wwwc...ww.cwww...cwww...cw..wwwc...wwwc...vvvc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cvvv...cv..vv"], 
+            ["8", "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwsc.www."]]}, 3: {max: 1, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
+            ["1", "..cwww...cvvv...cvvv...cvvw...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
+            ["2", "vvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvv...wwwc...wwwc...wwwc...wwsc...ww"]]}}};
             // VBA_DATA_END
 // ====================================
         
@@ -791,11 +812,11 @@
             }
 
             document.getElementById('lsTitle').textContent = `Available dates - Union ${userUnion}`;
-            toggle.style.display = 'block';
+            toggle.style.display = 'flex';
             toggle.addEventListener('click', () => {
                 const open = section.style.display !== 'block';
                 section.style.display = open ? 'block' : 'none';
-                toggle.textContent = open ? '📅 Hide available dates ▲' : '📅 Show available dates ▼';
+                document.getElementById('lsChev').textContent = open ? '▲' : '▼';
                 if (open) render();
             });
             tabCal.addEventListener('click', () => { view = 'cal'; render(); });
