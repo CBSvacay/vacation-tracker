@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>My Leave Availability</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            background: white;
+            padding: 26px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 { margin: 0; font-size: 24px; text-align: center; color: #2c3e50; }
+        .sub { text-align: center; color: #667eea; font-weight: bold; font-size: 15px; margin: 4px 0 16px; }
+        .msg { background: #f8f9fa; border-radius: 10px; padding: 18px; font-size: 15px; line-height: 1.5; text-align: center; color: #495057; }
+        .dis h2 { color: #c25e00; font-size: 19px; margin: 0 0 10px; }
+        .dis p { font-size: 14.5px; line-height: 1.5; margin: 0 0 10px; }
+        .dis ul { font-size: 14px; line-height: 1.5; padding-left: 20px; margin: 0 0 14px; }
+        .dis li { margin-bottom: 4px; }
+        .chk { display: flex; gap: 10px; align-items: flex-start; background: #fff9e6; border: 2px solid #ffc107; border-radius: 8px; padding: 12px; font-weight: 600; font-size: 14.5px; cursor: pointer; }
+        .chk input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; }
+        .btn {
+            display: block; width: 100%; box-sizing: border-box; text-align: center; border: none; border-radius: 8px;
+            padding: 12px; font-size: 16px; font-weight: bold; font-family: inherit; cursor: pointer; text-decoration: none;
+            background: linear-gradient(135deg, #0f9d8a 0%, #0b7d8f 100%); color: white; margin-top: 14px;
+        }
+        .btn:disabled { opacity: 0.45; cursor: default; }
+        .btn.small { padding: 9px; font-size: 14.5px; margin-top: 10px; }
+        .note { font-size: 12px; color: #6c757d; margin-top: 10px; }
+        .nav { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 8px; }
+        .nav button { background: #667eea; color: white; border: none; border-radius: 6px; padding: 7px 15px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .nav button:disabled { background: #c7cbe0; cursor: default; }
+        .nav span { font-weight: bold; font-size: 17px; }
+        .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+        .dh { text-align: center; font-size: 12px; font-weight: bold; color: #495057; }
+        .d { border-radius: 6px; text-align: center; padding: 6px 0 5px; line-height: 1.15; cursor: pointer; min-height: 38px; box-sizing: border-box; }
+        .d b { display: block; font-size: 15px; }
+        .d small { display: block; font-size: 10px; font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 2px; }
+        .d.sel { outline: 3px solid #2c3e50; outline-offset: -3px; }
+        .g { background: #c8ecd3; color: #1e6b34; }
+        .y { background: #ffe8a3; color: #7a5600; }
+        .r { background: #f5b7bd; color: #8a1422; }
+        .n { background: #e9ecef; color: #495057; }
+        .c { background: #808080; color: white; }
+        .p { background: #f1f3f5; color: #b5bcc3; }
+        .o { background: white; color: #adb5bd; border: 1px dashed #ccd1d7; }
+        .s { background: #ffc7ce; color: #9c0006; }
+        .f { background: #e7f0ff; color: #33507a; }
+        .none { background: #fafafa; color: #ced4da; }
+        .mine { background: #5b4bc4; color: white; }
+        .pend { background: repeating-linear-gradient(45deg, #c9c3f0, #c9c3f0 4px, #e6e2fa 4px, #e6e2fa 8px); color: #3b2f8f; }
+        .legend { font-size: 12px; color: #444; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+        .sw { display: inline-block; width: 13px; height: 13px; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+        .detail { margin-top: 10px; border: 2px solid #0b7d8f; border-radius: 10px; padding: 11px 12px; font-size: 14px; display: none; }
+        .detail b { font-size: 15px; }
+        h3 { font-size: 16px; margin: 20px 0 6px; }
+        .req { display: flex; justify-content: space-between; gap: 8px; align-items: center; border-top: 1px solid #e9ecef; padding: 8px 0; font-size: 14px; }
+        .req.past { opacity: 0.5; }
+        .pill { font-size: 11.5px; font-weight: bold; border-radius: 10px; padding: 2px 9px; white-space: nowrap; }
+        .pa { background: #d4edda; color: #1e6b34; }
+        .pp { background: #e6e2fa; color: #3b2f8f; }
+        .foot { font-size: 12px; color: #6c757d; font-style: italic; margin-top: 12px; text-align: center; }
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 16px 12px; }
+            .d b { font-size: 14px; }
+            .d small { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Leave Availability</h1>
+        <div class="sub" id="sub">&nbsp;</div>
+        <div id="app"><div class="msg">Loading...</div></div>
+    </div>
+
+    <script>
+        // The Excel program replaces everything between these two lines. Don't edit them by hand.
+        // LEAVE_DATA_START
+        const availData = null;
+        // LEAVE_DATA_END
+    </script>
+
+    <script>
+    (function () {
+        'use strict';
+        const D = (typeof availData !== 'undefined') ? availData : null;
+        const app = document.getElementById('app');
+        const subEl = document.getElementById('sub');
+        const params = new URLSearchParams(window.location.search);
+        const code = (params.get('k') || '').trim().toUpperCase();
+        const thisFile = (window.location.pathname.split('/').pop()) || 'leave-availability.html';
+        const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const DOW3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const ACK_KEY = 'leaveAvailAck';
+
+        function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function message(html) { app.innerHTML = '<div class="msg">' + html + '</div>'; }
+
+        if (!D || !D.people) { message('This page hasn&rsquo;t been set up yet. Please try again later.'); return; }
+        if (!code) { message('Please open this page from the <b>personal link in your email</b>.<br>If you can&rsquo;t find it, ask your supervisor to send it again.'); return; }
+        if (!window.crypto || !window.crypto.subtle) { message('Your browser can&rsquo;t open this page. Please try a different browser, or update this one.'); return; }
+
+        // ---------- weekly disclaimer (renews every Sunday, remembered only on this device) ----------
+        function lastSunday() { const t = new Date(); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - t.getDay()); return t.getTime(); }
+        function ackOk() { try { return Number(localStorage.getItem(ACK_KEY) || 0) >= lastSunday(); } catch (e) { return false; } }
+        function saveAck() { try { localStorage.setItem(ACK_KEY, String(Date.now())); } catch (e) { } }
+
+        function showDisclaimer() {
+            app.innerHTML =
+                '<div class="dis"><h2>&#9888; Before you look</h2>' +
+                '<p>This page shows <b>estimated</b> staffing for your shifts, based on the posted schedule and the requests already in (approved and pending).</p>' +
+                '<ul><li>It is a guide only. It does <b>not</b> guarantee your request will be approved.</li>' +
+                '<li>It may not include everything that affects staffing (training, sick calls, operational needs).</li>' +
+                '<li>It changes as requests come in, so it may be different by the time your request is reviewed.</li>' +
+                '<li>It may not reflect the live schedule. <b>Please check the staffing binder</b> before submitting your request.</li></ul>' +
+                '<label class="chk"><input type="checkbox" id="ackBox"><span>I understand this is a live guide only and does not guarantee approval.</span></label>' +
+                '<button class="btn" id="ackBtn" disabled>Continue</button>' +
+                '<div class="note">You&rsquo;ll be asked again each Sunday.</div></div>';
+            const box = document.getElementById('ackBox'), btn = document.getElementById('ackBtn');
+            box.addEventListener('change', () => { btn.disabled = !box.checked; });
+            btn.addEventListener('click', () => { if (box.checked) { saveAck(); start(); } });
+        }
+
+        // ---------- unlock this person's part with their code (SHA-256 keystream, same as the Excel program) ----------
+        const enc = new TextEncoder();
+        async function sha(bytes) { return new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)); }
+        function hex(b) { return Array.from(b, x => x.toString(16).padStart(2, '0')).join(''); }
+        async function unlock() {
+            const id = hex(await sha(enc.encode('id:' + code))).slice(0, 16);
+            const blob = D.people[id];
+            if (!blob) return null;
+            // blob = 16-byte random nonce (hex) + locked text (hex)
+            const key = await sha(enc.encode('key:' + code));
+            const n = blob.length / 2 - 16, out = new Uint8Array(n), blk = new Uint8Array(52);
+            blk.set(key, 0);
+            for (let j = 0; j < 16; j++) blk[32 + j] = parseInt(blob.substr(j * 2, 2), 16);
+            let ks = null;
+            for (let i = 0; i < n; i++) {
+                if (i % 32 === 0) {
+                    const ctr = i / 32;
+                    blk[48] = (ctr >>> 24) & 255; blk[49] = (ctr >>> 16) & 255; blk[50] = (ctr >>> 8) & 255; blk[51] = ctr & 255;
+                    ks = await sha(blk);
+                }
+                out[i] = parseInt(blob.substr(32 + i * 2, 2), 16) ^ ks[i % 32];
+            }
+            let text = '';
+            for (let i = 0; i < n; i++) text += String.fromCharCode(out[i]);
+            if (text.slice(0, 3) !== 'OK|') return null;
+            const parts = text.split('|');
+            const runs = (parts[3] || '').split(';').filter(x => x).map(x => {
+                const a = x.split(',');
+                return { s: +a[0], e: +a[1], st: a[2], kind: a[3], tm: a[4] || '' };
+            });
+            return { union: parts[1], days: parts[2], runs: runs };
+        }
+
+        // ---------- calendar ----------
+        let P = null, U = null, month = 0, selIdx = -1;
+        const year = D.year;
+        const y0 = Date.UTC(year, 0, 1);
+        const idxOf = (y, m, d) => Math.round((Date.UTC(y, m, d) - y0) / 86400000);
+        const dateOf = i => new Date(year, 0, 1 + i);
+        const longDate = d => DOW3[d.getDay()] + ' ' + MON3[d.getMonth()] + ' ' + d.getDate();
+        const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const now = new Date();
+        const todayIdx = idxOf(now.getFullYear(), now.getMonth(), now.getDate());
+        const LEVEL = { g: ['g', 'Good', 'room above the minimum'], y: ['y', 'Limited', 'one more off reaches the minimum'],
+                        r: ['r', 'At or below minimum', 'no room right now'], n: ['n', 'No minimum set', ''] };
+
+        function formLink(dateStr) {
+            let u = (D.form || 'leave-request-form.html') + '?year=' + year + '&k=' + encodeURIComponent(code) + '&src=' + encodeURIComponent(thisFile);
+            if (dateStr) u += '&date=' + dateStr;
+            return u;
+        }
+
+        function dayInfo(i) {
+            // returns {cls, label, text, canRequest}
+            const ch = P.days.charAt(i);
+            if (ch >= '0' && ch <= '4') {
+                const L = +ch;
+                let lv = (U && U.lv && U.lv[L]) ? U.lv[L] : '';
+                if (!lv && U && U.lv) lv = U.lv[0] || '';
+                const lc = lv.charAt(i) || '-';
+                const loc = (L > 0 && U && U.locs && U.locs[L]) ? U.locs[L] : '';
+                const where = loc ? 'working at ' + loc : 'working';
+                if (lc === 'c') return { cls: 'c', label: 'closed', text: 'closed', canRequest: false };
+                if (LEVEL[lc]) {
+                    const v = LEVEL[lc];
+                    return { cls: v[0], label: loc || v[1], text: where + ' - <b>' + v[1] + '</b>' + (v[2] ? ' (' + v[2] + ')' : ''), canRequest: true };
+                }
+                return { cls: 'n', label: loc || 'work', text: where, canRequest: true };
+            }
+            switch (ch) {
+                case 'A': return { cls: 'mine', label: 'leave', text: 'your leave - <b>approved</b>', canRequest: false };
+                case 'P': return { cls: 'pend', label: 'pending', text: 'your leave - <b>pending</b>', canRequest: false };
+                case 'a': return { cls: 'mine', label: 'part', text: 'your partial-day leave - <b>approved</b>', canRequest: false };
+                case 'p': return { cls: 'pend', label: 'part', text: 'your partial-day leave - <b>pending</b>', canRequest: false };
+                case '.': return { cls: 'o', label: 'off', text: 'your day off', canRequest: false };
+                case 'c': return { cls: 'c', label: '', text: 'closed', canRequest: false };
+                case 's': return { cls: 's', label: 'STAT', text: 'STAT holiday', canRequest: false };
+                case 'f': return { cls: 'f', label: 'office', text: 'office day', canRequest: true };
+                default: return { cls: 'none', label: '', text: 'not on the schedule yet', canRequest: false };
+            }
+        }
+
+        function render() {
+            const first = new Date(year, month, 1).getDay();
+            const nd = new Date(year, month + 1, 0).getDate();
+            let h = '<div class="nav"><button id="prev">&larr;</button><span>' + MONTHS[month] + ' ' + year + '</span><button id="next">&rarr;</button></div>';
+            h += '<div class="cal">' + ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(x => '<div class="dh">' + x + '</div>').join('');
+            for (let k = 0; k < first; k++) h += '<div></div>';
+            for (let d = 1; d <= nd; d++) {
+                const i = idxOf(year, month, d);
+                let info = dayInfo(i);
+                let cls = info.cls;
+                if (i < todayIdx && cls !== 'mine' && cls !== 'pend') cls = 'p';
+                h += '<div class="d ' + cls + (i === selIdx ? ' sel' : '') + '" data-i="' + i + '"><b>' + d + '</b><small>' + esc(cls === 'p' ? '' : info.label) + '&nbsp;</small></div>';
+            }
+            h += '</div>';
+            h += '<div class="legend">' +
+                '<span><span class="sw g"></span>Good</span><span><span class="sw y"></span>Limited</span><span><span class="sw r"></span>At/below minimum</span>' +
+                '<span><span class="sw mine"></span>Your leave (approved)</span><span><span class="sw pend"></span>Pending</span>' +
+                '<span><span class="sw o"></span>Day off</span><span><span class="sw c"></span>Closed</span><span><span class="sw p"></span>Past</span></div>';
+            h += '<div class="detail" id="detail"></div>';
+            h += requestsHtml();
+            h += '<a class="btn" href="' + esc(formLink('')) + '">Make a leave request</a>';
+            h += '<div class="foot">Last updated: ' + esc(D.updated || '') + ' &middot; Only you have this link</div>';
+            app.innerHTML = h;
+            document.getElementById('prev').disabled = (month === 0);
+            document.getElementById('next').disabled = (month === 11);
+            document.getElementById('prev').onclick = () => { if (month > 0) { month--; selIdx = -1; render(); } };
+            document.getElementById('next').onclick = () => { if (month < 11) { month++; selIdx = -1; render(); } };
+            app.querySelectorAll('.d[data-i]').forEach(el => el.onclick = () => { selIdx = +el.dataset.i; render(); showDetail(selIdx); });
+            if (selIdx >= 0) showDetail(selIdx);
+        }
+
+        function showDetail(i) {
+            const box = document.getElementById('detail');
+            const info = dayInfo(i);
+            const d = dateOf(i);
+            let h = '<b>' + longDate(d) + '</b> &middot; ' + info.text;
+            if (i < todayIdx) h += '<br><span style="color:#6c757d">This day has passed.</span>';
+            else if (info.canRequest) h += '<a class="btn small" href="' + esc(formLink(ymd(d))) + '">Request this day &rsaquo;</a>';
+            box.innerHTML = h;
+            box.style.display = 'block';
+        }
+
+        function rangeText(s, e) {
+            const a = dateOf(s), b = dateOf(e);
+            if (s === e) return MON3[a.getMonth()] + ' ' + a.getDate();
+            if (a.getMonth() === b.getMonth()) return MON3[a.getMonth()] + ' ' + a.getDate() + ' - ' + b.getDate();
+            return MON3[a.getMonth()] + ' ' + a.getDate() + ' - ' + MON3[b.getMonth()] + ' ' + b.getDate();
+        }
+
+        function requestsHtml() {
+            let h = '<h3>My requests in ' + year + '</h3>';
+            if (!P.runs.length) return h + '<div class="note">No leave or vacation on the schedule for ' + year + ' yet.</div>';
+            P.runs.forEach(r => {
+                const what = r.kind === 'V' ? 'Annual vacation' : 'Leave';
+                const tm = r.tm ? ' &middot; ' + esc(r.tm.replace('-', ' - ')) : '';
+                const pill = r.st === 'P' ? '<span class="pill pp">Pending</span>' : '<span class="pill pa">Approved</span>';
+                h += '<div class="req' + (r.e < todayIdx ? ' past' : '') + '"><span><b>' + rangeText(r.s, r.e) + '</b> &middot; ' + what + tm + '</span>' + pill + '</div>';
+            });
+            return h;
+        }
+
+        async function start() {
+            message('Opening your availability...');
+            let p = null;
+            try { p = await unlock(); } catch (e) { p = null; }
+            if (!p) {
+                subEl.innerHTML = '&nbsp;';
+                message('This link isn&rsquo;t valid (it may have been replaced).<br>Please ask your supervisor to send you a new one.');
+                return;
+            }
+            P = p;
+            U = (D.unions && D.unions[P.union]) ? D.unions[P.union] : null;
+            subEl.textContent = 'Union ' + P.union + ' ' + String.fromCharCode(183) + ' ' + year;
+            month = (now.getFullYear() === year) ? now.getMonth() : 0;
+            render();
+        }
+
+        if (ackOk()) start(); else showDisclaimer();
+    })();
+    </script>
+</body>
+</html>
