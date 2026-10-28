@@ -451,7 +451,7 @@
             {union: 2, rank: 6, status: "Completed", round: 4, days: 10},
             {union: 2, rank: 7, status: "Completed", round: 4, days: 1},
             {union: 2, rank: 8, status: "No Days", round: 2, days: 0},
-            {union: 2, rank: 9, status: "Waiting", round: 3, days: 1},
+            {union: 2, rank: 9, status: "No Days", round: 4, days: 0},
             {union: 2, rank: 10, status: "Waiting", round: 3, days: 11},
             {union: 2, rank: 11, status: "Waiting", round: 3, days: 5},
             {union: 2, rank: 12, status: "Waiting", round: 3, days: 4},
@@ -460,7 +460,7 @@
 
         const timestamps = {
             1: "Oct 28, 2026 at 3:08 PM",
-            2: "Oct 28, 2026 at 3:23 PM",
+            2: "Oct 28, 2026 at 3:32 PM",
             3: "Not started"
         };
 
@@ -510,7 +510,7 @@
             ["7", "w..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwwww..ww..ww...www..wwwwvw.vv..vv...www..wwwww..www.wv...www..wwwww..ww..ww..wwww..wwwww..ww..wv...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwwww..ww..ww...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwwww..ww..ww...www..wwwwww.ww..ww...www..wwwww"], 
             ["8", "ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.wv..vv...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..vv...v.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..vv...v.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.vv..vw..wwww"], 
             ["9", ".w.ww..ww...www..ww.w.w.ww..ww...www..ww...w.vvw.ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...vvv..ww.w.w.vv..vv...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..w"], 
-            ["10", "w..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.vv..vv...www..ww.w.w.ww..ww...www..ww...w.www.ww.w.www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...v.vvw.vv.w.vvv..vv...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww..."], 
+            ["10", "w..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..wv..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.vv..vv...www..ww.w.w.ww..ww...www..ww...w.www.ww.w.www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...v.vvw.vv.w.vvv..vv...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww..."], 
             ["11", "w..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..svvvv..wwwww..wwwww..wwwww..svvvv..vvwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..vvvvv..vvvww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..vvvvv..vvvvv..svwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww"], 
             ["12", "w..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..vvvvv..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swvvv..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwwv..svvvv..vvvww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..swwww..wwwwv..vvvvv"], 
             ["13", "ww..www....wwwww.wwwwww..www....wwwww..wwwww.wwww....wwwww..wwwww..www...wwwwww..wwwww..www....wwwww.wwwwww..www....wwwwv..vvvvv.wvvv....wwwww..wwwww..www...wwwwww..wwwww..www....wwwww.wwwwww..www....wwwww..wwwww.wwww....wwwww..wwwww..www...wwwwww..wwwww..vvv....vvvvv.wwwwww..www....wwwww..wwwww.wwww....wwwww..wwwww..www...wwwwww..wwwww..www....wwwww.wwwwww..www."], 
