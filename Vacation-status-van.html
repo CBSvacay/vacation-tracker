@@ -423,7 +423,7 @@
             {union: 1, rank: 5, status: "Ended", round: 1, days: 1},
             {union: 1, rank: 6, status: "Completed", round: 5, days: 5},
             {union: 1, rank: 7, status: "No Days", round: 3, days: 0},
-            {union: 1, rank: 8, status: "Waiting", round: 4, days: 6},
+            {union: 1, rank: 8, status: "Completed", round: 5, days: 5},
             {union: 1, rank: 9, status: "Waiting", round: 4, days: 1},
             {union: 1, rank: 10, status: "No Days", round: 3, days: 0},
             {union: 1, rank: 11, status: "No Days", round: 4, days: 0},
@@ -448,7 +448,7 @@
             {union: 2, rank: 3, status: "No Days", round: 2, days: 0},
             {union: 2, rank: 4, status: "Completed", round: 9, days: 7},
             {union: 2, rank: 5, status: "No Days", round: 5, days: 0},
-            {union: 2, rank: 6, status: "Waiting", round: 8, days: 6},
+            {union: 2, rank: 6, status: "Completed", round: 9, days: 5},
             {union: 2, rank: 7, status: "Ended", round: 4, days: 1},
             {union: 2, rank: 8, status: "No Days", round: 2, days: 0},
             {union: 2, rank: 9, status: "No Days", round: 4, days: 0},
@@ -459,8 +459,8 @@
         ];
 
         const timestamps = {
-            1: "Oct 29, 2026 at 3:21 PM",
-            2: "Oct 29, 2026 at 3:21 PM",
+            1: "Not started",
+            2: "Oct 29, 2026 at 3:24 PM",
             3: "Not started"
         };
 
@@ -489,7 +489,7 @@
             ["19", "ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.v...vv.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...wv.v...vv.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.w...ww.v...ww.w...ww.w...ww.w...ww.w...vv.v...vv.w...ww.w...w"], 
             ["20", "w..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swvww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wvvvv..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..vvvvv..vvvvv..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwvv..vwwww"], 
             ["21", "w..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwvv..vvvvv..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wvvvv..wwwww..wwwww..wwwws..wwwww..wwwww..vvvvv..svvvv..vvvww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwww"], 
-            ["22", "w..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..vvvvv..vvvvs..wwwww..wwwww..wwwww..swwww..wwwww..vvwww..wwwww..wwwws..wwwww..wwwww..wwwww..vvvvs..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwwv..svvvv..wwwww..wwwww..wwwww..wwwws"], 
+            ["22", "w..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..vvvvv..vvvvs..wwwww..wwwww..wwwww..swwww..wwwww..vvwww..wwwww..wwwws..wwwww..wwwww..vwwww..vvvvs..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwwv..svvvv..wwwww..wwwww..wwwww..wwwws"], 
             ["23", "ww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwwv..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwwv..vvvvv..swwww..wwwww..wwwww..wwwww..wwwws..wwwwv..wwwww..wwwww..wwwws..wwwww..wwvvv..vvvvv..svvvv..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwws..wwww"], 
             ["24", "ww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..vvvvv..wwwws..vvvvv..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..vvvvv..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..wwwws..wwwww..wwwww..wwwww..swwww..wwwww..wwwww..wwwww..wwwws..wwww"], 
             ["25", "ww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwvv....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwvv..wwww....wwww..wwww....wwww..wwww....vvvv..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwww..wwww....wwwv..vvvv....vvvv..wwww....wwww..wwww....www"], 
@@ -505,7 +505,7 @@
             ["2", "w..ww..ww..swww..ww..ww..wwww..ww..ww..wwws..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..wwww..ww..ws..wwww"], 
             ["3", "ww..wwww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..wwws..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..wwws..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..wwws..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..w"], 
             ["4", "w..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ww..swww..ww..ww..wwww..ww..ws..wwww"], 
-            ["5", "vv...www..wwwww..ww..wv..wwww..wwwww..ww..wv...vvv..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..wv..wwww..wwwww..ww..ww...www..wwwwww.ww..wv...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwwww..vv..vv...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..wv..wwww..wwwww..ww..ww...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..ww..wvvv"], 
+            ["5", "vv...www..wwwww..ww..wv..wwww..wwwww..ww..wv...vvv..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..wv..wwww..wwwww..ww..ww...www..wwwwww.ww..wv...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwwww..vv..vv...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..wv..wwww..wwwww..ww..ww...www..wwwwww.ww..wv...www..wwwww..www.ww...www..wwwww..ww..ww..wvvv"], 
             ["6", "w..ww..ww..wwww..wwwww..ww..ww...www..wwwvvw.ww..ww...www..wwwww..vvw.vv...www..wwwww..ww..ww..wwww..wwwww..ww..ww...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..vv..wwww..wwwvv..vvv.vv...www..wwvvww.ww..ww...www..wwwww..www.vv...www..wvwww..ww..ww..wwww..wwwww..ww..ww...www..wwwvww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwvvw..ww..w"], 
             ["7", "w..wwwwww.ww..wv...www..wwwww..www.wv...www..wwwww..ww..wv..wwww..wwwww..ww..wv...www..wwwwvw.vv..vv...www..wwwww..www.wv...www..wwwww..ww..wv..wwww..wwwww..ww..wv...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwwww..ww..ww...www..wwwwww.ww..ww...www..wwwww..www.ww...www..wwwww..ww..ww..wwww..wwwww..ww..ww...www..wwwwww.ww..ww...www..wwwww"], 
             ["8", "ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..ww...w.ww..ww...www..ww.w.w.wv..vv...www..ww...w.www.ww...www..ww...w.ww..ww..wwww..vv...v.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.vv...www..ww...w.ww..ww..wwww..vv...v.ww..ww...www..ww.w.w.ww..ww...www..ww...w.www.ww...www..ww...w.vv..vw..wwww"], 
