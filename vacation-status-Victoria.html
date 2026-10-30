@@ -433,10 +433,10 @@
             {union: 1, rank: 15, status: "Ended", round: 3, days: 2},
             {union: 1, rank: 16, status: "Waiting", round: 4, days: 6},
             {union: 2, rank: 1, status: "Ended", round: 6, days: 6},
-            {union: 2, rank: 2, status: "Completed", round: 8, days: 14},
+            {union: 2, rank: 2, status: "Waiting", round: 8, days: 14},
             {union: 2, rank: 3, status: "No Days", round: 5, days: 0},
             {union: 2, rank: 4, status: "Ended", round: 6, days: 4},
-            {union: 2, rank: 5, status: "Waiting", round: 7, days: 15},
+            {union: 2, rank: 5, status: "Waiting", round: 8, days: 8},
             {union: 2, rank: 6, status: "No Days", round: 4, days: 0},
             {union: 3, rank: 1, status: "No Days", round: 1, days: 0},
             {union: 3, rank: 2, status: "Ended", round: 1, days: 11}
@@ -444,12 +444,12 @@
 
         const timestamps = {
             1: "Oct 30, 2026 at 2:42 PM",
-            2: "Oct 30, 2026 at 3:29 PM",
+            2: "Oct 30, 2026 at 3:35 PM",
             3: "Not started"
         };
 
         const calendarYear = 2027;
-        const currentRounds = {1: 5, 2: 8, 3: 2};
+        const currentRounds = {1: 5, 2: 9, 3: 2};
 
         const liveSchedule = {year: 2027, unions: {1: {max: 2, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
             ["1", "wwc.wwwwsc.wwwwwc.wwwwwc.w.wwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vwwwwc.wwwwwc.wwwwwc.swwwwc.wwvvvc.vvvvvc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vvvvvc.vvvwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwvvvc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwsc.svvv"], 
@@ -469,7 +469,7 @@
             ["15", "wwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..vvvvc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..wwwwc..wwwwc..wwwsc..www"], 
             ["16", "..cwwww..cwwww..cwwww..cwwwww.cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwwv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwwv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww."]]}, 2: {max: 1, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
             ["1", "ww...wwww...wwww..swww..wwww...wwww...w..www...wwww...swww..wwww..wwww...wwww.....wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..wwwc..vvvvc..wswwc.wwww.cwwww..cwwww..cw..wswc..wwwwc..wwwwc.wwww.cvvvv..cswww..cw..wwwc..wwwwc..wwwwc.swww.cwwww..cwwww..cw..wwwc..wswwc..wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..ww"], 
-            ["2", "s..wwww...wwww...w..www...wwww...wwww..wwww..wwww...wwws...w..www...wwww...wwww.wwww..cw..wwwc..wwwwc..wwwwc.wsww.cwwww..cwwww..cw..wwwc..wswwc..wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..wwwc..wwwwc..wswwc.wwww.cwwww..cwwww..cw..wswc..wwwwc..wwwwc.wwww.cwwww..cswww..cw..wwwc..wwwwc..wwwwc.swww.cwwww..cwwww..cw..wwwc..wswwc..wvvsc.vvvw"], 
+            ["2", "s..wwww...wwww...w..www...wwww...wwww..wwww..wwww...wwws...w..www...wwww...wwww.wwww..cw..wwwc..wwwwc..wwwwc.wsww.cwwww..cwwww..cw..wwwc..wswwc..wwwwc.wwww.cwwww..cvvvv..cs..vvvc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..wwwc..wwwwc..wswwc.wwww.cwwww..cwwww..cw..wswc..wwwwc..wwwwc.wwww.cwwww..cswww..cw..wwwc..wwwwc..wwwwc.swww.cwwww..cwwww..cw..wwwc..wswwc..wvvsc.vvvw"], 
             ["3", "ww....www....www....www.wwww...www....v...ww....www....www....ww..vww....www....w..wwwc...ww.cwww...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cw...wwc...wwwcw..wwwc...ww.cvww...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cv...vvc...wwwcw..wwwc...ww.cvvv...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cv...wwc...wwwcw..wwwc...ww.cwww...cwww...cw...w"], 
             ["4", "...wwww...vvw....www..w....www....www..www...www....vv.....wwww.w....www....www.www...cwwww.wc...wwwc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwvc.vvv..cvww...cwww...cwwww.w....vvvc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwwc.www..cwww...cwww...cwwww.wc...vvvc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwwc.www..cwww...cwww...cwwww.wc...wwwc...wwsc.www."], 
             ["5", "ww....www...wwww..w.ww..www....www....www.ww....www...wwww....ww..www....www.......wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cvv..vvc...vvvc..vvvvc...vv.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..w"], 
