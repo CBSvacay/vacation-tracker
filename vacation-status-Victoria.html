@@ -433,10 +433,10 @@
             {union: 1, rank: 15, status: "Ended", round: 3, days: 2},
             {union: 1, rank: 16, status: "Waiting", round: 4, days: 6},
             {union: 2, rank: 1, status: "Ended", round: 6, days: 6},
-            {union: 2, rank: 2, status: "Completed", round: 7, days: 18},
+            {union: 2, rank: 2, status: "Waiting", round: 7, days: 18},
             {union: 2, rank: 3, status: "No Days", round: 5, days: 0},
             {union: 2, rank: 4, status: "Ended", round: 6, days: 4},
-            {union: 2, rank: 5, status: "Completed", round: 7, days: 15},
+            {union: 2, rank: 5, status: "Waiting", round: 7, days: 15},
             {union: 2, rank: 6, status: "No Days", round: 4, days: 0},
             {union: 3, rank: 1, status: "No Days", round: 1, days: 0},
             {union: 3, rank: 2, status: "Ended", round: 1, days: 11}
@@ -444,12 +444,12 @@
 
         const timestamps = {
             1: "Oct 30, 2026 at 2:42 PM",
-            2: "Not started",
+            2: "Oct 30, 2026 at 3:28 PM",
             3: "Not started"
         };
 
         const calendarYear = 2027;
-        const currentRounds = {1: 5, 2: 7, 3: 2};
+        const currentRounds = {1: 5, 2: 8, 3: 2};
 
         const liveSchedule = {year: 2027, unions: {1: {max: 2, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
             ["1", "wwc.wwwwsc.wwwwwc.wwwwwc.w.wwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vwwwwc.wwwwwc.wwwwwc.swwwwc.wwvvvc.vvvvvc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vvvvvc.vvvwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwvvvc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwsc.svvv"], 
