@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacation Selection Status</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 26px;
+        }
+        
+        .union-info {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .queue-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .rank-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .rank-row:last-child {
+            border-bottom: none;
+        }
+        
+        .rank-label {
+            min-width: 80px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .dot {
+            font-size: 24px;
+            margin: 0 15px;
+        }
+        
+        .dot-you {
+            font-size: 48px;
+            margin: 0 15px;
+            animation: pulse 2s infinite;
+        }
+        
+        .dot-active {
+            font-size: 48px;
+            margin: 0 15px;
+            animation: pulse-active 1.5s infinite;
+            filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes pulse-active {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.8));
+            }
+            50% { 
+                transform: scale(1.15);
+                filter: drop-shadow(0 0 15px rgba(255, 193, 7, 1));
+            }
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 25px rgba(76, 175, 80, 0.7);
+            }
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            font-size: 12px;
+            font-style: italic;
+            margin-left: 10px;
+        }
+        
+        .arrow {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .info-box.urgent {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        
+        .info-box.completed {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .info-box.your-turn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            animation: glow 2s infinite;
+        }
+        
+        .info-box.your-turn h3,
+        .info-box.your-turn .info-row {
+            color: white !important;
+        }
+        
+        .info-box.almost-there {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            border: none;
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        
+        .info-box.almost-there h3,
+        .info-box.almost-there .info-row {
+            color: white !important;
+        }
+        
+        .info-box h3 {
+            margin: 0 0 15px 0;
+            color: #1976D2;
+            font-size: 18px;
+        }
+        
+        .info-box.urgent h3 {
+            color: #c62828;
+        }
+        
+        .info-box.completed h3 {
+            color: #2e7d32;
+        }
+        
+        .info-row {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .status-message-big {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        
+        .urgent-text {
+            color: #c62828;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .summary-box {
+            background: #fff9e6;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .summary-box h3 {
+            margin: 0 0 15px 0;
+            color: #f57c00;
+            font-size: 18px;
+        }
+        
+        .summary-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 15px;
+        }
+        
+        .summary-item .dot {
+            margin-right: 10px;
+        }
+        
+        .legend {
+            background: #f1f3f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        
+        .legend-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        
+        .legend-item {
+            margin: 5px 0;
+            color: #6c757d;
+        }
+        
+        .refresh-note {
+            text-align: center;
+            color: #6c757d;
+            font-size: 13px;
+            font-style: italic;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        /* ===== Live schedule: "Show available dates" (no names) ===== */
+        .ls-toggle {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            text-align: left;
+            margin: 20px 0 0 0;
+            padding: 16px 18px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0f9d8a 0%, #0b7d8f 100%);
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(11, 125, 143, 0.35);
+        }
+        .ls-toggle .ls-ico { font-size: 34px; line-height: 1; }
+        .ls-toggle .ls-txt { flex: 1; }
+        .ls-toggle .ls-big { display: block; font-size: 18px; font-weight: bold; }
+        .ls-toggle .ls-small { display: block; font-size: 13px; opacity: 0.9; margin-top: 2px; }
+        .ls-toggle .ls-new { background: #ffd54f; color: #5d4300; font-size: 11px; font-weight: bold; border-radius: 10px; padding: 2px 8px; margin-left: 6px; vertical-align: middle; }
+        .ls-toggle .ls-chev { font-size: 22px; font-weight: bold; }
+        .ls-section {
+            display: none;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            background: #f8f9ff;
+        }
+        .ls-section h3 { margin: 0; color: #4c5bd4; font-size: 18px; }
+        .ls-note { font-size: 12px; color: #6c757d; margin: 3px 0 10px 0; }
+        .ls-tabs { display: flex; background: #e9ecf8; border-radius: 8px; padding: 3px; margin-bottom: 10px; }
+        .ls-tab {
+            flex: 1; border: none; background: transparent; padding: 8px 0;
+            font-size: 14px; font-weight: bold; font-family: inherit;
+            color: #667eea; border-radius: 6px; cursor: pointer;
+        }
+        .ls-tab.on { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .ls-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .ls-nav button {
+            background: #667eea; color: white; border: none; border-radius: 6px;
+            padding: 6px 14px; font-size: 15px; font-weight: bold; cursor: pointer;
+        }
+        .ls-nav button:disabled { background: #c7cbe0; cursor: default; }
+        .ls-nav span { font-weight: bold; color: #2c3e50; font-size: 15px; text-align: center; }
+        .ls-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .ls-dh { text-align: center; font-size: 12px; font-weight: bold; color: #495057; }
+        .ls-d { border-radius: 6px; text-align: center; padding: 5px 0; line-height: 1.25; font-size: 11px; cursor: pointer; }
+        .ls-d b { display: block; font-size: 14px; }
+        .ls-open { background: #d4edda; }
+        .ls-part { background: #fff3cd; }
+        .ls-full { background: #f8d7da; color: #a71d2a; font-weight: bold; }
+        .ls-closed { background: #808080; color: white; }
+        .ls-none { background: #f1f3f5; color: #adb5bd; }
+        .ls-d.sel { outline: 2px solid #2c3e50; outline-offset: -2px; }
+        .ls-legend { font-size: 12px; color: #555; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+        .ls-sw { display: inline-block; width: 13px; height: 13px; border: 1px solid #bbb; border-radius: 3px; vertical-align: middle; margin-right: 4px; }
+        .ls-grid { border-collapse: collapse; table-layout: fixed; width: 100%; }
+        .ls-grid th { font-size: 10px; color: #444; font-weight: bold; padding: 0; text-align: center; height: 14px; }
+        .ls-grid td { padding: 0; height: 18px; border: 1px solid #d0d0d0; text-align: center; cursor: pointer; }
+        .ls-grid .ln { width: 24px; border: none; font-size: 11px; font-weight: bold; color: #333; text-align: right; padding-right: 4px; cursor: default; }
+        .ls-grid .wk { border-left: 2px solid #333; }
+        .c-w { background: #e9ecef; }
+        .c-v { background: #ff0000; }
+        .c-s { background: #ffc7ce; }
+        .c-c { background: #808080; }
+        .c-dot { background: #ffffff; }
+        .c-x { background: #fafafa; }
+        .ls-grid tr.ls-off td { height: 19px; font-size: 10px; font-weight: bold; border-top: 2px solid #333; }
+        .ls-grid td.sel { outline: 2px solid #2c3e50; outline-offset: -2px; }
+        .ls-info { margin-top: 8px; font-size: 13px; color: #2c3e50; min-height: 18px; }
+        @media (max-width: 520px) {
+            .ls-section { margin-left: -22px; margin-right: -22px; padding: 10px 6px; }
+            .ls-grid .ln { width: 18px; font-size: 9px; padding-right: 2px; }
+            .ls-grid th { font-size: 8px; }
+            .ls-grid td { height: 14px; }
+            .ls-grid tr.ls-off td { font-size: 8px; height: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VACATION SELECTION STATUS</h1>
+            <div class="union-info" id="unionInfo">Loading...</div>
+            <div style="color: #6c757d; font-size: 14px; margin-top: 5px;">Calendar Year: <span id="calendarYear">----</span></div>
+        </div>
+        
+        <div class="info-box" id="statusBox">
+            <h3>Your Status</h3>
+            <div id="statusContent">
+                <div class="info-row"><strong>Position:</strong> <span id="yourRank">--</span></div>
+                <div class="info-row"><strong>Status:</strong> <span id="yourStatus">--</span></div>
+            </div>
+        </div>
+        
+        
+        <button class="ls-toggle" id="lsToggle" type="button" style="display: none;"><span class="ls-ico">📅</span><span class="ls-txt"><span class="ls-big">Available dates <span class="ls-new">NEW</span></span><span class="ls-small">See which days are still open - calendar and 4-week schedule</span></span><span class="ls-chev" id="lsChev">▼</span></button>
+        <div class="ls-section" id="lsSection">
+            <h3 id="lsTitle">Available dates</h3>
+            <div class="ls-note">Line numbers only - no names. Updated every time this page updates.</div>
+            <div class="ls-tabs">
+                <button class="ls-tab on" id="lsTabCal" type="button">📅 Calendar</button>
+                <button class="ls-tab" id="lsTabGrid" type="button">▦ 4-week schedule</button>
+            </div>
+            <div class="ls-nav">
+                <button id="lsPrev" type="button">←</button>
+                <span id="lsRange"></span>
+                <button id="lsNext" type="button">→</button>
+            </div>
+            <div id="lsBody"></div>
+            <div class="ls-legend" id="lsLegend"></div>
+            <div class="ls-info" id="lsInfo"></div>
+        </div>
+        
+        <div class="queue-container">
+            <div id="queueDisplay">
+                <p style="text-align: center; color: #6c757d;">Loading queue...</p>
+            </div>
+        </div>
+        
+        <div class="summary-box">
+            <h3>Summary</h3>
+            <div id="summaryContent">
+                <div class="summary-item">
+                    <span class="dot">🟢</span>
+                    <span><strong id="completedCount">0</strong> Completed/Skipped</span>
+                </div>
+                <div class="summary-item">
+                    <span class="dot">⚪</span>
+                    <span><strong id="waitingCount">0</strong> Waiting</span>
+                </div>
+                <div class="summary-item">
+                    <span class="dot">🔴</span>
+                    <span><strong id="endedCount">0</strong> Ended/No Days Left</span>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="legend">
+            <div class="legend-title">Legend:</div>
+            <div class="legend-item">🟢 Completed or Skipped</div>
+            <div class="legend-item">⚪ Waiting or Paused</div>
+            <div class="legend-item">🔴 Ended Selection or No Days Remaining</div>
+            <div class="legend-item">🟡 Currently Selecting (next in line after completed)</div>
+            <div class="legend-item">🔵 Your Current Position (larger, animated)</div>
+        </div>
+        
+        <div class="refresh-note">
+            Bookmark this page and refresh to see the latest updates
+        </div>
+    </div>
+    
+    <script>
+      // VBA WILL REPLACE THIS DATA BLOCK
+        // ====================================
+        const employeeData = [
+            // VBA_DATA_START
+
+            {union: 1, rank: 1, status: "No Days", round: 11, days: 0},
+            {union: 1, rank: 2, status: "Ended", round: 3, days: 4},
+            {union: 1, rank: 3, status: "No Days", round: 3, days: 0},
+            {union: 1, rank: 4, status: "No Days", round: 5, days: 0},
+            {union: 1, rank: 5, status: "No Days", round: 5, days: 0},
+            {union: 1, rank: 6, status: "Waiting", round: 12, days: 7},
+            {union: 1, rank: 7, status: "Ended", round: 3, days: 1},
+            {union: 1, rank: 8, status: "Ended", round: 4, days: 2},
+            {union: 1, rank: 9, status: "Ended", round: 4, days: 2},
+            {union: 1, rank: 10, status: "No Days", round: 4, days: 0},
+            {union: 1, rank: 11, status: "No Days", round: 5, days: 0},
+            {union: 1, rank: 12, status: "No Days", round: 4, days: 0},
+            {union: 1, rank: 13, status: "No Days", round: 5, days: -3},
+            {union: 1, rank: 14, status: "Ended", round: 3, days: 4},
+            {union: 1, rank: 15, status: "Ended", round: 3, days: 2},
+            {union: 1, rank: 16, status: "Ended", round: 5, days: 4},
+            {union: 2, rank: 1, status: "Ended", round: 6, days: 6},
+            {union: 2, rank: 2, status: "Ended", round: 8, days: 14},
+            {union: 2, rank: 3, status: "No Days", round: 5, days: 0},
+            {union: 2, rank: 4, status: "Ended", round: 6, days: 4},
+            {union: 2, rank: 5, status: "Ended", round: 8, days: 8},
+            {union: 2, rank: 6, status: "No Days", round: 4, days: 0},
+            {union: 2, rank: 7, status: "Waiting", round: 1, days: 9},
+            {union: 2, rank: 8, status: "Waiting", round: 1, days: 9},
+            {union: 3, rank: 1, status: "No Days", round: 1, days: 0},
+            {union: 3, rank: 2, status: "Ended", round: 1, days: 11}
+        ];
+
+        const timestamps = {
+            1: "Nov 7, 2026 at 1:05 PM",
+            2: "Nov 6, 2026 at 1:27 PM",
+            3: "Not started"
+        };
+
+        const calendarYear = 2027;
+        const currentRounds = {1: 13, 2: 1, 3: 2};
+
+        const liveSchedule = {year: 2027, unions: {1: {max: 2, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
+            ["1", "wwc.wwwwsc.wwwwwc.wwwwwc.w.wwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.wwwvsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vwwwwc.wwwwwc.wwwwwc.swwwwc.wwvvvc.vvvvvc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.svvvvc.vvvvvc.vvvwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwvvvc.swwwwc.wwwwwc.wwwwwc.wwwwwc.swwvvc.wwwwwc.wwwwwc.wwwwwc.swwwwc.wwwwwc.wwwwwc.wwwwsc.svvv"], 
+            ["2", "wwc.vvvvvc.wwwwsc.wwwwwc.wwwwwc.w.wwwc.swwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwvc.vvvwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwvvc.vvvvvc.vvvvvc.vswvvc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwwc.wswwwc.wwwwwc.wwwwwc.wwwwsc.wsww"], 
+            ["3", "wwc.wwwwwc.vvvvvc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.swwwwc.w.wwwc.wwwwwc.wwwwwc.wwwwsc.wwwwwc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwvvc.vvvvvc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwvc.vvvsvc.vvvvvc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwwc.wwwswc.wwwwwc.wwwwwc.wwwwsc.wwws"], 
+            ["4", "..cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cvvv...cwww...cwww...cwww...cwww...cvvv...cvww...cwww...cwww...cwww...cwww...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
+            ["5", ".wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwwv..vcwww..wcwww..wcwww..wcwwv..vcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcvvv..vcvvv..vcvvv..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..wcwww..scvww.."], 
+            ["6", "wwc...wwwc...wwwc...wvvc...w.wc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvc...vvvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwsc...ww"], 
+            ["7", "wwcw...wwcw...wwcw...wwcw...vvcww..wwcww..wwcvv..vwcw...wwcw...wwcv...vvcv...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcv...vvcv...vwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wscw...w"], 
+            ["8", "vvcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..vvvcv..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..vvvcv..vwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwwcw..wwscw..ww"], 
+            ["9", "..cwwv...cwww...cwww...cwww...cwww...cwww...cwww...cvww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cvvv...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
+            ["10", "..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cvvvv..cvwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww."], 
+            ["11", "wwcw...wvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...vvcw...wwcw...wwcw...vvcw...wwcw...wwcw...vvcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wwcw...wscw...w"], 
+            ["12", "..cwwww..cvvww..cwwww..cvwww..cvwww..cwwww..cwwww..cvwww..cwwww..cwwww..cvvvv..cvwww..cwwww..cwwww..cwwww..cvwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv."], 
+            ["13", "w.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...wwwc...wwwc...wwwc..www.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..vvv.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..vvv.c...wwwc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...vvvc...wwwc...wwwc..www.c..www.c...ww.c...ww.c..www.c...wwwc...wwwc...wwwc..www.c..vvv.c...ww.c...ww.c..www"], 
+            ["14", "wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..vvcvw..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..vvcvv..vvcww..wwcww..wwcww..wwcww..wwcvv..vvcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wwcww..wscww..w"], 
+            ["15", "wwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..vvvvc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..wwwwc..vvvvc..wwwwc..wwwwc..wwwsc..www"], 
+            ["16", "..cwwww..cwwww..cwwww..cwwwww.cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwwv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwwv..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cwwww..cvvvv..cvvvv..cwwww..cwwww..cwwww..cwwww."]]}, 2: {max: 1, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
+            ["1", "ww...wwww...wwww..swww..wwww...wwww...w..www...wwww...swww..wwww..wwww...wwww.....wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..wwwc..vvvvc..wswwc.wwww.cwwww..cwwww..cw..wswc..wwwwc..wwwwc.wwww.cvvvv..cswww..cw..wwwc..wwwwc..wwwwc.swww.cwwww..cwwww..cw..wwwc..wswwc..wwwwc.wwww.cwwww..cwwww..cs..wwwc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..ww"], 
+            ["2", "s..wwww...wwww...w..www...wwww...wwww..wwww..wwww...wwws...w..www...wwww...wwww.wwww..cw..wwwc..wwwwc..wwwwc.wsww.cwwww..cwwww..cw..wwwc..wswwc..wwwwc.wwww.cwwww..cvvvv..cs..vvvc..wwwwc..wwwwc.wwww.cswww..cwwww..cw..wwwc..wwwwc..wswwc.wwww.cwwww..cwwww..cw..wswc..wwwwc..wwwwc.wwww.cwwww..cswww..cw..wwwc..wwwwc..wwwwc.swww.cwwww..cwwww..cw..wwwc..wswwc..wvvsc.vvvw"], 
+            ["3", "ww....www....www....www.wwww...www....v...ww....www....www....ww..vww....www....w..wwwc...ww.cwww...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cw...wwc...wwwcw..wwwc...ww.cvww...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cv...vvc...wwwcw..wwwc...ww.cvvv...cwww...cw...wwc...wwwc...wwwc...wwwcwwww..cwww...cv...wwc...wwwcw..wwwc...ww.cwww...cwww...cw...w"], 
+            ["4", "...wwww...vvw....www..w....www....www..www...www....vv.....wwww.w....www....www.www...cwwww.wc...wwwc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwvc.vvv..cvww...cwww...cwwww.w....vvvc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwwc.www..cwww...cwww...cwwww.wc...vvvc...wwwc.www..cwwww..cwww...cwww..wc...wwwcw..wwwc.www..cwww...cwww...cwwww.wc...wwwc...wwsc.www."], 
+            ["5", "ww....www...wwww..w.ww..www....www....www.ww....www...wwww....ww..www....www.......wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cvv..vvc...vvvc..vvvvc...vv.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..w"], 
+            ["6", "...www....www....wwww......www....www...ww...www....www....www..w....www....www.www...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwsc..www"], 
+            ["7", "ww....www....www....ww..wwww...www....w...vv....www....www....ww..www....www.......vvvc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cwww...cv..vvvc...wwwc...wwwc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cvvv...cw..wwwc...wwwc...wwwc...ww.cwww...cwww...cw..wwwc...wwwc...vvvc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cvvv...cv..vv"], 
+            ["8", "...www....www....www..w....www.w..www..www...www....www....www..w....www....www.www...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwsc.www."]]}, 3: {max: 1, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
+            ["1", "..cwww...cvvv...cvvv...cvvw...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
+            ["2", "vvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvv...wwwc...wwwc...wwwc...wwsc...ww"]]}}};
+            // VBA_DATA_END
+// ====================================
+        
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userUnion = parseInt(urlParams.get('union')) || 1;
+        const userRank = parseInt(urlParams.get('rank')) || 5;
+        
+        // Filter data for user's union
+        const unionData = employeeData.filter(emp => emp.union === userUnion);
+        unionData.sort((a, b) => a.rank - b.rank);
+        
+        // Find user's data
+        const userData = unionData.find(emp => emp.rank === userRank);
+        const currentRound = currentRounds[userUnion] || 1;
+        
+        // Update header
+        document.getElementById('unionInfo').textContent = `Union ${userUnion} - Round ${currentRound}`;
+        document.getElementById('calendarYear').textContent = calendarYear;
+        
+        // Calculate stats and find active selector
+        let completedCount = 0;
+        let waitingCount = 0;
+        let endedCount = 0;
+        let peopleAhead = 0;
+        let lastCompletedRank = 0;
+        let activeRank = 0; // The person currently selecting
+        
+        unionData.forEach(emp => {
+            if (emp.status === "Completed" || emp.status === "Skipped") {
+                completedCount++;
+                if (emp.rank > lastCompletedRank) {
+                    lastCompletedRank = emp.rank;
+                }
+            } else if (emp.status === "Waiting" || emp.status === "Paused" || emp.status === "Nudged") {
+                waitingCount++;
+                if (emp.rank < userRank && userData && (userData.status === "Waiting" || userData.status === "Paused" || userData.status === "Nudged")) {
+                    peopleAhead++;
+                }
+            } else if (emp.status === "Ended" || emp.days === 0) {
+                endedCount++;
+            }
+        });
+        
+        // Find the first person after last completed (the active selector)
+        for (let emp of unionData) {
+            if (emp.rank > lastCompletedRank && (emp.status === "Waiting" || emp.status === "Paused" || emp.status === "Nudged")) {
+                activeRank = emp.rank;
+                break;
+            }
+        }
+        
+        // Update summary
+        document.getElementById('completedCount').textContent = completedCount;
+        document.getElementById('waitingCount').textContent = waitingCount;
+        document.getElementById('endedCount').textContent = endedCount;
+        
+        // Update status box with enhanced styling
+        const statusBox = document.getElementById('statusBox');
+        const statusContent = document.getElementById('statusContent');
+        
+        document.getElementById('yourRank').textContent = `Rank ${userRank}`;
+        
+        if (!userData) {
+            document.getElementById('yourStatus').textContent = "Employee not found";
+        } else {
+            let statusHTML = '';
+            
+            if (userData.status === "Completed") {
+                statusBox.className = "info-box completed";
+                statusBox.querySelector('h3').textContent = "Your Status - Completed ✓";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                statusHTML += `<div class="info-row"><strong>Status:</strong> Completed</div>`;
+                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1}</div>`;
+            }
+            else if (userData.status === "Skipped") {
+                statusBox.className = "info-box completed";
+                statusBox.querySelector('h3').textContent = "Your Status - Skipped";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                statusHTML += `<div class="info-row"><strong>Status:</strong> Skipped</div>`;
+                statusHTML += `<div class="info-row"><strong>Next:</strong> Waiting for Round ${currentRound + 1}</div>`;
+            }
+            else if (userData.status === "Ended" || userData.days === 0) {
+                statusBox.className = "info-box";
+                statusBox.querySelector('h3').textContent = "Your Status - Done";
+                statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                statusHTML += `<div class="info-row"><strong>Status:</strong> Done</div>`;
+                statusHTML += `<div class="info-row"><strong>Note:</strong> No further selections available</div>`;
+            }
+            else if (userData.status === "Nudged") {
+                statusBox.className = "info-box urgent";
+                statusBox.querySelector('h3').textContent = "⚠️ URGENT - Your Status";
+                statusHTML += `<div class="status-message-big" style="background: #f44336; color: white;">LAST CHANCE FOR SELECTION</div>`;
+                statusHTML += `<div class="info-row urgent-text"><strong>Action:</strong> Check your email immediately!</div>`;
+            }
+            else if (userData.status === "Waiting" || userData.status === "Paused") {
+                if (peopleAhead === 0) {
+                    // IT'S YOUR TURN!
+                    statusBox.className = "info-box your-turn";
+                    statusBox.querySelector('h3').textContent = "🎉 YOUR TURN!";
+                    statusHTML += `<div class="status-message-big" style="background: rgba(255,255,255,0.2); color: white;">It's your turn to select!</div>`;
+                    statusHTML += `<div class="info-row"><strong>Action:</strong> Check your email for the selection link</div>`;
+                } else if (peopleAhead === 1) {
+                    // YOU'RE NEXT!
+                    statusBox.className = "info-box almost-there";
+                    statusBox.querySelector('h3').textContent = "⚡ ALMOST THERE!";
+                    statusHTML += `<div class="status-message-big" style="background: rgba(255,255,255,0.2); color: white;">You're Next!</div>`;
+                    statusHTML += `<div class="info-row"><strong>Position:</strong> One person ahead of you</div>`;
+                } else {
+                    statusBox.className = "info-box";
+                    statusBox.querySelector('h3').textContent = "Your Status";
+                    statusHTML += `<div class="info-row"><strong>Position:</strong> Rank ${userRank}</div>`;
+                    statusHTML += `<div class="info-row"><strong>Status:</strong> Waiting</div>`;
+                    statusHTML += `<div class="info-row"><strong>People ahead:</strong> ${peopleAhead}</div>`;
+                }
+            }
+            
+            statusContent.innerHTML = statusHTML;
+        }
+        
+        // Render queue with enhanced dots
+        const queueDisplay = document.getElementById('queueDisplay');
+        queueDisplay.innerHTML = '';
+        
+        unionData.forEach(emp => {
+            const rankRow = document.createElement('div');
+            rankRow.className = 'rank-row';
+            
+            const rankLabel = document.createElement('span');
+            rankLabel.className = 'rank-label';
+            rankLabel.textContent = `Rank ${emp.rank}`;
+            rankRow.appendChild(rankLabel);
+            
+            // Determine dot type and emoji
+            let dotEmoji = '⚪';
+            let dotClass = 'dot';
+            
+            if (emp.status === "Completed" || emp.status === "Skipped") {
+                dotEmoji = '🟢';
+            } else if (emp.status === "Ended" || emp.days === 0) {
+                dotEmoji = '🔴';
+            } else if (emp.rank === activeRank && activeRank > 0) {
+                // Yellow pulsing dot for active selector
+                dotEmoji = '🟡';
+                dotClass = 'dot-active';
+            }
+            
+            const dot = document.createElement('span');
+            if (emp.rank === userRank) {
+                dot.className = 'dot-you';
+                dot.textContent = '🔵';
+            } else {
+                dot.className = dotClass;
+                dot.textContent = dotEmoji;
+            }
+            rankRow.appendChild(dot);
+            
+            // Add timestamp if this is last completed
+            if (emp.rank === lastCompletedRank && lastCompletedRank > 0) {
+                const timestamp = document.createElement('span');
+                timestamp.className = 'timestamp';
+                timestamp.textContent = `← Last selection: ${timestamps[userUnion]}`;
+                rankRow.appendChild(timestamp);
+            }
+            
+            // Add YOU arrow
+            if (emp.rank === userRank) {
+                const arrow = document.createElement('span');
+                arrow.className = 'arrow';
+                arrow.textContent = '← YOU ARE HERE';
+                rankRow.appendChild(arrow);
+            }
+            
+            // Add SELECTING NOW label for active rank
+            if (emp.rank === activeRank && activeRank > 0 && emp.rank !== userRank) {
+                const selectingLabel = document.createElement('span');
+                selectingLabel.style.cssText = 'color: #FF9800; font-weight: bold; margin-left: 10px; font-size: 14px;';
+                selectingLabel.textContent = '← SELECTING NOW';
+                rankRow.appendChild(selectingLabel);
+            }
+            
+            queueDisplay.appendChild(rankRow);
+        });
+        
+        // ==================== LIVE SCHEDULE: "Show available dates" (no names) ====================
+        // liveSchedule is written by the Excel program in the data block above.
+        (function () {
+            const LS = (typeof liveSchedule !== 'undefined') ? liveSchedule : null;
+            const U = (LS && LS.unions) ? LS.unions[userUnion] : null;
+            if (!U || !U.lines || U.lines.length === 0) return;      // nothing to show: the button stays hidden
+
+            const toggle = document.getElementById('lsToggle');
+            const section = document.getElementById('lsSection');
+            const bodyEl = document.getElementById('lsBody');
+            const rangeEl = document.getElementById('lsRange');
+            const prevBtn = document.getElementById('lsPrev');
+            const nextBtn = document.getElementById('lsNext');
+            const legendEl = document.getElementById('lsLegend');
+            const infoEl = document.getElementById('lsInfo');
+            const tabCal = document.getElementById('lsTabCal');
+            const tabGrid = document.getElementById('lsTabGrid');
+
+            const year = LS.year;
+            const maxDay = U.max || 0;
+            const lines = U.lines;                                   // [line number, one letter per day]
+            const nDays = lines[0][1].length;
+            const blocks = (U.blocks || []).map(b => ({ start: b[0], len: b[1] }));
+            const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const DOW1 = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            const DOW3 = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const STATUS = { 'v': 'Vacation booked', 's': 'STAT', 'w': 'Working', 'c': 'Closed', '.': 'Day off', '-': 'Not on the schedule' };
+            const CLS = { 'v': 'c-v', 's': 'c-s', 'w': 'c-w', 'c': 'c-c', '.': 'c-dot', '-': 'c-x' };
+
+            const dateOf = i => new Date(year, 0, 1 + i);
+            const indexOf = d => Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(year, 0, 1)) / 86400000);
+            const ymd = s => { const p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+            const longDate = d => `${DOW3[d.getDay()]} ${MON3[d.getMonth()]} ${d.getDate()}`;
+
+            // Totals per day: people booked off, and whether the day is open / closed / not on the schedule
+            const offCount = [];
+            const dayKind = [];
+            for (let i = 0; i < nDays; i++) {
+                let off = 0, active = false, closed = false, any = false;
+                for (const ln of lines) {
+                    const ch = ln[1].charAt(i);
+                    if (ch === 'v') off++;
+                    if (ch === 'v' || ch === 'w' || ch === 's') active = true;
+                    if (ch === 'c') closed = true;
+                    if (ch !== '-') any = true;
+                }
+                offCount.push(off);
+                dayKind.push(!any ? 'none' : ((!active && closed) ? 'closed' : 'open'));
+            }
+            const countText = c => maxDay > 0 ? `${c}/${maxDay}` : `${c} off`;
+            const levelClass = c => (maxDay > 0 && c >= maxDay) ? 'ls-full' : (c > 0 ? 'ls-part' : 'ls-open');
+            const swatch = (color, text) => `<span><span class="ls-sw" style="background:${color}"></span>${text}</span>`;
+            const dayInfo = i => {
+                const d = dateOf(i);
+                if (dayKind[i] === 'closed') return `${longDate(d)}: closed`;
+                if (dayKind[i] === 'none') return `${longDate(d)}: not on the schedule yet`;
+                const c = offCount[i];
+                if (maxDay > 0) return `${longDate(d)}: ${c} of ${maxDay} booked off` + (c >= maxDay ? ' - full' : ` - ${maxDay - c} spot${maxDay - c === 1 ? '' : 's'} left`);
+                return `${longDate(d)}: ${c} booked off`;
+            };
+
+            // Start on this month / this 4-week block when it's in the vacation year
+            const today = new Date();
+            let view = 'cal';
+            let month = (today.getFullYear() === year) ? today.getMonth() : 0;
+            let block = 0;
+            if (today.getFullYear() === year) {
+                const ti = indexOf(today);
+                blocks.forEach((b, k) => { const s = indexOf(ymd(b.start)); if (ti >= s && ti < s + b.len) block = k; });
+            }
+
+            function renderCal() {
+                const first = new Date(year, month, 1).getDay();
+                const days = new Date(year, month + 1, 0).getDate();
+                let h = DOW1.map(d => `<div class="ls-dh">${d}</div>`).join('');
+                for (let k = 0; k < first; k++) h += '<div></div>';
+                for (let d = 1; d <= days; d++) {
+                    const i = indexOf(new Date(year, month, d));
+                    if (dayKind[i] === 'closed') h += `<div class="ls-d ls-closed" data-i="${i}"><b>${d}</b>closed</div>`;
+                    else if (dayKind[i] === 'none') h += `<div class="ls-d ls-none" data-i="${i}"><b>${d}</b>&nbsp;</div>`;
+                    else h += `<div class="ls-d ${levelClass(offCount[i])}" data-i="${i}"><b>${d}</b>${countText(offCount[i])}</div>`;
+                }
+                bodyEl.innerHTML = `<div class="ls-cal">${h}</div>`;
+                rangeEl.textContent = `${MONTHS[month]} ${year}`;
+                prevBtn.disabled = (month === 0);
+                nextBtn.disabled = (month === 11);
+                legendEl.innerHTML = swatch('#d4edda', 'Open') + swatch('#fff3cd', 'Some booked') +
+                    (maxDay > 0 ? swatch('#f8d7da', 'Full') : '') + swatch('#808080', 'Closed');
+                infoEl.textContent = maxDay > 0 ? `Numbers = people booked off / daily maximum. Tap a day for details.`
+                                                : `Numbers = people booked off that day. Tap a day for details.`;
+            }
+
+            function renderGrid() {
+                if (blocks.length === 0) {
+                    bodyEl.innerHTML = '<p style="color:#6c757d;">The schedule has not been built for this year yet.</p>';
+                    rangeEl.textContent = '';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    legendEl.innerHTML = '';
+                    infoEl.textContent = '';
+                    return;
+                }
+                const b = blocks[block];
+                const s = indexOf(ymd(b.start));
+                let h1 = '<tr><th class="ln"></th>', h2 = '<tr><th class="ln"></th>';
+                for (let k = 0; k < b.len; k++) {
+                    const d = dateOf(s + k);
+                    const wk = (k > 0 && d.getDay() === 1) ? ' class="wk"' : '';
+                    h1 += `<th${wk}>${DOW1[d.getDay()]}</th>`;
+                    h2 += `<th${wk}>${d.getDate()}</th>`;
+                }
+                let rows = '';
+                for (const ln of lines) {
+                    rows += `<tr><td class="ln">${ln[0]}</td>`;
+                    for (let k = 0; k < b.len; k++) {
+                        const i = s + k;
+                        const ch = (i >= 0 && i < nDays) ? ln[1].charAt(i) : '-';
+                        const wk = (k > 0 && dateOf(i).getDay() === 1) ? ' wk' : '';
+                        rows += `<td class="${CLS[ch] || 'c-x'}${wk}" data-i="${i}" data-l="${ln[0]}"></td>`;
+                    }
+                    rows += '</tr>';
+                }
+                let off = '<tr class="ls-off"><td class="ln">Off</td>';
+                for (let k = 0; k < b.len; k++) {
+                    const i = s + k;
+                    const wk = (k > 0 && dateOf(i).getDay() === 1) ? ' wk' : '';
+                    if (i < 0 || i >= nDays || dayKind[i] === 'none') off += `<td class="c-x${wk}"></td>`;
+                    else if (dayKind[i] === 'closed') off += `<td class="c-c${wk}" data-i="${i}"></td>`;
+                    else off += `<td class="${levelClass(offCount[i])}${wk}" data-i="${i}">${offCount[i]}</td>`;
+                }
+                off += '</tr>';
+                bodyEl.innerHTML = `<table class="ls-grid">${h1}</tr>${h2}</tr>${rows}${off}</table>`;
+                const e = dateOf(s + b.len - 1), d0 = dateOf(s);
+                rangeEl.textContent = `${MON3[d0.getMonth()]} ${d0.getDate()} - ${MON3[e.getMonth()]} ${e.getDate()}, ${year}`;
+                prevBtn.disabled = (block === 0);
+                nextBtn.disabled = (block === blocks.length - 1);
+                legendEl.innerHTML = swatch('#ff0000', 'Vacation') + swatch('#ffc7ce', 'STAT') + swatch('#e9ecef', 'Working') +
+                    swatch('#ffffff', 'Day off') + swatch('#808080', 'Closed');
+                infoEl.textContent = maxDay > 0 ? `Off row = people booked off (max ${maxDay}). Tap a square for details.`
+                                                : 'Off row = people booked off. Tap a square for details.';
+            }
+
+            function render() {
+                tabCal.className = 'ls-tab' + (view === 'cal' ? ' on' : '');
+                tabGrid.className = 'ls-tab' + (view === 'grid' ? ' on' : '');
+                if (view === 'cal') renderCal(); else renderGrid();
+            }
+
+            document.getElementById('lsTitle').textContent = `Available dates - Union ${userUnion}`;
+            toggle.style.display = 'flex';
+            toggle.addEventListener('click', () => {
+                const open = section.style.display !== 'block';
+                section.style.display = open ? 'block' : 'none';
+                document.getElementById('lsChev').textContent = open ? '▲' : '▼';
+                if (open) render();
+            });
+            tabCal.addEventListener('click', () => { view = 'cal'; render(); });
+            tabGrid.addEventListener('click', () => { view = 'grid'; render(); });
+            prevBtn.addEventListener('click', () => { if (view === 'cal') { if (month > 0) month--; } else if (block > 0) block--; render(); });
+            nextBtn.addEventListener('click', () => { if (view === 'cal') { if (month < 11) month++; } else if (block < blocks.length - 1) block++; render(); });
+            bodyEl.addEventListener('click', ev => {
+                const el = ev.target.closest('[data-i]');
+                if (!el) return;
+                bodyEl.querySelectorAll('.sel').forEach(x => x.classList.remove('sel'));
+                el.classList.add('sel');
+                const i = +el.dataset.i;
+                if (el.dataset.l) {
+                    const ln = lines.find(x => x[0] === el.dataset.l);
+                    const ch = ln ? ln[1].charAt(i) : '-';
+                    infoEl.textContent = `Line ${el.dataset.l} - ${longDate(dateOf(i))}: ${STATUS[ch] || ''}`;
+                } else {
+                    infoEl.textContent = dayInfo(i);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
