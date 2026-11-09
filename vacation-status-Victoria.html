@@ -438,15 +438,15 @@
             {union: 2, rank: 4, status: "Ended", round: 6, days: 4},
             {union: 2, rank: 5, status: "Ended", round: 8, days: 8},
             {union: 2, rank: 6, status: "No Days", round: 4, days: 0},
-            {union: 2, rank: 7, status: "Waiting", round: 1, days: 9},
-            {union: 2, rank: 8, status: "Waiting", round: 1, days: 9},
+            {union: 2, rank: 7, status: "Paused", round: 1, days: 9},
+            {union: 2, rank: 8, status: "Completed", round: 1, days: 6},
             {union: 3, rank: 1, status: "No Days", round: 1, days: 0},
             {union: 3, rank: 2, status: "Ended", round: 1, days: 11}
         ];
 
         const timestamps = {
             1: "Nov 7, 2026 at 1:05 PM",
-            2: "Nov 6, 2026 at 1:27 PM",
+            2: "Not started",
             3: "Not started"
         };
 
@@ -477,7 +477,7 @@
             ["5", "ww....www...wwww..w.ww..www....www....www.ww....www...wwww....ww..www....www.......wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cvv..vvc...vvvc..vvvvc...vv.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..wwc...wwwc..wwwwc...ww.cwww...cwww...cwww.wwc...wwwc...wwwc...ww.cwww...cwww...cww..w"], 
             ["6", "...www....www....wwww......www....www...ww...www....www....www..w....www....www.www...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwwc..www.cwww...cwww...cwwww.wc...wwwc...wwwc..ww..cwww...cwww...cwww..wc...wwwc..wwwsc..www"], 
             ["7", "ww....www....www....ww..wwww...www....w...vv....www....www....ww..www....www.......vvvc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cwww...cv..vvvc...wwwc...wwwc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cvvv...cw..wwwc...wwwc...wwwc...ww.cwww...cwww...cw..wwwc...wwwc...vvvc...ww.cwww...cwww...cw..wwwc...wwwc...wwwc...ww.cwww...cvvv...cv..vv"], 
-            ["8", "...www....www....www..w....www.w..www..www...www....www....www..w....www....www.www...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwsc.www."]]}, 3: {max: 1, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
+            ["8", "...www....www....www..w....www.w..www..www...vvv....www....www..w....www....www.www...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwwc.www..cwww...cwww...cwww..wc...wwwc...wwsc.www."]]}, 3: {max: 1, blocks: [["2027-01-01", 24], ["2027-01-25", 28], ["2027-02-22", 28], ["2027-03-22", 28], ["2027-04-19", 28], ["2027-05-17", 28], ["2027-06-14", 28], ["2027-07-12", 28], ["2027-08-09", 28], ["2027-09-06", 28], ["2027-10-04", 28], ["2027-11-01", 28], ["2027-11-29", 28], ["2027-12-27", 5]], lines: [
             ["1", "..cwww...cvvv...cvvv...cvvw...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww...cwww.."], 
             ["2", "vvc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...wwwc...vvvv...wwwc...wwwc...wwwc...wwsc...ww"]]}}};
             // VBA_DATA_END
